@@ -7,6 +7,7 @@
     <display-name>LIBRERIAS PLUGIN</display-name>
     <description><![CDATA[Proyecto IBCEGE]]></description>
 
+	<!--  Libs plugins -->
 	<module><java>lib/plugin-regtelCAIB.jar</java></module>
     <module><java>lib/plugin-smsCAIB.jar</java></module>
    	<module><java>lib/plugin-loginCAIB.jar</java></module>
@@ -14,6 +15,7 @@
 	<module><java>lib/plugin-pagosCAIB.jar</java></module>   	
 	<module><java>lib/plugin-custodiaCAIB.jar</java></module>
     
+    <!--  Asistente pagos -->
     <module><java>pagosCAIB-model.jar</java></module>    
     <module><ejb>pagosCAIB-persistence.jar</ejb></module>    
     <module>
@@ -23,10 +25,8 @@
         </web>
     </module>	
     
-    <module><java>regtelCAIB-model.jar</java></module>    
-    <module><ejb>regtelCAIB-persistence.jar</ejb></module>
-    
-    <module>
+   <!-- Iframe portal --> 
+   <module>
         <web>
             <web-uri>sistra-portal.war</web-uri>
             <context-root>sistraportal</context-root>
