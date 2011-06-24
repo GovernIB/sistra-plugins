@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE application PUBLIC
+   '-//Sun Microsystems, Inc.//DTD J2EE Application 1.3//EN'
+   'http://java.sun.com/dtd/application_1_3.dtd'>
+
+<application>
+    <display-name>LIBRERIAS PLUGIN</display-name>
+    <description><![CDATA[Proyecto IBCEGE]]></description>
+
+	<module><java>lib/plugin-regtelCAIB.jar</java></module>
+    <module><java>lib/plugin-smsCAIB.jar</java></module>
+   	<module><java>lib/plugin-loginCAIB.jar</java></module>
+	<module><java>lib/plugin-firmaCAIB.jar</java></module>
+	<module><java>lib/plugin-pagosCAIB.jar</java></module>   	
+	<module><java>lib/plugin-custodiaCAIB.jar</java></module>
+    
+    <module><java>pagosCAIB-model.jar</java></module>    
+    <module><ejb>pagosCAIB-persistence.jar</ejb></module>    
+    <module>
+        <web>
+            <web-uri>pagosCAIB-front.war</web-uri>
+            <context-root>pagosCAIBFront</context-root>
+        </web>
+    </module>	
+    
+    <module><java>regtelCAIB-model.jar</java></module>    
+    <module><ejb>regtelCAIB-persistence.jar</ejb></module>
+    
+    <module>
+        <web>
+            <web-uri>sistra-portal.war</web-uri>
+            <context-root>sistraportal</context-root>
+        </web>
+    </module>
+    
+    <!--  PROVATO: NECESARIO PARA PLUGIN-SMSCAIB -->
+    <module><java>lib/xpp3-1.1.3.4.M.jar</java></module>
+    <module><java>lib/provato.soap.client.jar</java></module>
+    <module><java>lib/provato-api.jar</java></module>
+    
+    <!-- IDEAS: NECESARIO PARA PLUGIN-CAIB -->
+    <module><java>lib/ideas36rc1_Java1.4.jar</java></module>
+    
+    <!-- REDOSE: FORMATEADORES ESPECIFICOS CAIB -->
+    <module><java>lib/libreria-formateadoresCAIB.jar</java></module>    
+
+    <!-- VALCERT: NECESARIO PARA EL PLUGIN DE CUSTODIA CAIB -->
+    <module><java>lib/sistra-valcert-axis-1.6.6.jar</java></module>    
+    
+     <!-- REGWEB: NECESARIO PARA PLUGIN-REGTEL -->
+    <module><java>lib/logic-1.0.1-client.jar</java></module>
+    
+    
+</application>

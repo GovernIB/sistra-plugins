@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Main-Class: es.caib.sistra.plugins.firma.impl.caib.applet.AppletFirma
+Extension-List: SignaturaCaib
+SignaturaCaib-Extension-Name: es.caib.signatura
+SignaturaCaib-Specification-Version: 2.5.0
+SignaturaCaib-Implementation-Version: 2.5.0
+SignaturaCaib-Implementation-Vendor-Id: es.caib
+SignaturaCaib-Implementation-URL: http://www.caib.es/signaturacaib/signatura-installer.jar

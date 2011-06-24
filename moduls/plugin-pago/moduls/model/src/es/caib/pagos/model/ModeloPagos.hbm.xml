@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+    "-//Hibernate/Hibernate Mapping DTD 2.0//EN"
+    "http://hibernate.sourceforge.net/hibernate-mapping-2.0.dtd" >
+    
+<hibernate-mapping>
+<class  name="es.caib.pagos.model.ModeloPagos" table="ZPE_RPAGOS">
+	 <cache usage="read-write"/>
+     <id name="localizador" unsaved-value="null" column="PAG_LOCALI" length="100">
+          <generator class="assigned"/>
+      </id>
+                                   
+	<property name="identificadorTramite"  column="PAG_IDETRA"/>
+	<property name="modeloTramite"  column="PAG_MODTRA"/>
+	<property name="versionTramite"  column="PAG_VERTRA"/>                                   
+    <property name="nombreTramite"  column="PAG_NOMTRA"  not-null="true" length="200"/>
+    <property name="modelo"  column="PAG_MODELO"  not-null="false" length="100"/>
+    <property name="idTasa"  column="PAG_IDTASA"  not-null="false" length="100"/>
+    <property name="concepto"  column="PAG_CONCEP"  not-null="false" length="200"/>
+    <property name="fechaDevengo"  column="PAG_DATADV"  not-null="false"/>
+    <property name="importe"  column="PAG_IMPORT"  not-null="false" length="100"/>
+    <property name="nifDeclarante"  column="PAG_NIFDEC"  not-null="false" length="12"/>
+    <property name="nombreDeclarante"  column="PAG_NOMDEC"  not-null="false" length="200"/>
+    <property name="estado"  column="PAG_ESTADO"  not-null="false"/>
+    <property name="tipo"  column="PAG_TIPO"  not-null="false" length="1"/>
+    <property name="identificadorPago"  column="PAG_IDENTP" not-null="false" length="200"/>
+    <property name="fechaPago"  column="PAG_DATAPG" not-null="false"/>
+    <property name="reciboB64PagoTelematico"  column="PAG_RECIBO" not-null="false" length="4000"/>                
+    <property name="urlRetornoSistra"  column="PAG_URLSTR" not-null="false" length="400"/>    
+    <property name="urlMantenimientoSesionSistra"  column="PAG_URLMNT" not-null="false" length="400"/>        	
+	<property name="token"  column="PAG_TOKEN" not-null="false" length="100"/>    
+    <property name="tiempoLimite"  column="PAG_DATALI" not-null="false"/>     
+    <property name="nombreUsuario"  column="PAG_NOMUSU" not-null="false" length="200"/>        	
+	<property name="tipoPago"  column="PAG_TIPOPG" not-null="false" length="1"/>    
+    <property name="idioma"  column="PAG_IDIOMA" not-null="false" length="100"/>     
+	<property name="pagoFinalizado"  column="PAG_FINAL" not-null="false" length="1"/>    
+
+	   	
+	
+</class>
+</hibernate-mapping>

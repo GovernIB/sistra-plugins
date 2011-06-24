@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="pluginsCAIB" default="main">
+
+<property file="${basedir}/config.properties"/>
+<property name="projecte" value="${ant.project.name}"/>
+<property name="output.dir" location="${basedir}/output"/>
+<property name="moduls.dir" location="${basedir}/moduls"/>
+<property name="etc.dir" location="${basedir}/etc"/>		
+<property name="lib" value="lib"/>
+
+	
+<target name="main" depends="clean,prepare,assemble"/>
+
+<target name="clean" description="Destruye los directorios de trabajo">
+	<delete dir="output" quiet="yes" />
+	<antcall target="propagate">
+		<param name="task" value="clean"/>
+	</antcall>
+</target>
+
+<target name="prepare" description="Crea los directorios necesarios para la construcción de la aplicación">
+	<mkdir dir="${output.dir}" />
+	<mkdir dir="${output.dir}/moduls" />
+	<mkdir dir="${output.dir}/product" />
+</target>	
+
+<target name="propagate">
+	<ant dir="${moduls.dir}/plugin-firma/moduls/plugin" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-login/moduls/plugin" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-pago/moduls" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-regtel/moduls" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-sms/moduls/plugin" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-custodia/moduls/plugin" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/sistraportal/moduls/portal" target="${task}" inheritall="false"/>
+</target>
+	
+	
+<target name="assemble" description="assemble ear">
+	<antcall target="propagate">
+		<param name="task" value="main"/>
+	</antcall>
+	
+	<delete file="${output.dir}/product/2-pluginsCAIB.ear" quiet="yes"/>
+	<ear earfile="${output.dir}/product/2-pluginsCAIB.ear" appxml="${etc.dir}/application.xml">
+		<manifest>
+			<attribute name="Created-By" value="${indra}"/>
+		    <attribute name="Specification-Title" value="${projecte}"/>				
+		    <attribute name="Specification-Version" value="${release.version} build${release.build} ${release.date}"/>
+		</manifest>
+		<metainf dir="${etc.dir}/jboss-${jboss.version}" includes="jboss-app.xml"/>
+		<zipfileset dir="${lib}" prefix="lib">
+			<include name="xpp3-1.1.3.4.M.jar" />
+       		<include name="provato.soap.client.jar" />
+			<include name="provato-api.jar" />
+			<include name="sistra-valcert-axis-1.6.6.jar" />
+			<include name="libreria-formateadoresCAIB.jar" />
+		</zipfileset>
+		<zipfileset dir="${lib}/firma" prefix="lib">
+			<include name="ideas36rc1_Java1.4.jar"/>
+		</zipfileset>
+		<zipfileset dir="${lib}/regweblib" prefix="lib">
+			<include name="logic-1.0.1-client.jar"/>
+		</zipfileset>
+		<zipfileset dir="${output.dir}/moduls" prefix="lib">
+			<include name="plugin-custodiaCAIB.jar"/>
+			<include name="plugin-firmaCAIB.jar"/>
+			<include name="plugin-loginCAIB.jar"/>
+			<include name="plugin-pagosCAIB.jar"/>
+			<include name="plugin-regtelCAIB.jar"/>
+			<include name="plugin-smsCAIB.jar"/>
+			<include name="pagosCAIB-client.jar"/>
+			<include name="regtelCAIB-client.jar"/>
+		</zipfileset>
+		<zipfileset dir="${output.dir}/moduls">
+			<include name="pagosCAIB-model.jar"/>
+			<include name="pagosCAIB-persistence.jar"/>
+			<include name="pagosCAIB-front.war"/>
+			<include name="regtelCAIB-model.jar"/>
+			<include name="regtelCAIB-persistence.jar"/>
+			<include name="sistra-portal.war"/>
+		</zipfileset>
+	</ear>
+</target>
+</project>
