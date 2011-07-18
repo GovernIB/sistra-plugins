@@ -25,7 +25,10 @@
     <property name="tipo"  column="PAG_TIPO"  not-null="false" length="1"/>
     <property name="identificadorPago"  column="PAG_IDENTP" not-null="false" length="200"/>
     <property name="fechaPago"  column="PAG_DATAPG" not-null="false"/>
-    <property name="reciboB64PagoTelematico"  column="PAG_RECIBO" not-null="false" length="4000"/>                
+    <!--  CAMBIO A CLOB
+    <property name="reciboB64PagoTelematico"  column="PAG_RECIBO" not-null="false" length="4000"/>   
+     -->
+    <property name="reciboB64PagoTelematico" type="binary" column="PAG_RECIBO" not-null="false" unique="false" update="true" insert="true" />              
     <property name="urlRetornoSistra"  column="PAG_URLSTR" not-null="false" length="400"/>    
     <property name="urlMantenimientoSesionSistra"  column="PAG_URLMNT" not-null="false" length="400"/>        	
 	<property name="token"  column="PAG_TOKEN" not-null="false" length="100"/>    
