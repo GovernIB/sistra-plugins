@@ -24,7 +24,7 @@ public class AutenticarCookieAction extends Action{
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
-    	 response.sendRedirect(DelegateUtil.getConfiguracionDelegate().obtenerConfiguracion().getProperty("sistra.url") + request.getContextPath() + "/enlacePortal.do?"+request.getQueryString());
+		 response.sendRedirect(request.getContextPath() + "/enlacePortal.do?"+request.getQueryString());
          return null;                                           			
     }
  }
