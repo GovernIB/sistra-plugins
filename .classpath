@@ -65,9 +65,9 @@
 	<classpathentry kind="lib" path="lib/sistra/sistra-xml.jar"/>
 	<classpathentry kind="lib" path="lib/client/redose-client.jar"/>
 	<classpathentry kind="lib" path="lib/sistra-valcert-axis-1.6.6.jar"/>
-	<classpathentry kind="lib" path="lib/regweblib/logic-1.0.1-client.jar"/>
 	<classpathentry kind="lib" path="lib/client/audita-client.jar"/>
 	<classpathentry kind="lib" path="lib/client/sistra-client.jar"/>
 	<classpathentry kind="lib" path="lib/client/zonaper-client.jar"/>
+	<classpathentry kind="lib" path="lib/regweblib/logic-1.0.2-client.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
