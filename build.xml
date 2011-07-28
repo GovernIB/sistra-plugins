@@ -32,6 +32,7 @@
 	<ant dir="${moduls.dir}/plugin-sms/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-custodia/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/sistraportal/moduls/portal" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/formateadores/moduls/formateadores" target="${task}" inheritall="false"/>
 </target>
 	
 	
@@ -53,7 +54,6 @@
        		<include name="provato.soap.client.jar" />
 			<include name="provato-api.jar" />
 			<include name="sistra-valcert-axis-1.6.6.jar" />
-			<include name="libreria-formateadoresCAIB.jar" />
 		</zipfileset>
 		<zipfileset dir="${lib}/firma" prefix="lib">
 			<include name="ideas36rc1_Java1.4.jar"/>
@@ -70,6 +70,7 @@
 			<include name="plugin-smsCAIB.jar"/>
 			<include name="pagosCAIB-client.jar"/>
 			<include name="regtelCAIB-client.jar"/>
+			<include name="libreria-formateadoresCAIB.jar"/>			
 		</zipfileset>
 		<zipfileset dir="${output.dir}/moduls">
 			<include name="pagosCAIB-model.jar"/>

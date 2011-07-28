@@ -34,8 +34,8 @@
         	<include name="sistra-util.jar"/>
    		</fileset>	
     	<fileset dir="${lib.dir}/client">
-       		<include name="2-redose-model.jar"/>
-    		<include name="2-redose-persistence.jar"/>
+    		<include name="2-redose-model.jar"/>
+    		<include name="2-redose-persistence.jar"/>    		
    		</fileset>	
     </path>	
    	
