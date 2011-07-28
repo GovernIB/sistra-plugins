@@ -339,7 +339,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		return false;
 	}
 	private String getUsuarioRegistro() throws Exception {
-		String userName = getConfig().getProperty("plugin.regweb.auth.username");
+		String userName = getConfig().getProperty("auto.user");
 		return userName;		
 	}
 	private String getIdiomaAsiento(AsientoRegistral asiento) throws Exception {
@@ -781,8 +781,8 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 
 	private LoginContext doLogin() throws Exception {
 		LoginContext lc = null;
-		String userName = getConfig().getProperty("plugin.regweb.auth.username");
-		String password = getConfig().getProperty("plugin.regweb.auth.password");
+		String userName = getConfig().getProperty("auto.user");
+		String password = getConfig().getProperty("auto.pass");
 		if (userName != null && userName.length() > 0 && password != null && password.length() > 0) {
 			lc = new LoginContext(
 					"client-login",
@@ -799,9 +799,15 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	private Properties getConfig() throws Exception {
 		if (config == null) {
 			config = new Properties();
-			config.load(new FileInputStream(
-					System.getProperty("ad.path.properties") +
-					"sistra/plugins/plugin-regtel.properties"));
+			
+			// Path directorio de configuracion
+       	 	String pathConf = System.getProperty("ad.path.properties");
+       	 	
+			// Propiedades globales
+       	 	config.load(new FileInputStream(pathConf + "sistra/global.properties"));
+			
+       	 	// Propiedades plugin
+			config.load(new FileInputStream(pathConf + "sistra/plugins/plugin-regtel.properties"));
 		}
 		return config; 
 	}
