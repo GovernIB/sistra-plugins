@@ -94,7 +94,8 @@
         	<metainf dir="${etc.dir}" includes="applet.mf"/>
         	<include name="**/applet/*.class" />
         	<include name="**/applet/*.properties" />        	
-       		<include name="**/UtilFirmaCAIB.*" />        	
+       		<include name="**/UtilFirmaCAIB.*" />
+        	<include name="**/Base64Coder.*" />
         </jar>
     </target>
 

@@ -327,7 +327,9 @@ public class UtilFirmaCAIB
      */
     private static String bytesToBase64(byte[] bytes, boolean safe) throws Exception
     {    
-    	String b64 = new sun.misc.BASE64Encoder().encode( bytes );    	
+    	// String b64 = new sun.misc.BASE64Encoder().encode( bytes );    	
+    	char[] chars = Base64Coder.encode(bytes);
+    	String b64 = new String(chars);
     	if ( safe ) b64 = escapeChars64UrlSafe( b64 );
     	return b64;
     	
@@ -357,7 +359,8 @@ public class UtilFirmaCAIB
     {    	
     	
     	if ( safe ) cadenaB64 = unescapeChars64UrlSafe( cadenaB64 );
-    	return new sun.misc.BASE64Decoder().decodeBuffer(cadenaB64);
+    	// return new sun.misc.BASE64Decoder().decodeBuffer(cadenaB64);
+    	return Base64Coder.decode(cadenaB64);
     	
     }
     

@@ -3,8 +3,8 @@ package es.caib.sistra.plugins.firma.impl.caib.applet;
 import java.applet.Applet;
 import java.awt.Color;
 import java.awt.Panel;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
+//import java.security.AccessController;
+//import java.security.PrivilegedAction;
 
 import javax.swing.JComboBox;
 
@@ -71,7 +71,10 @@ public class AppletFirma  extends Applet {
      * Inicializa dispositivo de firma
      * @return
      */
-    public boolean inicializarDispositivo( final String contentType ){	   	    
+    public boolean inicializarDispositivo( final String contentType ){
+    	boolean res = inicializarDispositivoImpl( contentType );
+		return res;
+    	/*
     	return ((Boolean)  AccessController.doPrivileged(
 				 new PrivilegedAction() {
 				   public Object run() {
@@ -79,7 +82,8 @@ public class AppletFirma  extends Applet {
 					   return new Boolean(res);
 				   }
 				 }
-			   )).booleanValue();			  
+			   )).booleanValue();
+    	 */			  
     }
     
     
@@ -131,7 +135,8 @@ public class AppletFirma  extends Applet {
      * @param cadena
      * @return
      */	
-	 public String firmarCadena(final String cadena, final String contentType ){	  		 		
+	 public String firmarCadena(final String cadena, final String contentType ){
+		 /*
 		  String firma = (String)  AccessController.doPrivileged(
 					 new PrivilegedAction() {
 					   public Object run() {
@@ -140,7 +145,9 @@ public class AppletFirma  extends Applet {
 					 }
 				   );		  
 		  		  
-		  return firma;		 		  
+		  return firma;
+		  */
+		 return firmarCadenaImpl(cadena, contentType );
 	    }
     /**
      * Realiza firma de cadena
@@ -174,14 +181,16 @@ public class AppletFirma  extends Applet {
      * @return
      */	
 	 public String firmarFichero(final String cadena, final String contentType ){	   
-		
+		/*
 		    return (String)  AccessController.doPrivileged(
 					 new PrivilegedAction() {
 					   public Object run() {
 						   return firmarFicheroImpl(cadena, contentType );
 					   }
 					 }
-				   );		
+				   );
+	  */
+		 return firmarFicheroImpl(cadena, contentType );
 	    }
 	 
 	 /**
@@ -190,14 +199,16 @@ public class AppletFirma  extends Applet {
      * @return
      */	
 	 public String firmarFicheroB64(final String b64, final String contentType ){	   
-		
+		/*
 		    return (String)  AccessController.doPrivileged(
 					 new PrivilegedAction() {
 					   public Object run() {
 						   return firmarFicheroB64Impl(b64, contentType );
 					   }
 					 }
-				   );		
+				   );
+         */
+		 return firmarFicheroB64Impl(b64, contentType );
 	    }
     
     /**
@@ -297,6 +308,7 @@ public class AppletFirma  extends Applet {
      */
     public String cadenaToBase64( final String cadena)
     {
+    	/*
     	return (String)  AccessController.doPrivileged(
 				 new PrivilegedAction() {
 				   public Object run() {
@@ -304,6 +316,8 @@ public class AppletFirma  extends Applet {
 				   }
 				 }
 			   );
+		*/
+    	 return cadenaToBase64Impl( cadena );
     }
     
     /**
@@ -328,6 +342,7 @@ public class AppletFirma  extends Applet {
      */
     public String base64ToCadena( final String cadenaB64)
     {
+    	/*
     	return (String)  AccessController.doPrivileged(
 				 new PrivilegedAction() {
 				   public Object run() {
@@ -335,6 +350,8 @@ public class AppletFirma  extends Applet {
 				   }
 				 }
 			   );
+		*/
+    	return base64ToCadenaImpl( cadenaB64 );
     }
     
     
