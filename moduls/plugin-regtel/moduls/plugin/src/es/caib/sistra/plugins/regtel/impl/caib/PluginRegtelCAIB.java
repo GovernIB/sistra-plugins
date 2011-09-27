@@ -53,9 +53,11 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	
 	public final static String CODIGO_PAIS_ESPANYA = "ESP";
 	public final static String CODIGO_PAIS_ESPANYA_REDUCIDO = "ES";
+	
 	public final static String SEPARADOR_OFICINA_FISICA = ".";
-
-
+	public final static String REGEXP_SEPARADOR_OFICINA_FISICA = "\\."; // Exp regular para hacer split
+	
+	
 	public ResultadoRegistro registroEntrada(
 			AsientoRegistral asiento,
 			ReferenciaRDS refAsiento,
@@ -108,8 +110,14 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		ParametrosRegistroEntrada params = mapeaAsientoParametrosRegistroEntrada(justificantePreregistro.getAsientoRegistral()); 
 		
 		// Particularizamos campos para preregistro
-		params.setoficina(oficina);
-		if(codigoProvincia != null && !"7".equals(codigoProvincia)){
+		String[] codisOficina = descomponerOficinaFisica(oficina);
+		if (codisOficina.length == 2) {
+			params.setoficina(codisOficina[0]);
+			params.setoficinafisica(codisOficina[1]);
+		} else {
+			throw new Exception("Codi d'oficina incorrecte");
+		}
+		if(codigoProvincia != null && CODIGO_PROVINCIA_CAIB.equals(codigoProvincia)){
 			params.setbalears(codigoMunicipio);
 			params.setfora("");
 		}else{
@@ -338,10 +346,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			return true;
 		return false;
 	}
-	private String getUsuarioRegistro() throws Exception {
-		String userName = getConfig().getProperty("auto.user");
-		return userName;		
-	}
+	
 	private String getIdiomaAsiento(AsientoRegistral asiento) throws Exception {
 		String idioma = asiento.getDatosAsunto().getIdiomaAsunto();
 		if ("es".equalsIgnoreCase(idioma))
@@ -480,7 +485,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		params.setdata(dfData.format(ara));
 		
 		String codiOficina = asiento.getDatosOrigen().getCodigoEntidadRegistralOrigen();
-		String[] codisOficina = codiOficina.split(SEPARADOR_OFICINA_FISICA);
+		String[] codisOficina = descomponerOficinaFisica(codiOficina);
 		if (codisOficina.length == 2) {
 			params.setoficina(codisOficina[0]);
 			params.setoficinafisica(codisOficina[1]);
@@ -575,7 +580,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		params.setdata(dfData.format(ara));
 		
 		String codiOficina = asiento.getDatosOrigen().getCodigoEntidadRegistralOrigen();
-		String[] codisOficina = codiOficina.split(SEPARADOR_OFICINA_FISICA);
+		String[] codisOficina = descomponerOficinaFisica(codiOficina);
 		if (codisOficina.length == 2) {
 			params.setoficina(codisOficina[0]);
 			params.setoficinafisica(codisOficina[1]);
@@ -781,8 +786,8 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 
 	private LoginContext doLogin() throws Exception {
 		LoginContext lc = null;
-		String userName = getConfig().getProperty("auto.user");
-		String password = getConfig().getProperty("auto.pass");
+		String userName = getUsuarioRegistro();
+		String password = getPasswdRegistro();
 		if (userName != null && userName.length() > 0 && password != null && password.length() > 0) {
 			lc = new LoginContext(
 					"client-login",
@@ -812,4 +817,30 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		return config; 
 	}
 	
+	private String getUsuarioRegistro() throws Exception {
+		String auto = getConfig().getProperty("plugin.regweb.auth.auto");
+		String userName = null;
+		if ("true".equals(auto)) {
+			userName = getConfig().getProperty("auto.user");			
+		} else {
+			userName = getConfig().getProperty("plugin.regweb.auth.username");
+		}
+		return userName;
+	}
+	
+	private String getPasswdRegistro() throws Exception {
+		String auto = getConfig().getProperty("plugin.regweb.auth.auto");
+		String userName = null;
+		if ("true".equals(auto)) {
+			userName = getConfig().getProperty("auto.pass");			
+		} else {
+			userName = getConfig().getProperty("plugin.regweb.auth.password");
+		}
+		return userName;		
+	}
+
+	
+	private String[] descomponerOficinaFisica(String oficinaFisica) {
+		return oficinaFisica.split(REGEXP_SEPARADOR_OFICINA_FISICA);
+	}
 }
