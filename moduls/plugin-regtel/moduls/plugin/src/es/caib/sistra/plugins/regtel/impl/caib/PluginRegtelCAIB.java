@@ -237,6 +237,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			// Establecemos parametros
 			ParametrosRegistroEntrada registro = new ParametrosRegistroEntrada();
 			registro.fijaUsuario(getUsuarioRegistro());
+			registro.setOrigenRegistro("SISTRA"); 
 			registro.setoficina(codiOficina);
 			registro.setNumeroEntrada(numero); 			
 			registro.setAnoEntrada(ano);
@@ -279,6 +280,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			// Establecemos parametros
 			ParametrosRegistroSalida registro = new ParametrosRegistroSalida();
 			registro.fijaUsuario(getUsuarioRegistro());
+			//registro.setOrigenRegistro("SISTRA"); 
 			registro.setAnoSalida(ano); 
 			registro.setNumeroSalida(numero); 
 			registro.setoficina(codiOficina);
@@ -476,7 +478,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			AsientoRegistral asiento) throws Exception {
 		ParametrosRegistroSalida params = new ParametrosRegistroSalida();
 		params.fijaUsuario(getUsuarioRegistro());
-		
+		//params.setOrigenRegistro("SISTRA"); 
 		Date ara = new Date();
 		DateFormat dfData = new SimpleDateFormat("dd/MM/yyyy");
 		DateFormat dfHora = new SimpleDateFormat("HH:mm");
@@ -571,7 +573,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	private ParametrosRegistroEntrada mapeaAsientoParametrosRegistroEntrada(AsientoRegistral asiento) throws Exception{
 		ParametrosRegistroEntrada params = new ParametrosRegistroEntrada();
 		params.fijaUsuario(getUsuarioRegistro());
-				
+		params.setOrigenRegistro("SISTRA"); 	
 		Date ara = new Date();
 		DateFormat dfData = new SimpleDateFormat("dd/MM/yyyy");
 		DateFormat dfHora = new SimpleDateFormat("HH:mm");
