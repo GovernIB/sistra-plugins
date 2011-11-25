@@ -16,6 +16,7 @@ import es.caib.xml.analiza.Nodo;
 import es.caib.xml.util.HashMapIterable;
 import es.indra.util.pdf.ObjectStamp;
 import es.indra.util.pdf.TextoStamp;
+import java.awt.Color;
 import es.indra.util.pdf.UtilPDF;
 
 /**
@@ -57,6 +58,9 @@ public class FormateadorPdfIbavi extends FormateadorPdfFormularios{
     	//String anyo = nodo.getValor();
     	nodo = (Nodo) datosFormulario.get(XPATH_IDTRAMITE);
     	String idtramite = nodo.getValor();
+    	int TamFuente = 10;
+    	int TamFuente2 = 7;
+    	int TamFuente3 = 8;
     	
     	// - Creamos objeto StringTokenizer para extraer los diferentes números a imprimir en los pdfs.
 		StringTokenizer numeros = new StringTokenizer(numSecuenciaInicio,delimiter);
@@ -90,7 +94,7 @@ public class FormateadorPdfIbavi extends FormateadorPdfFormularios{
 			
 			// Para cada copia generamos 3 copias: administracion, empresa e interesado y
 			// stampamos el num secuencial
-			ObjectStamp textos [] = new ObjectStamp[4];
+			ObjectStamp textos [] = new ObjectStamp[7];
 			textos[0] = new TextoStamp();
 			textos[0].setPage(0);
 			textos[0].setRotation(0);		
@@ -100,12 +104,27 @@ public class FormateadorPdfIbavi extends FormateadorPdfFormularios{
 			textos[2].setPage(1);
 			textos[3] = new TextoStamp();
 			textos[3].setPage(1);
+			textos[4] = new TextoStamp();
+			textos[4].setPage(1);
+			textos[4].setRotation(0);
+			textos[5] = new TextoStamp();
+			textos[5].setPage(1);
+			textos[5].setRotation(0);
+			textos[6] = new TextoStamp();
+			textos[6].setPage(1);
+			textos[6].setRotation(0);
 			
 			
 			if ("OP0004REDI".equals(idtramite))
 			{
-				textos[0].setX(130);
-				textos[0].setY(5);		
+				textos[0].setX(13);
+				textos[0].setY(530);
+				textos[4].setX(17);
+				textos[4].setY(520);
+				textos[5].setX(13);
+				textos[5].setY(510);
+				textos[6].setX(13);
+				textos[6].setY(500);
 				textos[1].setX(410);
 				textos[1].setY(763);
 				textos[2].setX(225);
@@ -116,8 +135,14 @@ public class FormateadorPdfIbavi extends FormateadorPdfFormularios{
 			}
 			else
 			{
-				textos[0].setX(130);
-				textos[0].setY(5);		
+				textos[0].setX(13);
+				textos[0].setY(545);
+				textos[4].setX(17);
+				textos[4].setY(535);
+				textos[5].setX(13);
+				textos[5].setY(525);
+				textos[6].setX(13);
+				textos[6].setY(515);
 				textos[1].setX(470);
 				textos[1].setY(745);
 				textos[2].setX(225);
@@ -134,21 +159,43 @@ public class FormateadorPdfIbavi extends FormateadorPdfFormularios{
 			((TextoStamp) textos[3]).setTexto((String) identificadores.nextElement());
 			
 			// Ejemplar administracion
-			((TextoStamp) textos[0]).setTexto("Ejemplar para IBAVI / Exemplar per a l'IBAVI");
+			((TextoStamp) textos[0]).setFontColor(Color.RED);
+			((TextoStamp) textos[0]).setFontSize(TamFuente);
+			((TextoStamp) textos[0]).setTexto("Exemplar per a l'IBAVI");
+			((TextoStamp) textos[4]).setFontColor(Color.RED);
+			((TextoStamp) textos[4]).setFontSize(TamFuente);
+			((TextoStamp) textos[4]).setFontName("Helvetica-Oblique");
+			((TextoStamp) textos[4]).setTexto("Ejemplar para IBAVI");
 			bis = new ByteArrayInputStream(documentoF.getDatosFichero());
 			bos = new ByteArrayOutputStream(sizeBuffer);
 			UtilPDF.stamp(bos,bis,textos);
 			administracion = bos.toByteArray();
 			
 			// Ejemplar empresa
-			((TextoStamp) textos[0]).setTexto("Ejemplar para el ARRENDADOR / Exemplar per a l'ARRENDADOR");
+			textos[4].setX(13);
+			((TextoStamp) textos[0]).setFontSize(TamFuente2);
+			((TextoStamp) textos[0]).setTexto("Exemplar per a l'ARRENDADOR");
+			((TextoStamp) textos[4]).setFontSize(TamFuente2);
+			((TextoStamp) textos[4]).setTexto("Ejemplar para el ARRENDADOR");
 			bis = new ByteArrayInputStream(documentoF.getDatosFichero());
 			bos = new ByteArrayOutputStream(sizeBuffer);
 			UtilPDF.stamp(bos,bis,textos);
 			empresa = bos.toByteArray();
 			
 			// Ejemplar interesado
-			((TextoStamp) textos[0]).setTexto("Ejemplar para la ENTIDAD COLABORADORA / Exemplar per a l'ENTITAT COL·LABORADORA");
+			((TextoStamp) textos[0]).setFontSize(TamFuente3);
+			((TextoStamp) textos[0]).setTexto("Exemplar per a l'ENTITAT");
+			((TextoStamp) textos[4]).setFontName("Helvetica");
+			((TextoStamp) textos[4]).setFontSize(TamFuente3);
+			((TextoStamp) textos[4]).setTexto("COL·LABORADORA");
+			((TextoStamp) textos[5]).setFontColor(Color.RED);
+			((TextoStamp) textos[5]).setFontName("Helvetica-Oblique");
+			((TextoStamp) textos[5]).setFontSize(TamFuente3);
+			((TextoStamp) textos[5]).setTexto("Ejemplar para la ENTIDAD");
+			((TextoStamp) textos[6]).setFontName("Helvetica-Oblique");
+			((TextoStamp) textos[6]).setFontColor(Color.RED);
+			((TextoStamp) textos[6]).setFontSize(TamFuente3);
+			((TextoStamp) textos[6]).setTexto("COLABORADORA");
 			bis = new ByteArrayInputStream(documentoF.getDatosFichero());
 			bos = new ByteArrayOutputStream(sizeBuffer);
 			UtilPDF.stamp(bos,bis,textos);
