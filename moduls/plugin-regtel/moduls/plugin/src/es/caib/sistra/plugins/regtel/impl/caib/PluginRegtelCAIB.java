@@ -115,7 +115,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			params.setoficina(codisOficina[0]);
 			params.setoficinafisica(codisOficina[1]);
 		} else {
-			throw new Exception("Codi d'oficina incorrecte");
+			throw new Exception("Codigo de oficina incorrecto");
 		}
 		if(codigoProvincia != null && CODIGO_PROVINCIA_CAIB.equals(codigoProvincia)){
 			params.setbalears(codigoMunicipio);
@@ -159,7 +159,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			}
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap tipus
-			logger.error("Error al obtenir els tipus de document", ex);
+			logger.error("Error al obtener los tipos de documentos", ex);
 		}
 		return lista;
 	}
@@ -183,7 +183,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			}
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap servei
-			logger.error("Error al obtenir els serveis destinataris", ex);
+			logger.error("Error al obtener los servicios destinatarios", ex);
 		}
 		return lista;
 		
@@ -328,6 +328,9 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			while (it.hasNext()) {
 				OficinaRegistro of = new OficinaRegistro();
 				String codiOficina = (String)it.next();
+				if (codiOficina == null || codiOficina.length() <= 0) {
+					return lista;
+				}
 				String codiOficinaFisica = (String)it.next();
 				String nomOficinaFisica = (String)it.next();
 				String nomOficina = (String)it.next();
@@ -337,7 +340,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			}
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap oficina
-			logger.error("Error al obtenir les oficines de registre", ex);
+			logger.error("Error al obtener las oficinas de registro", ex);
 		}
 		return lista;
 	}
@@ -463,14 +466,14 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 				
 				return res;
 			} else {
-				throw new Exception("La anotació de registre no s'ha guardat");
+				throw new Exception("La anotación de registro no se ha guardado");
 			}
 		} else {
 			Map<String, String> errors = respostaValidacio.getErrores();
 			StringBuilder sb = new StringBuilder();
 			for (String camp: errors.keySet())
 				sb.append("|[" + camp + "]:" + errors.get(camp));
-			throw new Exception("Errors de validació: " + sb.toString());
+			throw new Exception("Errores de validación: " + sb.toString());
 		}		
 	}
 
@@ -492,7 +495,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			params.setoficina(codisOficina[0]);
 			params.setoficinafisica(codisOficina[1]);
 		} else {
-			throw new Exception("Codi d'oficina incorrecte");
+			throw new Exception("Codigo de oficina incorrecto");
 		}
 		
 		params.settipo(asiento.getDatosAsunto().getTipoAsunto());
@@ -558,7 +561,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 				return res;
 			} else {
 				logger.debug("realizarRegistroEntrada: no se ha podido grabar");
-				throw new Exception("La anotació de registre no s'ha guardat");
+				throw new Exception("La anotación de registro no se ha guardado");
 			}
 		} else {
 			logger.debug("realizarRegistroEntrada: no pasa validación");
@@ -566,7 +569,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			StringBuilder sb = new StringBuilder();
 			for (String camp: errors.keySet())
 				sb.append("|[" + camp + "]:" + errors.get(camp));
-			throw new Exception("Errors de validació: " + sb.toString());
+			throw new Exception("Errores de validación: " + sb.toString());
 		}
 	}
 	
@@ -587,7 +590,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			params.setoficina(codisOficina[0]);
 			params.setoficinafisica(codisOficina[1]);
 		} else {
-			throw new Exception("Codi d'oficina incorrecte");
+			throw new Exception("Codigo de oficina incorrecto");
 		}
 		
 		params.settipo(asiento.getDatosAsunto().getTipoAsunto());

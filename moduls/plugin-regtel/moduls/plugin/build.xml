@@ -33,7 +33,7 @@
     		<include name="redose-client.jar"/>    		
     	</fileset>
     	<fileset dir="${lib.dir}/regweblib">
-    		<include name="logic-1.0.3-SNAPSHOT-client.jar"/>    		
+    		<include name="logic-1.0.5-client.jar"/>    		
     	</fileset>    	
     	<fileset dir="${lib.dir}/sistra">
     		<include name="sistra-xml.jar"/>
