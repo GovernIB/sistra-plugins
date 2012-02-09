@@ -22,6 +22,9 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
  *  
  * @struts.action-forward
  *  name="fail" path=".error"  
+ *  
+ * @struts.action-forward
+ *  name="success" path=".pagoPresencial" 
  */
 public class ConfirmarPagoAction extends BaseAction
 {
@@ -31,10 +34,10 @@ public class ConfirmarPagoAction extends BaseAction
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
-		
 		// Realizamos la confirmacion del pago
 		try{
 			SesionPagoDelegate dlg = getSesionPago(request);
+			
 			int resultado = dlg.confirmarPago();
 			
 			switch (resultado){
@@ -42,15 +45,18 @@ public class ConfirmarPagoAction extends BaseAction
 					String urlRetornoSistra = dlg.obtenerUrlRetornoSistra();
 		 			response.sendRedirect(urlRetornoSistra);
 					return null;
-				case -1: // NO PAGADO
+				case 0: // NO PAGADO
 					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorConfirmarPago.noPagado");
 					return mapping.findForward("fail");
-				default: // ERROR CONEXION (no existe localizador, error conexion, ...)
+				case -1: // ERROR ESTADO DIFERENTE PENDIENTE DE PAGO 
+					//TODO 					
 					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
-					return mapping.findForward("fail");			
+					return mapping.findForward("fail");	
+				default: 
+					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
+					return mapping.findForward("fail");	
 			}
 		}catch(Exception e){
-//			ERROR con el pago no debido a la pasarela de pagos.
 			request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorGenericoComprobarPago");
 			return mapping.findForward("fail");
 		}

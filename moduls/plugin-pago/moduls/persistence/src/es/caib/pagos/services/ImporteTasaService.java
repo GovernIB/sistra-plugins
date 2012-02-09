@@ -1,27 +1,31 @@
 package es.caib.pagos.services;
 
-import es.caib.pagos.services.wsdl.ServiceLocator;
-import es.caib.pagos.services.wsdl.ServiceSoap;
+import java.rmi.RemoteException;
+
+import javax.xml.rpc.ServiceException;
+
+import es.caib.pagos.services.wsdl.DatosTasa046;
+import es.caib.pagos.services.wsdl.Service_TasaLocator;
+import es.caib.pagos.services.wsdl.Service_TasaSoap;
+import es.caib.pagos.services.wsdl.Service_TasaSoapStub;
+import es.caib.pagos.services.wsdl.UsuariosWebServices;
+import es.caib.pagos.util.Constants;
 
 
-
-
-public class ImporteTasaService { //extends ClienteService{
+public class ImporteTasaService {
 
 	private String url;
 	
 	public ImporteTasaService(String url) {
 		this.url = url;
-		//super(url);
-		//this.setPropertiesFile("ImporteTasaService.properties");
 	}
-	
-	
-	public String execute(String value) throws Exception{
-		ServiceLocator sl = new ServiceLocator();
-		sl.setEndpointAddress("ServiceSoap",url);
-		ServiceSoap port = sl.getServiceSoap();
-		String res = port.ws1(value);
+
+	public DatosTasa046 execute(String value, UsuariosWebServices usuario) throws ServiceException, RemoteException{
+		Service_TasaLocator sl = new Service_TasaLocator();
+		sl.setEndpointAddress(Constants.SERVICE_SOAP, url);
+		Service_TasaSoap port = sl.getService_TasaSoap();
+		((Service_TasaSoapStub)port).setHeader(Constants.NAMESPACE_ATIB, Constants.PARTNAME_USUARIOS_WEBSERVICES, usuario);
+		DatosTasa046 res = port.consultaDatosTasa046(value);
 		return res;
 		
 	}

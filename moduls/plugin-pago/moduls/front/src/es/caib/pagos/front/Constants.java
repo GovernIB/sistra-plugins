@@ -73,4 +73,8 @@ public class Constants implements Serializable
 	 */
 	public static String ORGANISMO_URL = "urlOrganismo";
 	
+	public static String NOMBREFICHERO_KEY = "nombrefichero";
+	public static String DATOSFICHERO_KEY = "datosfichero";
+	
+	
 }

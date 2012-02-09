@@ -19,7 +19,6 @@
     	name=".pago"	
     	extends=".mainLayout"
     	controller="es.caib.pagos.front.controller.DatosPagoController">
-		      	    
     	<put name="main" value="/pages/pago.jsp" />
     </definition>	
     
@@ -28,18 +27,41 @@
     	name=".pagoTelematico"	
     	extends=".mainLayout"
     	controller="es.caib.pagos.front.controller.DatosPagoController">
-		      	    
     	<put name="main" value="/pages/pagoTelematico.jsp" />
     </definition>	
+    
+    <!-- Pantalla de pago tarjeta-->
+    <definition
+    	name=".pagoTarjeta"	
+    	extends=".mainLayout"
+    	controller="es.caib.pagos.front.controller.DatosPagoController">
+    	<put name="main" value="/pages/pagoTarjeta.jsp" />
+    </definition>	
+    
+    <!-- Pantalla de pago banca-->
+    <definition
+    	name=".pagoBanca"	
+    	extends=".mainLayout"
+    	controller="es.caib.pagos.front.controller.DatosPagoController">
+    	<put name="main" value="/pages/pagoBanca.jsp" />
+    </definition>
     
 	 <!-- Pantalla de pago presencial -->
     <definition
     	name=".pagoPresencial"	
     	extends=".mainLayout"
     	controller="es.caib.pagos.front.controller.DatosPagoController">
-		      	    
     	<put name="main" value="/pages/pagoPresencial.jsp" />
     </definition>	
+    
+    
+    <!-- Pantalla de pago finalizado-->
+    <definition
+    	name=".pagoFinalizado"	
+    	extends=".mainLayout"
+    	controller="es.caib.pagos.front.controller.DatosPagoController">
+    	<put name="main" value="/pages/pagoFinalizado.jsp" />
+    </definition>
     
 	<!--  configuraciones de mensajes y errores -->    	 
    	 <definition

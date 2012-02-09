@@ -87,16 +87,6 @@ public class SesionPagoDelegate implements Delegate
         }
 	}
 	
-	public String realizarPago(String modoPago) throws DelegateException
-	{
-		try 
-        {
-        	return local.realizarPago(modoPago);
-        } catch (EJBException e) 
-        {
-            throw new DelegateException(e);
-        }
-	}
 
 	public int confirmarPago() throws DelegateException
 	{
@@ -130,6 +120,40 @@ public class SesionPagoDelegate implements Delegate
             throw new DelegateException(e);
         }
 	}	
+	
+	public byte[] realizarPagoPresencial() throws DelegateException
+	{
+		try
+		{
+			return local.realizarPagoPresencial();
+		} catch (EJBException e)
+		{
+			throw new DelegateException(e);
+		}
+	}
+	
+	
+	public int realizarPagoTarjeta(String numeroTarjeta, String caducidadTarjeta, String titularTarjeta, String cvvTarjeta) throws DelegateException
+	{
+		try
+		{
+			return local.realizarPagoTarjeta(numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta);
+		} catch (EJBException e)
+		{
+			throw new DelegateException(e);
+		}
+	}
+	
+	public String realizarPagoBanca(String codigoEntidad) throws DelegateException
+	{
+		try
+		{
+			return local.realizarPagoBanca(codigoEntidad);
+		} catch (EJBException e)
+		{
+			throw new DelegateException(e);
+		}
+	}
 	
 	/* ========================================================= */
     /* ======================== REFERENCIA AL FACADE  ========== */

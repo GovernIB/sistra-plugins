@@ -1,5 +1,6 @@
 package es.caib.pagos.front.action;
 
+import javax.ejb.EJBException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -38,7 +39,7 @@ public class CancelarPagoPresencialAction extends BaseAction
 			SesionPagoDelegate dlg = getSesionPago(request);
 			dlg.cancelarPagoPresencial();
 			return mapping.findForward("success");				
-		}catch(Exception e){
+		}catch(EJBException e){// TODO
 			request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorGenericoComprobarPago");
 			return mapping.findForward("fail");
 		}	

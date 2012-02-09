@@ -274,8 +274,8 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			long imp = PasarelaPagos.consultarImporteTasa(idTasa);
 			return imp;			
         }catch (Exception ex){
-        	log.error("Exception consultando importe tasa: " + idTasa,ex);
-			throw new EJBException("Exception consultando importe tasa: " + idTasa,ex);
+        	log.error("Error consultando importe tasa para idTasa "  + idTasa);
+			throw new EJBException("Error consultando importe tasa para idTasa "  + idTasa, ex);
         }
 	}
 

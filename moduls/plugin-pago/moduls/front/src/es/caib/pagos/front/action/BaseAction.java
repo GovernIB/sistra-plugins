@@ -70,4 +70,5 @@ public abstract class BaseAction extends Action {
     public void setUrlMantenimientoSesionSistra(HttpServletRequest request, String url){
     	PagosFrontRequestHelper.setUrlMantenimientoSesionSistra(request, url);
     }
+
 }

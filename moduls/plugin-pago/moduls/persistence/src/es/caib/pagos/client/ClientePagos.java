@@ -6,12 +6,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.pagos.exceptions.ClienteException;
-import es.caib.pagos.exceptions.DUINoPagadoException;
-import es.caib.pagos.exceptions.DUIPagadoException;
-import es.caib.pagos.exceptions.FirmaException;
-import es.caib.pagos.exceptions.LocalizadorNoExisteException;
-import es.caib.pagos.exceptions.TasaNoExisteException;
+import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.persistence.delegate.DelegateUtil;
+import es.caib.pagos.util.Constants;
+import es.caib.pagos.util.UtilWs;
 
 
 /**
@@ -27,27 +25,17 @@ public class ClientePagos {
 	
 	private static ClientePagos clientePagos = null;
 
-	public static final int ERROR_GENERAL = 0;
-	public static final int ERROR_DUI_PAGADO = 1;
-	public static final int ERROR_TASA_NO_EXISTE = 2;
-	public static final int ERROR_LOCALIZADOR_NO_EXISTE = 3;
-	public static final int ERROR_DUI_NO_PAGADO = 4;
-	public static final int ERROR_FIRMA = 5;
-	
-	protected static final int PRESENCIAL = 0;
-	protected static final int TELEMATICO = 0;	
-	protected static final String ERROR_NE = "NE";
-	protected static final String ERROR_ER = "ER";
-	protected static final String ERROR_NP = "NP";
-	protected static final String ERROR_PA = "PA";
-	protected static final String ERROR_FR = "FR";		
-	
+	//WSActions
+	private static final String IMPORTE_TASA = "importeTasa";
+	private static final String INICIO_PAGO = "inicioPago";
+	private static final String COMPROBAR_PAGO = "comprobarPago";
+	private static final String GET_PDF_046 = "getPdf046";
+	private static final String GET_URL_PAGO = "getUrlPago";
+	private static final String PAGAR_CON_TARJETA = "pagarConTarjeta";
+
+		
 	private Hashtable actions = null;
 	private String url = "";
-	private String url_inicio_pago_es;
-	private String url_inicio_pago_ca;
-	private String url_justificante_pago_es;
-	private String url_justificante_pago_ca;
 	private String fase = "pruebas";
 
 	/** 
@@ -59,9 +47,10 @@ public class ClientePagos {
 	
 	/**
 	 * Singleton del cliente de pagos
+	 * @throws DelegateException 
 	 *
 	 */
-	public static ClientePagos getInstance() throws Exception{
+	public static ClientePagos getInstance() throws DelegateException {
 		if (clientePagos == null){
 			clientePagos = new ClientePagos();
 			clientePagos.init();						
@@ -74,166 +63,75 @@ public class ClientePagos {
 	 * 
 	 * Inicializa la url a la que se enviarán las peticiones del WebService. Dicho valor se coge
 	 * del fichero ClientePagos.properties
+	 * @throws DelegateException 
 	 *
 	 */
-	protected void init() throws Exception
+	protected void init() throws DelegateException 
 	{ 
 		this.fase = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("fase");
 		this.url = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("url." + this.fase);
-		this.url_inicio_pago_es = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("url_inicio_pago_es." + this.fase);
-		this.url_inicio_pago_ca = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("url_inicio_pago_ca." + this.fase);
-		this.url_justificante_pago_es = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("url_justificante_pago_es." + this.fase);
-		this.url_justificante_pago_ca = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("url_justificante_pago_ca." + this.fase);
-		
+				
 		this.actions = new Hashtable();
-		this.actions.put("importeTasa",new ImporteTasaAction());
-		this.actions.put("inicioPago",new InicioPagoAction());
-		this.actions.put("comprobarPago",new ComprobarPagoAction());
-		this.actions.put("imprimirTasaPagada",new ImprimirTasaPagadaAction());
-	}
-
-	/**
-	 * Obtiene url para iniciar pago una vez se obtiene el token de acceso
-	 * @param idioma
-	 * @return Url de acceso
-	 */
-	public String getUrlInicioPago(String idioma,String token){
-		if (idioma.equals("ca")) return url_inicio_pago_ca + token;
-		else return url_inicio_pago_es + token; 
-	}
+		this.actions.put(IMPORTE_TASA,new ImporteTasaAction()); //ConsultaDatosTasa046
+		this.actions.put(INICIO_PAGO,new InicioPagoAction()); //Inserta046
+		this.actions.put(COMPROBAR_PAGO,new ComprobarPagoAction()); //Estado046
+		this.actions.put(GET_PDF_046,new GetPdf046Action());
+		this.actions.put(GET_URL_PAGO,new GetUrlPagoAction());
+		this.actions.put(PAGAR_CON_TARJETA,new PagarConTarjetaAction());
 	
-	
-	/**
-	 * Obtiene url para acceder al modelo de un pago ya realizado
-	 * @param localizador
-	 * @return
-	 */
-	public String getUrlModelo(String idioma,String localizador){
-		String url = ""; 
-		if (idioma.equals("ca"))
-		{
-			url = url_justificante_pago_ca;
-		}
-		else
-		{
-			url = url_justificante_pago_es;
-		}
-		int idx = url.indexOf("?");
-		if(idx != -1)
-		{
-			url = url.substring(0,idx) + "?localizador=" + localizador;
-		}
-		return url;
 	}
 	
 	/**
-	 * Obtiene url para justificante pago una vez se obtiene el token de acceso
-	 * @param idioma
-	 * @return Url de acceso
-	 */
-	public String getUrlJustificantePago(String idioma,String token){
-		if (idioma.equals("ca"))	return url_justificante_pago_ca + token;
-		else return url_justificante_pago_es + token; 
-	}	
-	/**
+	 * Llama a la operación ConsultaDatosTasa046
 	 * Servicio para Saber el Importe de una Tasa
 	 * @param tasa
-	 * @return Devuelve un Long con el valor de la Tasa. Si devuelve null significa
-	 * que ha habido un error y se puede recoger con getLastError
+	 * @return Devuelve un Long con el valor de la Tasa. 
 	 * @throws ClienteException
 	 */
 	public Long getImporte(String tasa) throws ClienteException
 	{		
 		Long resultado = null;
-		try{
-			Hashtable data = new Hashtable();
-			data.put("idtasa", tasa);
-			log.debug("importeTasa (" + tasa + ")");
-			WebServiceAction action = (WebServiceAction) actions.get("importeTasa");
-			Hashtable results = action.execute(this,data);
-			if(results.containsKey("error"))
-			{
-				WebServiceError error = (WebServiceError) results.get("error");
-				if(error.getError().equals(ClientePagos.ERROR_NE))
-				{
-					throw new TasaNoExisteException();
-				}
-				else
-				{
-					throw new ClienteException();
-				}
-			}
-			else
-			{
-				String ls_importe = (String) results.get("importe");
-				int idx = ls_importe.indexOf(",");
-				if(idx != -1) // Proteccion
-				{
-					ls_importe = ls_importe.substring(0,idx);
-				}
-				//ls_importe = ls_importe.replace(',' , '.');
-				resultado = Long.valueOf(ls_importe);
-			}
-			return resultado;
-		}catch(ClienteException ex){
-			log.error("Error en el Acceso al Importe de la tasa " + tasa + "Excepcion: "+ ex.getLocalizedMessage());
-			throw ex;
-		}catch(Exception ex){
-			log.error("Error en el Acceso al Importe de la tasa " + tasa + "Excepcion: "+ ex.getLocalizedMessage());
-			throw new ClienteException("Error en el Acceso al Importe de la tasa " + 
-					                   tasa + "Excepcion: "+ ex.getLocalizedMessage(),ex);
+	
+		Hashtable data = new Hashtable();
+		data.put(Constants.KEY_ID_TASA, tasa);
+		log.debug("importeTasa (" + tasa + ")");
+		Hashtable results = ejecutarAccion(data, IMPORTE_TASA);
+
+		String ls_importe = (String) results.get(Constants.KEY_IMPORTE);
+		int idx = ls_importe.indexOf(",");
+		if(idx != -1) // Proteccion
+		{
+			ls_importe = ls_importe.substring(0,idx);
 		}
-	}
+		resultado = Long.valueOf(ls_importe);
+		
+		return resultado;
+	} 
 	
 	/**
 	 * Servicio que Inicia el Pago Telematico
 	 * @param tasa
-	 * @return Devuelve una instancia de la clase ResultadoInicioPago o null en el caso de 
+	 * @return Devuelve una instancia de la clase ResultadoInicioPago 
 	 * que haya cualquier error
-	 * @throws ClienteException
+	 * @throws ClienteException, WebServiceException
+	 * 
 	 */
 	public ResultadoInicioPago inicioPago(Tasa tasa) throws ClienteException
 	{
 		ResultadoInicioPago resultado = null;
-		try{
-			Hashtable data = new Hashtable();
-			data.put("tasa", tasa);
-			log.debug("InicioPago:");
-			WebServiceAction action = (WebServiceAction) actions.get("inicioPago");
-			Hashtable results = action.execute(this,data);
-			if(results.containsKey("error"))
-			{
-				WebServiceError error = (WebServiceError) results.get("error");
-				if(error.getError().equals(ClientePagos.ERROR_NE))
-				{
-					throw new TasaNoExisteException();
-				}
-				else if(error.getError().equals(ClientePagos.ERROR_PA))
-				{
-					throw new DUIPagadoException();
-				}
-				else
-				{
-					throw new ClienteException();
-				}
+		
+		Hashtable data = new Hashtable();
+		data.put(Constants.KEY_TASA, tasa);
+		log.debug("inicioPago (" + tasa.getIdTasa() + ")");
+		
+		Hashtable results = ejecutarAccion(data, INICIO_PAGO);
+		
+		String ls_localizador = (String) results.get(Constants.KEY_LOCALIZADOR);
+		String ls_token = (String) results.get(Constants.KEY_TOKEN);
+		resultado = new ResultadoInicioPago(ls_token,ls_localizador);
 
-			}
-			else
-			{
-				String ls_localizador = (String) results.get("localizador");
-				String ls_token = (String) results.get("token");
-				resultado = new ResultadoInicioPago(ls_token,ls_localizador);
-			}
-
-			return resultado;
-		}catch(ClienteException ex){
-			log.error("Error en el Inicio de Pago de la tasa " + tasa.getIdTasa() + "Excepcion: "+ ex.getLocalizedMessage());
-			throw ex;
-		}catch(Exception ex){
-			log.error("Error en el Inicio de Pago de la tasa " + tasa.getIdTasa() + "Excepcion: "+ ex.getLocalizedMessage());
-			throw new ClienteException("Error en el Inicio de Pago de la tasa " + 
-					                   tasa.getIdTasa() + "Excepcion: "+ ex.getLocalizedMessage(),ex);
-		}
+		return resultado;
+		
 	}
 	
 	/**
@@ -244,100 +142,126 @@ public class ClientePagos {
 	 */
 	public String comprobarPago(String localizador) throws ClienteException
 	{
-		String resultado = null;
-		try{
-			Hashtable data = new Hashtable();
-			data.put("localizador", localizador);
-			log.debug("comprobarPago (" + localizador + ")");
-			WebServiceAction action = (WebServiceAction) actions.get("comprobarPago");
-			Hashtable results = action.execute(this,data);
-			if(results.containsKey("error"))
-			{
-				WebServiceError error = (WebServiceError) results.get("error");
-				if(error.getError().equals(ClientePagos.ERROR_NE))
-				{
-					throw new LocalizadorNoExisteException();
-				}
-				else if(error.getError().equals(ClientePagos.ERROR_NP))
-				{
-					throw new DUINoPagadoException();
-				}
-				else if(error.getError().equals(ClientePagos.ERROR_FR))
-				{
-					throw new FirmaException();
-				}
-				else
-				{
-					throw new ClienteException();
-				}
-			}
-			else
-			{
-				resultado = (String) results.get("justificante");
-			}
 
-			return resultado;
-		}catch(ClienteException ex){
-			log.error("Error al comprobar el Pago del localizador " + localizador + "Excepcion: "+ ex.getLocalizedMessage());
-			throw ex;
-		}catch(Exception ex){
-			log.error("Error al comprobar el Pago del localizador " + localizador + "Excepcion: "+ ex.getLocalizedMessage());
-			throw new ClienteException("Error al comprobar el Pago del localizador " + 
-					localizador + "Excepcion: "+ ex.getLocalizedMessage(),ex);
-		}
-	}
-	
-	/**
-	 * Servicio para imprimir una Tasa Pagada a partir del localizador
-	 * @param localizador
-	 * @return Devuelve el token mediante el cual se accedera a una URL de la Plataforma
-	 * de Pagos, o null si hay cualquier problema
-	 * @throws ClienteException
-	 */
-
-	public String imprimirTasaPagada(String localizador) throws ClienteException
-	{
-		String resultado = null;
-		try{
-			Hashtable data = new Hashtable();
-			data.put("localizador", localizador);
-			log.debug("imprimirTasaPagada (" + localizador + ")");
-			WebServiceAction action = (WebServiceAction) actions.get("imprimirTasaPagada");
-			Hashtable results = action.execute(this,data);
-			if(results.containsKey("error"))
-			{
-				WebServiceError error = (WebServiceError) results.get("error");
-				if(error.getError().equals(ClientePagos.ERROR_NE))
-				{
-					throw new LocalizadorNoExisteException();
-				}
-				else if(error.getError().equals(ClientePagos.ERROR_NP))
-				{
-					throw new DUINoPagadoException();
-				}
-				else
-				{
-					throw new ClienteException();
-				}
-			}
-			else
-			{
-				resultado = (String) results.get("token");
-			}
-			
-			return resultado;
-			
-		}catch(ClienteException ex){
-			log.error("Error al imprimir la Tasa pagada del localizador " +	localizador + "Excepcion: "+ ex.getLocalizedMessage());
-			throw ex;			
-		}catch(Exception ex){
-			log.error("Error al imprimir la Tasa pagada del localizador " +	localizador + "Excepcion: "+ ex.getLocalizedMessage());
-			throw new ClienteException("Error al imprimir la Tasa pagada del localizador " + 
-					localizador + "Excepcion: "+ ex.getLocalizedMessage(),ex);
-		}
+		Hashtable data = new Hashtable();
+		data.put(Constants.KEY_LOCALIZADOR, localizador);
+		log.debug("comprobarPago (" + localizador + ")");
+		Hashtable results = ejecutarAccion(data, COMPROBAR_PAGO);
+		String resultado = (String) results.get(Constants.KEY_FECHA_PAGO);
+		return resultado;
 		
 	}
 	
+
+	/**
+	 * Servicio para obtener el PDF de carta de pago del modelo 046
+	 * @param localizador
+	 * @param importe
+	 * @param nif
+	 * @param fecha
+	 * @return
+	 * @throws ClienteException
+	 */
+	public byte[] getPdf046(String localizador, String importe, String nif, 
+			String fecha) throws ClienteException
+	{
+	
+		Hashtable data = new Hashtable();
+		data.put(Constants.KEY_LOCALIZADOR, localizador);
+		data.put(Constants.KEY_IMPORTE_INGRESAR, importe);
+		data.put(Constants.KEY_NIF_SP, nif);
+		data.put(Constants.KEY_FECHA_CREACION, fecha); 
+		
+		log.debug(GET_PDF_046);
+		log.debug("Localizador: " + localizador);
+		log.debug("importeaingresar: " + importe);
+		log.debug("nifsujetopasivo: " + nif);
+		log.debug("fechacreacion: " + fecha);
+		
+		Hashtable results = ejecutarAccion(data, GET_PDF_046);
+		
+		byte[] datos = (byte[])results.get(Constants.KEY_RESULTADO);
+		return datos;
+
+	}
+	
+	/**
+	 * Servicio para realizar el pago con tarjeta bancaria
+	 * @param refsModelos
+	 * @param numeroTarjeta
+	 * @param caducidadTarjeta
+	 * @param titularTarjeta
+	 * @param cvvTarjeta
+	 * @return
+	 * @throws ClienteException
+	 */
+	public Boolean pagarConTarjeta(String[] refsModelos, String numeroTarjeta, 
+			String caducidadTarjeta, String titularTarjeta, String cvvTarjeta) throws ClienteException
+	{
+		
+		Hashtable data = new Hashtable();
+		data.put(Constants.KEY_REFS_MODELOS, refsModelos);
+		data.put(Constants.KEY_NUM_TARJETA, numeroTarjeta);
+		data.put(Constants.KEY_CAD_TARJETA, caducidadTarjeta);
+		data.put(Constants.KEY_TIT_TARJETA, titularTarjeta);
+		data.put(Constants.KEY_CVV_TARJETA, cvvTarjeta);
+		
+		log.debug(PAGAR_CON_TARJETA);
+		//No es seguro imprimir esto en el log
+//		log.debug("Numero tarjeta: " + numeroTarjeta);
+//		log.debug("Fecha caducidad: " + caducidadTarjeta);
+//		log.debug("Titular " + titularTarjeta);
+//		log.debug("CVV " + cvvTarjeta);
+		
+		Hashtable results = ejecutarAccion(data, PAGAR_CON_TARJETA);
+	
+		return (Boolean)results.get(Constants.KEY_RESULTADO);
+		
+	}
+
+	/**
+	 * Servicio para obtener la url de la entidad bancaria para realizar el pago por banca online
+	 * @param refsModelos
+	 * @param codigoEntidad
+	 * @return
+	 * @throws ClienteException
+	 */
+	public String getUrlPago(String[] refsModelos, String codigoEntidad) throws ClienteException
+	{
+		
+		Hashtable data = new Hashtable();
+		data.put(Constants.KEY_REFS_MODELOS, refsModelos);
+		data.put(Constants.KEY_CODIGO_ENTIDAD, codigoEntidad);
+
+		log.debug(GET_URL_PAGO);
+		log.debug("Modelo: " + refsModelos[0]);
+		log.debug("Codigo entidad: " + codigoEntidad);
+
+		Hashtable results = ejecutarAccion(data, GET_URL_PAGO);
+	
+		return (String)results.get(Constants.KEY_RESULTADO);
+
+	}
+	
+	/**
+	 * Ejecuta una acción del WS
+	 * @param data Parámetros de la acción
+	 * @param accion Nombre de la acción a ejecutar
+	 * @return Resultado de la ejecución
+	 * @throws ClienteException 
+	 */
+	private Hashtable ejecutarAccion(Hashtable data, String accion) throws ClienteException {
+		WebServiceAction action = (WebServiceAction) actions.get(accion);
+		Hashtable results = null;
+		try {
+			results = action.execute(this,data);
+		} catch (Exception e) {
+			throw new ClienteException(WebServiceError.ERROR_INDETERMINADO, "Error indeterminado.", e);
+		}
+		UtilWs.validateResults(results);
+		return results;
+	}
+
 	
 	/**
 	 * Metodo que devuelve la URL del WebService

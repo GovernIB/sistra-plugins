@@ -4,6 +4,11 @@
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic"%>
 <%@ taglib prefix="tiles" uri="http://jakarta.apache.org/struts/tags-tiles"%>
 
+
+<bean:define id="urlAbrirDocumento" type="java.lang.String">
+	<html:rewrite page="/realizarPagoPresencial.do"/>
+</bean:define>
+
 <script type="text/javascript">
 	bloqueador = 0;
 <logic:present name="urlAcceso">
@@ -19,7 +24,11 @@
 	if(bloqueador == 1) document.write(texto);
 	-->
 </script>
-
+<script type="text/javascript">
+<!--
+	var mensajeEnviando = '<bean:message key="pago.presencial.mensajeDescargando"/>';
+//-->
+</script>
 
 <h2><bean:message key="pago.presencial" /></h2>
 		
@@ -36,19 +45,30 @@
 <!-- /datos pago -->
 
 <p>
-	<bean:message key="pago.presencial.continuarTramitacion" />
+	<bean:message key="pago.presencial.continuarTramitacion2" />
 </p>
 
 <p>
 	<bean:message key="pago.presencial.noSePreocupe" />
 </p>
 
+<p>
+<bean:message key="pago.presencial.continuarTramitacion4"/><a href="<%=urlAbrirDocumento%>" class="veure">
+	<bean:message key="pago.documentoPago" />
+</a>
+</p>
+								
+
+
+<p>
+	<bean:message key="pago.presencial.continuarTramitacion5" />
+</p>
 <html:form action="/confirmarPago">		
 	<html:hidden property="modoPago" value="P"/>
 	<p class="alerta">
-		<bean:message key="pago.presencial.cancelarPago1" />
-		<a href="cancelarPagoPresencial.do">
-		<bean:message key="pago.presencial.cancelarPago2" />
+		<bean:message key="pago.presencial.continuarTramitacion6" />
+		<a href="reanudarPago.do">
+		<bean:message key="pago.seleccionarPago" />
 		</a>.
 	</p>
 	<div class="botonera">
@@ -57,12 +77,6 @@
 		</html:submit>
 	</div>
 </html:form>
-
-<!--  Enlace volver  -->
-<bean:define id="urlRetornoSistra" value="<%=((java.lang.String) session.getAttribute(es.caib.pagos.front.Constants.URL_RETORNO_SISTRA_KEY))%>" type="java.lang.String"/>
-<p class="volver">
-	<html:link href="<%=urlRetornoSistra%>">
-		<bean:message key="pago.volver.asistenteTramitacion" />
-	</html:link>
-</p>
-
+<!-- capa mensaje accediendo -->
+<div id="capaInfoFondo"></div>
+<div id="capaInfoForms"></div>

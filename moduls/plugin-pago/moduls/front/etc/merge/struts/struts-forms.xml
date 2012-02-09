@@ -4,5 +4,14 @@
     
 <form-bean
     name="pagoForm"
-    type="es.caib.pagos.front.form.PagoForm"/>    
+    type="es.caib.pagos.front.form.PagoForm"/>  
+    
+<form-bean
+    name="pagoTarjetaForm"
+    type="es.caib.pagos.front.form.PagoTarjetaForm"/>
+    
+<form-bean
+    name="pagoBancaForm"
+    type="es.caib.pagos.front.form.PagoBancaForm"/>
+     
   

@@ -1,19 +1,16 @@
 package es.caib.pagos.exceptions;
 
-import es.caib.pagos.client.ClientePagos;
 
 /**
- * Excepción lanzada cuando hay un error en la firma electrónica.
+ * Clase para las excepciones al comprobar la firma
  * 
- * @author jcsoler
+ * @author ihdelpino
  *
  */
 
+
 public class FirmaException extends ClienteException {
 
-	protected void init() {
-		this.code = ClientePagos.ERROR_FIRMA;
-	}
-
+	//TODO
 
 }

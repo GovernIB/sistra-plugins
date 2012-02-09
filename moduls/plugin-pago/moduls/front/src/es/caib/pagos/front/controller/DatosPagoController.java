@@ -9,9 +9,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.struts.tiles.ComponentContext;
 
-import es.caib.pagos.front.Constants;
 import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
-import es.caib.pagos.persistence.util.Configuracion;
 import es.caib.sistra.plugins.pagos.ConstantesPago;
 import es.caib.sistra.plugins.pagos.DatosPago;
 
@@ -28,7 +26,7 @@ public class DatosPagoController extends BaseController
 		
 		// Obtenemos datos del pago
 		DatosPago datosPago = dlg.obtenerDatosPago();
-		
+			
 		// Importe (convertimos de cents)
 		double impDec = Double.parseDouble(datosPago.getImporte()) / 100 ;	
 		DecimalFormat f = (DecimalFormat) DecimalFormat.getInstance(getLocale(request));
@@ -37,7 +35,7 @@ public class DatosPagoController extends BaseController
 		f.setMinimumFractionDigits(2);
 		f.setMinimumIntegerDigits(1);
 		String importe = f.format(impDec);
-				
+
 		// Fecha (convertimos desde Date)
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");               
 	    String fechaDevengo = sdf.format( datosPago.getFechaDevengo() );
@@ -65,6 +63,7 @@ public class DatosPagoController extends BaseController
 	    request.setAttribute("urlRetornoSistra",dlg.obtenerUrlRetornoSistra());
 	    request.setAttribute("presencialPermitido",presencialPermitido);
 	    request.setAttribute("telematicoPermitido",telematicoPermitido);
+
 	}
 
 }

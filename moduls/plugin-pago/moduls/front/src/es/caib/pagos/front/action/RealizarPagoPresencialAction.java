@@ -10,7 +10,7 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import es.caib.pagos.front.Constants;
-import es.caib.pagos.front.form.PagoForm;
+import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
 
 /**
@@ -24,8 +24,6 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
  * @struts.action-forward
  *  name="fail" path=".error"
  *
- * @struts.action-forward
- *  name="succes" path=".pagoPresencial"
  *  
  */
 public class RealizarPagoPresencialAction extends BaseAction
@@ -36,33 +34,24 @@ public class RealizarPagoPresencialAction extends BaseAction
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
-		
-		PagoForm pagoForm = (PagoForm) form;
-				
-		// Realizamos el pago
-		String urlAcceso = null;
+					
+		byte[] datos = null;
 		try{
 			SesionPagoDelegate dlg = getSesionPago(request);
-			urlAcceso = dlg.realizarPago(pagoForm.getModoPago());
-		}catch(Exception e){
-			if(e.getMessage().contains("Error iniciando")){
-				request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
-			}else{
-				request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorGenericoComprobarPago");
-			}
+			datos = dlg.realizarPagoPresencial();
+			String nombreFichero = "cartapago.pdf";
+			byte[] datosFichero = datos;
+
+			response.reset();
+			response.setContentType("application/octet-stream");
+			response.setHeader("Content-Disposition","attachment; filename="+ nombreFichero + ";");
+			response.getOutputStream().write(datosFichero);
+			return null;
+			
+		} catch (DelegateException de){
+			request.setAttribute(Constants.MESSAGE_KEY, de.getMessage());
 			return mapping.findForward("fail");
-		}
-		
-		if (urlAcceso == null){
-			// TODO Tratamiento errores
-			request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorGenericoComprobarPago");
-			return mapping.findForward("fail");
- 		}else{
-			request.setAttribute( Constants.PAYMENT_URL, urlAcceso );
-		
-			return mapping.findForward("succes");
-		}
-				
+		} 
     }
 		
 }

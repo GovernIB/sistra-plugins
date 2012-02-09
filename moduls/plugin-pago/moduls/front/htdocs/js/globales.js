@@ -164,14 +164,14 @@ function mostrarFondo() {
 function accediendoEnviando(mensaje) {
 	
 	contenido = mensaje;
-	
+
 	var capaIF = document.getElementById('capaInfoFondo');
 	var capaI = document.getElementById('capaInfoForms');
 	// tama?os de la ventana y la p?gina
 	var scroller = document.documentElement.scrollTop;
 	var ventanaX = document.documentElement.clientWidth;
 	var ventanaY = document.documentElement.clientHeight;
-	var capaY = document.getElementById('contenedor').offsetHeight;
+	var capaY = document.getElementById('contenidor').offsetHeight;
 	// la capa de fondo ocupa toda la p?gina
 	with (capaIF) {
 		if(ventanaY > capaY) style.height = ventanaY + 'px';
@@ -183,6 +183,7 @@ function accediendoEnviando(mensaje) {
 	}
 	// colocamos el texto adecuado
 	capaI.innerHTML = contenido;
+	
 	// mostramos, miramos su tama?o y centramos la capaInfo con respecto a la ventana
 	capaI.style.display = 'block';
 	capaInfoX = capaI.offsetWidth;
@@ -209,6 +210,7 @@ function reposicionaCapa(){
 
 opacidad = 0;
 function mostrarCapa() {
+	
 	if(opacidad < 100) {
 		opacidad += 20;
 		if(document.all) document.getElementById('capaInfoForms').filters.alpha.opacity = opacidad;
@@ -228,7 +230,7 @@ function mostrarInfo() {
 	// tama?os de la ventana y la p?gina
 	var ventanaX = document.documentElement.clientWidth;
 	var ventanaY = document.documentElement.clientHeight;
-	var capaY = document.getElementById('contenedor').offsetHeight;
+	var capaY = document.getElementById('contenidor').offsetHeight;
 	
 	
 	// la capa de fondo ocupa toda la p?gina	
@@ -495,4 +497,8 @@ function checkVersionNavegador(errorIE,errorFirefox){
 			alert(errorFirefox);
 		}
 	}
+}
+
+function mostrarMensajeAlerta(mensajeAlerta) {
+	alert(mensajeAlerta);
 }

@@ -1,129 +1,131 @@
 package es.caib.pagos.client;
 
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Hashtable;
-import java.util.StringTokenizer;
 
 import javax.xml.rpc.ServiceException;
 
-import org.apache.axis.encoding.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.services.ComprobarPagoService;
+import es.caib.pagos.services.wsdl.DatosRespuesta046;
+import es.caib.pagos.services.wsdl.UsuariosWebServices;
 import es.caib.pagos.util.Constants;
-import es.caib.pagos.util.FuncionesCadena;
-import gva.ideas.MensajeFirmado;
-import gva.ideas.excepciones.ExcepcionMensaje;
-import es.caib.util.ConvertUtil;
+import es.caib.pagos.util.UtilWs;
+
 public class ComprobarPagoAction implements WebServiceAction {
 
 
 	private static Log log = LogFactory.getLog(ComprobarPagoAction.class);
 
-	public Hashtable execute(ClientePagos cliente, Hashtable data) throws Exception {
+	public Hashtable execute(ClientePagos cliente, Hashtable data)  throws Exception{
 		Hashtable resultado = new Hashtable();
-		String localizador = (String)data.get("localizador");
+		String localizador = (String)data.get(Constants.KEY_LOCALIZADOR);
 		
         ComprobarPagoService comprobante = new ComprobarPagoService(cliente.getUrl());
-		String ls_resultado = null;
+		DatosRespuesta046 ls_resultado = null;
 		try {
-			ls_resultado = comprobante.execute(localizador);
-		} catch (MalformedURLException e1) {
-			e1.printStackTrace();
-			resultado.put("error", new WebServiceError("Error al generar la URL del servicio ComprobarPago"));
+			UsuariosWebServices usuario = UtilWs.getUsuario();
+			ls_resultado = comprobante.execute(localizador, usuario);
+		} catch(DelegateException de) {
+			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_PROPERTIES, "Error obteniendo los valores de usuario web service"));
+			log.error("Error obteniendo los valores de usuario web service");
+			return resultado;
+		} catch(ServiceException se){
+			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la URL sel servicio ComprobarPago"));
+			log.error("Error en la URL sel servicio ComprobarPago");
+			return resultado;
+		} catch(RemoteException re) {
+			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la comunicacón con el servicio comprobarPago"));
+			log.error("Error en la comunicacón con el servicio comprobarPago");
+			return resultado;
 		}
-
-		log.debug("Resultado ComprobarPago: " + ls_resultado);
-
-		StringTokenizer st = new StringTokenizer(ls_resultado,"#");
-		if(st.countTokens() == 2)
-		{
-			String value = (String) st.nextElement();
-			resultado.put("estado",value);
-			value = (String) st.nextElement();
-			byte [] handleContent = Base64.decode(value);
-
-			try {
-				String ls_justificante = new String(handleContent,Constants.CHARSET);
-				log.debug("Resultado ComprobarPago Justificante: " + ls_justificante);
-				resultado.put("justificante",ls_justificante);
-				es.caib.pagos.client.JustificantePago j = new es.caib.pagos.client.JustificantePago(ls_justificante);
-				/* Comprobamos la firma */
-				if(!comprobarFirma(ls_justificante))
-				{
-					resultado.put("error", new WebServiceError(ClientePagos.ERROR_FR));
-				}
-				else
-				{
-					log.debug("Resultado ComprobarPago Justificante: se ha comprobado correctamente la firma. Justificante:" + ls_justificante);
-				}
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
-				resultado.put("error", new WebServiceError("Error al pasar a String con el CHARSET " + Constants.CHARSET));
+	
+		if (ls_resultado == null) {
+			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio ComprobarPago."));
+			log.error("No se ha obtenido respuesta del servicio ComprobarPago.");
+		} else {
+			if (ls_resultado.getCodError() == null) {
+				//TODO comprobacion de firma
+				//antes de hacer nada comprobamos la firma
+//				boolean firmaOk = false;
+//				try {
+//					firmaOk = UtilWs.comprobarFirma(ls_resultado.getFirma());
+//				} catch (ExcepcionMensaje em) {
+//					resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_GENERAL, "Error comprobando la firma. Mensaje incorrecto"));
+//					log.error("Error comprobando la firma. Mensaje incorrecto");
+//					return resultado;
+//				} catch (UnsupportedEncodingException uee) {
+//					resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_GENERAL, "Error al pasar a String con el CHARSET " + Constants.CHARSET));
+//					log.error("Error al pasar a String con el CHARSET " + Constants.CHARSET);
+//					return resultado;
+//				}
+//				if (firmaOk) {
+//					log.debug("Se ha comprobado correctamente la firma: " + ls_resultado.getFirma());
+					if (Constants.ESTADO_PAGADO.equals(ls_resultado.getEstadoPago())) {
+						try {
+							SimpleDateFormat sdf = new SimpleDateFormat("dd/mm/yyyy");
+							Date fechaPago = sdf.parse(ls_resultado.getFechaPago());
+							resultado.put(Constants.KEY_FECHA_PAGO, ls_resultado.getFechaPago());
+						} catch (ParseException pe) {
+							resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_FECHA_PAGO, "Error creando la fecha de pago"));
+							log.error("Error creando la fecha de pago.");
+						}
+					} else {
+						resultado.put(Constants.KEY_FECHA_PAGO, "");
+					}
+					//resultado.put(Constants.KEY_ESTADO, ls_resultado.getEstadoPago());
+				
+//				} else {
+//					resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_WS_FIRMA, "La respuesta no se reconoce como autentica. Error al comprobar la firma"));
+//					log.error("La respuesta no se reconoce como autentica. Error al comprobar la firma");
+//				}
+			} else {
+				resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
 			}
 		}
-		else
-		{
-			resultado.put("error", new WebServiceError(ls_resultado));
-		}
+
 		return resultado;
 	}
 	
-	private boolean comprobarFirma(String justificante)
-	{
-		try
-		{			
-			int li_ini = justificante.indexOf("<DATOS_PAGO>");
-			int li_fin = justificante.indexOf("</DATOS_PAGO>");				
-			String ls_datos = justificante.substring(li_ini,li_fin + 13);
-			li_ini = justificante.indexOf("<FIRMA>");
-			li_fin = justificante.indexOf("</FIRMA>");
-			String ls_pkcs7 = justificante.substring(li_ini + 7,li_fin);
-
-			MensajeFirmado l_mf = new MensajeFirmado();
-			l_mf.cargarDeString(ls_pkcs7);	
-			l_mf.setDatos(ls_datos.getBytes(FuncionesCadena.getCharset()));
 	
-			if (!l_mf.comprobarIntegridadFirma())					
-				return false;
-			else
-				return true;
-		}
-		catch (ExcepcionMensaje ex) 
-		{ 				
-			log.error("comprobarFirma: ",ex);
-			System.out.println(ex.getCodigoError()+"\n"+ex.getDescripcionError()+"\n"+ex.getDescripcionErrorNativo());
-			return false; 
-		}		
-		catch(Throwable ex)
-		{				
-			log.error("comprobarFirma: ",ex);
-			return false; 
-		}
-	}
-
-	public static void main(String[] arg){
-		/*	
-		 	Resultado ComprobarPago: PA#PEpVU1RJRklDQU5URV9QQUdPPjxEQVRPU19QQUdPPjxMT0NBTElaQURPUj4wNDYyODExNTM3MDQ1PC9MT0NBTElaQURPUj48RFVJPjA0NjI4MTE1MzcwNDU8L0RVST48RkVDSEFfUEFHTz4yMDEwMDExODE2MDUxNDwvRkVDSEFfUEFHTz48L0RBVE9TX1BBR08+PEZJUk1BPkFBPT08L0ZJUk1BPjwvSlVTVElGSUNBTlRFX1BBR08+
-	 		Resultado ComprobarPago Justificante: <JUSTIFICANTE_PAGO><DATOS_PAGO><LOCALIZADOR>0462811537045</LOCALIZADOR><DUI>0462811537045</DUI><FECHA_PAGO>20100118160514</FECHA_PAGO></DATOS_PAGO><FIRMA>AA==</FIRMA></JUSTIFICANTE_PAGO>
-	 	*/
-		try{
-			ComprobarPagoAction a = new ComprobarPagoAction();
-			byte [] handleContent = Base64.decode("RWwgY29uanVudG8gZGUgY2xhdmVzIG5vIGV4aXN0ZQ0K");
-			String ls_justificante = new String(handleContent,Constants.CHARSET);
-			System.out.println(ls_justificante);
-			
-			handleContent = Base64.decode("AA==");
-			ls_justificante = new String(handleContent,Constants.CHARSET);
-			System.out.println(ls_justificante);
-			
-			System.out.println(a.comprobarFirma("<JUSTIFICANTE_PAGO><DATOS_PAGO><LOCALIZADOR>0462811537422</LOCALIZADOR><DUI>0462811537422</DUI><FECHA_PAGO>20100119120418</FECHA_PAGO></DATOS_PAGO><FIRMA>RWwgY29uanVudG8gZGUgY2xhdmVzIG5vIGV4aXN0ZQ0K</FIRMA></JUSTIFICANTE_PAGO>"));
-		}catch(Exception e){
-			e.printStackTrace();
-		}
+//	public static void main(String[] arg){
+//		/*	
+//		 	Resultado ComprobarPago: PA#PEpVU1RJRklDQU5URV9QQUdPPjxEQVRPU19QQUdPPjxMT0NBTElaQURPUj4wNDYyODExNTM3MDQ1PC9MT0NBTElaQURPUj48RFVJPjA0NjI4MTE1MzcwNDU8L0RVST48RkVDSEFfUEFHTz4yMDEwMDExODE2MDUxNDwvRkVDSEFfUEFHTz48L0RBVE9TX1BBR08+PEZJUk1BPkFBPT08L0ZJUk1BPjwvSlVTVElGSUNBTlRFX1BBR08+
+//	 		Resultado ComprobarPago Justificante: <JUSTIFICANTE_PAGO><DATOS_PAGO><LOCALIZADOR>0462811537045</LOCALIZADOR><DUI>0462811537045</DUI><FECHA_PAGO>20100118160514</FECHA_PAGO></DATOS_PAGO><FIRMA>AA==</FIRMA></JUSTIFICANTE_PAGO>
+//	 	*/
+//		// RWwgY29uanVudG8gZGUgY2xhdmVzIG5vIGV4aXN0ZQ0K
+//		try{
+//			
+//			
+//			MensajeFirmado l_mf = new MensajeFirmado();
+//			byte [] handleContent = Base64.decode("PA#PEpVU1RJRklDQU5URV9QQUdPPjxEQVRPU19QQUdPPjxMT0NBTElaQURPUj4wNDYyODExNTM3MDQ1PC9MT0NBTElaQURPUj48RFVJPjA0NjI4MTE1MzcwNDU8L0RVST48RkVDSEFfUEFHTz4yMDEwMDExODE2MDUxNDwvRkVDSEFfUEFHTz48L0RBVE9TX1BBR08+PEZJUk1BPkFBPT08L0ZJUk1BPjwvSlVTVElGSUNBTlRFX1BBR08+");
+//			String firma = new String(handleContent, Constants.CHARSET);
+//			l_mf.cargarDeString(firma);
+//			String ls_datos = 
+//			l_mf.setDatos(ls_datos.getBytes(FuncionesCadena.getCharset()));
+//			return l_mf.comprobarIntegridadFirma();
+//			
+////			ComprobarPagoAction a = new ComprobarPagoAction();
+////			byte [] handleContent = Base64.decode("PA#PEpVU1RJRklDQU5URV9QQUdPPjxEQVRPU19QQUdPPjxMT0NBTElaQURPUj4wNDYyODExNTM3MDQ1PC9MT0NBTElaQURPUj48RFVJPjA0NjI4MTE1MzcwNDU8L0RVST48RkVDSEFfUEFHTz4yMDEwMDExODE2MDUxNDwvRkVDSEFfUEFHTz48L0RBVE9TX1BBR08+PEZJUk1BPkFBPT08L0ZJUk1BPjwvSlVTVElGSUNBTlRFX1BBR08+");
+////			String ls_justificante = new String(handleContent, Constants.CHARSET);
+////		
+////			System.out.println(ls_justificante);
+//			
+//			
+////			handleContent = Base64.decode("AA==");
+////			ls_justificante = new String(handleContent,Constants.CHARSET);
+////			System.out.println(ls_justificante);
+//			
+//			//System.out.println(a.comprobarFirma("<JUSTIFICANTE_PAGO><DATOS_PAGO><LOCALIZADOR>0462811537422</LOCALIZADOR><DUI>0462811537422</DUI><FECHA_PAGO>20100119120418</FECHA_PAGO></DATOS_PAGO><FIRMA>RWwgY29uanVudG8gZGUgY2xhdmVzIG5vIGV4aXN0ZQ0K</FIRMA></JUSTIFICANTE_PAGO>"));
+//		}catch(Exception e){
+//			e.printStackTrace();
+//		}
 		
 		/*
 		 2010-01-19 12:06:54,056 DEBUG [es.caib.pagos.client.ClientePagos] comprobarPago (0462811537422)
@@ -215,5 +217,5 @@ public class ComprobarPagoAction implements WebServiceAction {
 		 2010-01-19 14:48:05,800 ERROR [es.caib.pagos.client.ComprobarPagoAction] comprobarFirma: 
 
 		 */
-	}
+//	}
 }

@@ -1,373 +1,489 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://www.atib.es/services/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://www.atib.es/services/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
+<wsdl:definitions xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:tns="http://atib.es/" xmlns:s1="http://microsoft.com/wsdl/types/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" targetNamespace="http://atib.es/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">
   <wsdl:types>
-    <s:schema elementFormDefault="qualified" targetNamespace="http://www.atib.es/services/">
-      <s:element name="inicio">
+    <s:schema elementFormDefault="qualified" targetNamespace="http://atib.es/">
+      <s:import namespace="http://microsoft.com/wsdl/types/" />
+      <s:element name="GetPdf046">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="localizador" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="importeaingresar" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="nifsujetopasivo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fechacreacion" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetPdf046Response">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetPdf046Result" type="s:base64Binary" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="UsuariosWebServices" type="tns:UsuariosWebServices" />
+      <s:complexType name="UsuariosWebServices">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="identificador" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="password" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="idOrigen" nillable="true" type="s:int" />
+        </s:sequence>
+        <s:anyAttribute />
+      </s:complexType>
+      <s:element name="Inserta046">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="sB64" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="inicioResponse">
+      <s:element name="Inserta046Response">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="inicioResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Inserta046Result" type="tns:DatosRespuesta046" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="inicioXML">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="xIn">
-              <s:complexType mixed="true">
-                <s:sequence>
-                  <s:any />
-                </s:sequence>
-              </s:complexType>
-            </s:element>
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="inicioXMLResponse">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="inicioXMLResult" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="ping">
+      <s:complexType name="DatosRespuesta046">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Token" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Localizador" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CodError" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="TextError" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="EstadoPago" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="FechaPago" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="Ping046">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="incoming" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="pingResponse">
+      <s:element name="Ping046Response">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="pingResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Ping046Result" type="tns:DatosRespuesta046" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="ws1">
+      <s:element name="ConsultaDatosTasa046">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="idTasa" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="identificador" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="ws1Response">
+      <s:element name="ConsultaDatosTasa046Response">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="ws1Result" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="ConsultaDatosTasa046Result" type="tns:DatosTasa046" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="ws4">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="localizador" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="ws4Response">
-        <s:complexType>
-          <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="ws4Result" type="s:string" />
-          </s:sequence>
-        </s:complexType>
-      </s:element>
-      <s:element name="ws5">
+      <s:complexType name="DatosTasa046">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="IdConcepto" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="Codigo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Identificador" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Descripcion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Importe" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="CodError" nillable="true" type="s:int" />
+          <s:element minOccurs="0" maxOccurs="1" name="TextError" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="Estado046">
         <s:complexType>
           <s:sequence>
             <s:element minOccurs="0" maxOccurs="1" name="localizador" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="ws5Response">
+      <s:element name="Estado046Response">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="ws5Result" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="Estado046Result" type="tns:DatosRespuesta046" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="Localizador">
+      <s:element name="GetModelos_OBJ">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="Modelo" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fechaInicio" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fechaFin" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="identificador" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="LocalizadorResponse">
+      <s:element name="GetModelos_OBJResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="LocalizadorResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="GetModelos_OBJResult" type="tns:DatosDeModeloList" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="GetVersion">
+      <s:complexType name="DatosDeModeloList">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="modelos" type="tns:ArrayOfDatosDeModelo" />
+          <s:element minOccurs="0" maxOccurs="1" name="error" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="ArrayOfDatosDeModelo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="DatosDeModelo" nillable="true" type="tns:DatosDeModelo" />
+        </s:sequence>
+      </s:complexType>
+      <s:complexType name="DatosDeModelo">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="localizador" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="nifsujetopasivo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="descripcion" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="identificador" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="importe" type="s:decimal" />
+          <s:element minOccurs="1" maxOccurs="1" name="fechaalta" type="s:dateTime" />
+          <s:element minOccurs="1" maxOccurs="1" name="fechapago" type="s:dateTime" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetUrlPago">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="1" maxOccurs="1" name="IDApp" type="s:int" />
+            <s:element minOccurs="0" maxOccurs="1" name="refsModelos" type="tns:ArrayOfGuid" />
+            <s:element minOccurs="0" maxOccurs="1" name="CodigoEntidad" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="GetVersionResponse">
+      <s:complexType name="ArrayOfGuid">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="unbounded" name="guid" type="s1:guid" />
+        </s:sequence>
+      </s:complexType>
+      <s:element name="GetUrlPagoResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetVersionResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="GetUrlPagoResult" type="s:string" />
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:element name="PagarConTarjeta">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="refsModelos" type="tns:ArrayOfGuid" />
+            <s:element minOccurs="0" maxOccurs="1" name="numeroTarjeta" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="caducidadTarjeta" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="titularTarjeta" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="cvvTarjeta" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="PagarConTarjetaResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="PagarConTarjetaResult" type="tns:DatosRespuestaPago" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:complexType name="DatosRespuestaPago">
+        <s:sequence>
+          <s:element minOccurs="1" maxOccurs="1" name="RefPago" type="s1:guid" />
+          <s:element minOccurs="1" maxOccurs="1" name="Pagado" type="s:boolean" />
+          <s:element minOccurs="0" maxOccurs="1" name="Error" type="s:string" />
+        </s:sequence>
+      </s:complexType>
+    </s:schema>
+    <s:schema elementFormDefault="qualified" targetNamespace="http://microsoft.com/wsdl/types/">
+      <s:simpleType name="guid">
+        <s:restriction base="s:string">
+          <s:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" />
+        </s:restriction>
+      </s:simpleType>
     </s:schema>
   </wsdl:types>
-  <wsdl:message name="inicioSoapIn">
-    <wsdl:part name="parameters" element="tns:inicio" />
+  <wsdl:message name="GetPdf046SoapIn">
+    <wsdl:part name="parameters" element="tns:GetPdf046" />
   </wsdl:message>
-  <wsdl:message name="inicioSoapOut">
-    <wsdl:part name="parameters" element="tns:inicioResponse" />
+  <wsdl:message name="GetPdf046SoapOut">
+    <wsdl:part name="parameters" element="tns:GetPdf046Response" />
   </wsdl:message>
-  <wsdl:message name="inicioXMLSoapIn">
-    <wsdl:part name="parameters" element="tns:inicioXML" />
+  <wsdl:message name="GetPdf046UsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
   </wsdl:message>
-  <wsdl:message name="inicioXMLSoapOut">
-    <wsdl:part name="parameters" element="tns:inicioXMLResponse" />
+  <wsdl:message name="Inserta046SoapIn">
+    <wsdl:part name="parameters" element="tns:Inserta046" />
   </wsdl:message>
-  <wsdl:message name="pingSoapIn">
-    <wsdl:part name="parameters" element="tns:ping" />
+  <wsdl:message name="Inserta046SoapOut">
+    <wsdl:part name="parameters" element="tns:Inserta046Response" />
   </wsdl:message>
-  <wsdl:message name="pingSoapOut">
-    <wsdl:part name="parameters" element="tns:pingResponse" />
+  <wsdl:message name="Inserta046UsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
   </wsdl:message>
-  <wsdl:message name="ws1SoapIn">
-    <wsdl:part name="parameters" element="tns:ws1" />
+  <wsdl:message name="Ping046SoapIn">
+    <wsdl:part name="parameters" element="tns:Ping046" />
   </wsdl:message>
-  <wsdl:message name="ws1SoapOut">
-    <wsdl:part name="parameters" element="tns:ws1Response" />
+  <wsdl:message name="Ping046SoapOut">
+    <wsdl:part name="parameters" element="tns:Ping046Response" />
   </wsdl:message>
-  <wsdl:message name="ws4SoapIn">
-    <wsdl:part name="parameters" element="tns:ws4" />
+  <wsdl:message name="Ping046UsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
   </wsdl:message>
-  <wsdl:message name="ws4SoapOut">
-    <wsdl:part name="parameters" element="tns:ws4Response" />
+  <wsdl:message name="ConsultaDatosTasa046SoapIn">
+    <wsdl:part name="parameters" element="tns:ConsultaDatosTasa046" />
   </wsdl:message>
-  <wsdl:message name="ws5SoapIn">
-    <wsdl:part name="parameters" element="tns:ws5" />
+  <wsdl:message name="ConsultaDatosTasa046SoapOut">
+    <wsdl:part name="parameters" element="tns:ConsultaDatosTasa046Response" />
   </wsdl:message>
-  <wsdl:message name="ws5SoapOut">
-    <wsdl:part name="parameters" element="tns:ws5Response" />
+  <wsdl:message name="ConsultaDatosTasa046UsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
   </wsdl:message>
-  <wsdl:message name="LocalizadorSoapIn">
-    <wsdl:part name="parameters" element="tns:Localizador" />
+  <wsdl:message name="Estado046SoapIn">
+    <wsdl:part name="parameters" element="tns:Estado046" />
   </wsdl:message>
-  <wsdl:message name="LocalizadorSoapOut">
-    <wsdl:part name="parameters" element="tns:LocalizadorResponse" />
+  <wsdl:message name="Estado046SoapOut">
+    <wsdl:part name="parameters" element="tns:Estado046Response" />
   </wsdl:message>
-  <wsdl:message name="GetVersionSoapIn">
-    <wsdl:part name="parameters" element="tns:GetVersion" />
+  <wsdl:message name="Estado046UsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
   </wsdl:message>
-  <wsdl:message name="GetVersionSoapOut">
-    <wsdl:part name="parameters" element="tns:GetVersionResponse" />
+  <wsdl:message name="GetModelos_OBJSoapIn">
+    <wsdl:part name="parameters" element="tns:GetModelos_OBJ" />
   </wsdl:message>
-  <wsdl:portType name="ServiceSoap">
-    <wsdl:operation name="inicio">
+  <wsdl:message name="GetModelos_OBJSoapOut">
+    <wsdl:part name="parameters" element="tns:GetModelos_OBJResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetModelos_OBJUsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
+  </wsdl:message>
+  <wsdl:message name="GetUrlPagoSoapIn">
+    <wsdl:part name="parameters" element="tns:GetUrlPago" />
+  </wsdl:message>
+  <wsdl:message name="GetUrlPagoSoapOut">
+    <wsdl:part name="parameters" element="tns:GetUrlPagoResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetUrlPagoUsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
+  </wsdl:message>
+  <wsdl:message name="PagarConTarjetaSoapIn">
+    <wsdl:part name="parameters" element="tns:PagarConTarjeta" />
+  </wsdl:message>
+  <wsdl:message name="PagarConTarjetaSoapOut">
+    <wsdl:part name="parameters" element="tns:PagarConTarjetaResponse" />
+  </wsdl:message>
+  <wsdl:message name="PagarConTarjetaUsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
+  </wsdl:message>
+  <wsdl:portType name="Service_TasaSoap">
+    <wsdl:operation name="GetPdf046">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Dado un localizador, devuelve un array de bytes de la carta de pago o justificante, generada en PDF.</wsdl:documentation>
+      <wsdl:input message="tns:GetPdf046SoapIn" />
+      <wsdl:output message="tns:GetPdf046SoapOut" />
+    </wsdl:operation>
+    <wsdl:operation name="Inserta046">
       <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Inicio de Servico con un String del XML en base64: Devuelve un token valido para 20 minutos para efectuar el Pago</wsdl:documentation>
-      <wsdl:input message="tns:inicioSoapIn" />
-      <wsdl:output message="tns:inicioSoapOut" />
+      <wsdl:input message="tns:Inserta046SoapIn" />
+      <wsdl:output message="tns:Inserta046SoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="inicioXML">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Inicio de Servico con XMLDocument: Devuelve untoken valido para 20 minutos para efectuar el Pago</wsdl:documentation>
-      <wsdl:input message="tns:inicioXMLSoapIn" />
-      <wsdl:output message="tns:inicioXMLSoapOut" />
+    <wsdl:operation name="Ping046">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Devuelve un error si existe algún servicio con problemas</wsdl:documentation>
+      <wsdl:input message="tns:Ping046SoapIn" />
+      <wsdl:output message="tns:Ping046SoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="ping">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Devuelve el texto enviado</wsdl:documentation>
-      <wsdl:input message="tns:pingSoapIn" />
-      <wsdl:output message="tns:pingSoapOut" />
+    <wsdl:operation name="ConsultaDatosTasa046">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Devuelve los datos de una tasa dado su identificador.</wsdl:documentation>
+      <wsdl:input message="tns:ConsultaDatosTasa046SoapIn" />
+      <wsdl:output message="tns:ConsultaDatosTasa046SoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="ws1">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Devuelve el precio de una tasa en centimos.</wsdl:documentation>
-      <wsdl:input message="tns:ws1SoapIn" />
-      <wsdl:output message="tns:ws1SoapOut" />
+    <wsdl:operation name="Estado046">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Analiza el estado del Localizador</wsdl:documentation>
+      <wsdl:input message="tns:Estado046SoapIn" />
+      <wsdl:output message="tns:Estado046SoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="ws4">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Analiza el estado del Localizador, Devuelve un XML firmado</wsdl:documentation>
-      <wsdl:input message="tns:ws4SoapIn" />
-      <wsdl:output message="tns:ws4SoapOut" />
+    <wsdl:operation name="GetModelos_OBJ">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Dado un rango de fechas, devuelve una lista de DATOSDEMODELO.</wsdl:documentation>
+      <wsdl:input message="tns:GetModelos_OBJSoapIn" />
+      <wsdl:output message="tns:GetModelos_OBJSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="ws5">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Obtener un Token para el acceso del usuario al Portal Del Contribuyente para comprobar el pago. Enta con el localizador</wsdl:documentation>
-      <wsdl:input message="tns:ws5SoapIn" />
-      <wsdl:output message="tns:ws5SoapOut" />
+    <wsdl:operation name="GetUrlPago">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Soicita una url para realizar el pago B64</wsdl:documentation>
+      <wsdl:input message="tns:GetUrlPagoSoapIn" />
+      <wsdl:output message="tns:GetUrlPagoSoapOut" />
     </wsdl:operation>
-    <wsdl:operation name="Localizador">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Devuelve Localizador.</wsdl:documentation>
-      <wsdl:input message="tns:LocalizadorSoapIn" />
-      <wsdl:output message="tns:LocalizadorSoapOut" />
-    </wsdl:operation>
-    <wsdl:operation name="GetVersion">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Devuelve la versión de la aplicación.</wsdl:documentation>
-      <wsdl:input message="tns:GetVersionSoapIn" />
-      <wsdl:output message="tns:GetVersionSoapOut" />
+    <wsdl:operation name="PagarConTarjeta">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Realiza un intento de pago con tarjeta de n modelos en el SGP. Devuelve los datos del pago del SGP</wsdl:documentation>
+      <wsdl:input message="tns:PagarConTarjetaSoapIn" />
+      <wsdl:output message="tns:PagarConTarjetaSoapOut" />
     </wsdl:operation>
   </wsdl:portType>
-  <wsdl:binding name="ServiceSoap" type="tns:ServiceSoap">
+  <wsdl:binding name="Service_TasaSoap" type="tns:Service_TasaSoap">
     <soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="inicio">
-      <soap:operation soapAction="http://www.atib.es/services/inicio" style="document" />
+    <wsdl:operation name="GetPdf046">
+      <soap:operation soapAction="http://atib.es/GetPdf046" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
+        <soap:header message="tns:GetPdf046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="inicioXML">
-      <soap:operation soapAction="http://www.atib.es/services/inicioXML" style="document" />
+    <wsdl:operation name="Inserta046">
+      <soap:operation soapAction="http://atib.es/Inserta046" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
+        <soap:header message="tns:Inserta046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ping">
-      <soap:operation soapAction="http://www.atib.es/services/ping" style="document" />
+    <wsdl:operation name="Ping046">
+      <soap:operation soapAction="http://atib.es/Ping046" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
+        <soap:header message="tns:Ping046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ws1">
-      <soap:operation soapAction="http://www.atib.es/services/ws1" style="document" />
+    <wsdl:operation name="ConsultaDatosTasa046">
+      <soap:operation soapAction="http://atib.es/ConsultaDatosTasa046" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
+        <soap:header message="tns:ConsultaDatosTasa046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ws4">
-      <soap:operation soapAction="http://www.atib.es/services/ws4" style="document" />
+    <wsdl:operation name="Estado046">
+      <soap:operation soapAction="http://atib.es/Estado046" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
+        <soap:header message="tns:Estado046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ws5">
-      <soap:operation soapAction="http://www.atib.es/services/ws5" style="document" />
+    <wsdl:operation name="GetModelos_OBJ">
+      <soap:operation soapAction="http://atib.es/GetModelos_OBJ" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
+        <soap:header message="tns:GetModelos_OBJUsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="Localizador">
-      <soap:operation soapAction="http://www.atib.es/services/Localizador" style="document" />
+    <wsdl:operation name="GetUrlPago">
+      <soap:operation soapAction="http://atib.es/GetUrlPago" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
+        <soap:header message="tns:GetUrlPagoUsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetVersion">
-      <soap:operation soapAction="http://www.atib.es/services/GetVersion" style="document" />
+    <wsdl:operation name="PagarConTarjeta">
+      <soap:operation soapAction="http://atib.es/PagarConTarjeta" style="document" />
       <wsdl:input>
         <soap:body use="literal" />
+        <soap:header message="tns:PagarConTarjetaUsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
-  <wsdl:binding name="ServiceSoap12" type="tns:ServiceSoap">
+  <wsdl:binding name="Service_TasaSoap12" type="tns:Service_TasaSoap">
     <soap12:binding transport="http://schemas.xmlsoap.org/soap/http" />
-    <wsdl:operation name="inicio">
-      <soap12:operation soapAction="http://www.atib.es/services/inicio" style="document" />
+    <wsdl:operation name="GetPdf046">
+      <soap12:operation soapAction="http://atib.es/GetPdf046" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
+        <soap12:header message="tns:GetPdf046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="inicioXML">
-      <soap12:operation soapAction="http://www.atib.es/services/inicioXML" style="document" />
+    <wsdl:operation name="Inserta046">
+      <soap12:operation soapAction="http://atib.es/Inserta046" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
+        <soap12:header message="tns:Inserta046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ping">
-      <soap12:operation soapAction="http://www.atib.es/services/ping" style="document" />
+    <wsdl:operation name="Ping046">
+      <soap12:operation soapAction="http://atib.es/Ping046" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
+        <soap12:header message="tns:Ping046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ws1">
-      <soap12:operation soapAction="http://www.atib.es/services/ws1" style="document" />
+    <wsdl:operation name="ConsultaDatosTasa046">
+      <soap12:operation soapAction="http://atib.es/ConsultaDatosTasa046" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
+        <soap12:header message="tns:ConsultaDatosTasa046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ws4">
-      <soap12:operation soapAction="http://www.atib.es/services/ws4" style="document" />
+    <wsdl:operation name="Estado046">
+      <soap12:operation soapAction="http://atib.es/Estado046" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
+        <soap12:header message="tns:Estado046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="ws5">
-      <soap12:operation soapAction="http://www.atib.es/services/ws5" style="document" />
+    <wsdl:operation name="GetModelos_OBJ">
+      <soap12:operation soapAction="http://atib.es/GetModelos_OBJ" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
+        <soap12:header message="tns:GetModelos_OBJUsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="Localizador">
-      <soap12:operation soapAction="http://www.atib.es/services/Localizador" style="document" />
+    <wsdl:operation name="GetUrlPago">
+      <soap12:operation soapAction="http://atib.es/GetUrlPago" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
+        <soap12:header message="tns:GetUrlPagoUsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
-    <wsdl:operation name="GetVersion">
-      <soap12:operation soapAction="http://www.atib.es/services/GetVersion" style="document" />
+    <wsdl:operation name="PagarConTarjeta">
+      <soap12:operation soapAction="http://atib.es/PagarConTarjeta" style="document" />
       <wsdl:input>
         <soap12:body use="literal" />
+        <soap12:header message="tns:PagarConTarjetaUsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />
       </wsdl:output>
     </wsdl:operation>
   </wsdl:binding>
-  <wsdl:service name="Service">
-    <wsdl:port name="ServiceSoap" binding="tns:ServiceSoap">
-      <soap:address location="http://www.atib.es/servicios/service.asmx" />
+  <wsdl:service name="Service_Tasa">
+    <wsdl:port name="Service_TasaSoap" binding="tns:Service_TasaSoap">
+      <soap:address location="http://www.atib.es/servicios/service_tasa.asmx" />
     </wsdl:port>
-    <wsdl:port name="ServiceSoap12" binding="tns:ServiceSoap12">
-      <soap12:address location="http://www.atib.es/servicios/service.asmx" />
+    <wsdl:port name="Service_TasaSoap12" binding="tns:Service_TasaSoap12">
+      <soap12:address location="http://www.atib.es/servicios/service_tasa.asmx" />
     </wsdl:port>
   </wsdl:service>
 </wsdl:definitions>

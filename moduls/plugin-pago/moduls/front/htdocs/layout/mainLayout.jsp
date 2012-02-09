@@ -14,8 +14,9 @@
 	<link href="css/estils_print.css" rel="stylesheet" type="text/css" media="print" />
 	<!-- /css -->
 	
-	<script type="text/javascript" src="js/globales.js"></script>
+	
 	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
+	<script type="text/javascript" src="js/globales.js"></script>
 	<script type="text/javascript" src="js/comuns.js"></script>
 	<script type="text/javascript" src="js/pas4.js"></script>
 	<!-- DETECCION NAVEGADOR (Compatibles: IE >=6 , FireFox >= 1.5)-->
@@ -28,8 +29,20 @@
 	</script>
 </head>
 
+<script type="text/javascript">
+<!--
+	var mensajeAlerta = '<bean:message key="pago.presencial.mensajeDescargar"/>';
+//-->
+</script>
+
+<logic:present name="mostrarAlerta">
+<body onload="mostrarMensajeAlerta(mensajeAlerta);">
+</logic:present>
+<logic:notPresent name="mostrarAlerta">
 <body>
+</logic:notPresent>
 <div id="contenidor">
+
 	<!-- capsal -->
 	<tiles:insert name="header"/>		
 	<!-- continguts -->
@@ -39,4 +52,4 @@
 	<tiles:insert name="footer"/>
 </div>
 </body>
-</html>
+</html:html>

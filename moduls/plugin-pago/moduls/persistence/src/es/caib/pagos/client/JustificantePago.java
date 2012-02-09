@@ -1,7 +1,6 @@
 package es.caib.pagos.client;
 
 import java.io.ByteArrayInputStream;
-import java.util.Vector;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

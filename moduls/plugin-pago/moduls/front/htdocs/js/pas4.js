@@ -23,5 +23,27 @@ $(document).ready(function() {
 	$("#pagoInstrucciones h3 a").click(function () {
 		$(this).parent().parent().find(".instrucciones").slideToggle("slow");
 	});
+	//seleccion pago
+	$("#seleccionDatos a#P").click(function() {
+		$("#banca").hide();
+		$("#tarjeta").hide();
+		$("#presencial").show();
+	});
+	$("#seleccionDatos a#T").click(function() {
+		$("#banca").hide();
+		$("#presencial").hide();
+		$("#errorsForm").hide();
+		$("#tarjeta").show();
+	});
+	$("#seleccionDatos a#B").click(function() {
+		$("#presencial").hide();
+		$("#tarjeta").hide();
+		$("#banca").show();
+	});
+	$("#fPresencial").submit(function() {
+		$("#banca").hide();
+		$("#tarjeta").hide();
+		$("#presencial").show();
+	});
 	
 });

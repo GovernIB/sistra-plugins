@@ -58,6 +58,11 @@ p.alerta { padding:1em 1em 1em 3.7em; margin:1em 0; background:#f2f2f2 url(../im
 p.error { padding:1em 1em 1em 3.7em; margin:1em 0; background:#f2f2f2 url(../imgs/icones/ico_error.gif) no-repeat 1em 1em; }
 p.volver { position:relative; clear:both; border-top:1px dashed #f4f4f4; padding:1em 0 .5em 2em; background:url(../imgs/icones/04tornar.gif) no-repeat left 1em #fff; }
 
+.error
+{
+	color: Red;
+}
+
 #fondo { position:absolute; display:none; top:0; left:0; width:100%; height:200px; background-color:#000; z-index:2; }
 
 /* index */
@@ -73,7 +78,7 @@ div#opcions object { display:inline; vertical-align:top; }
 div#opcions span.noJava { color:#c00; }
 
 div#opcions form.js { display:none; }
-form p span.etiqueta { float:left; width:15em; text-align:right; padding-right:.8em; }
+form p span.etiqueta { display:block; float:left; width:15em; text-align:right; padding-right:.8em; }
 form p.botonera { padding-left:16em; }
 
 /* internes */
@@ -208,8 +213,8 @@ div#pagoBEA input, div#pagoFPA input { font-size:1.2em; margin:1em 0; }
 
 
 div#pagoInstrucciones{width:58em; font-size:.9em; padding:0 1em; margin-bottom:2em; border:1px solid #f2f2f2;}
-div#pagoInstrucciones h3{font-size:1em; font-weight:normal; text-transform:uppercase; padding:.5em 0;}
-div#pagoInstrucciones div.instrucciones{ display:none; }
+div#pagoInstrucciones h3{text-align: center; font-size:1em; font-weight:normal; text-transform:uppercase; padding:.5em 0;}
+div#pagoInstrucciones div.instrucciones{ display:none;}
 div#pagoInstrucciones div.instrucciones ul{list-style:circle; margin:1em 1em 1em 2em; }
 
 
@@ -246,6 +251,11 @@ div#listadoTasas ul li div.detalle input { overflow:visible; padding:0 .5em; fon
 #datosPago ul li { font-size:1.2em; }
 #datosPago span.label { display:block; float:left; width:17em; font-size:.7em; text-align:right; margin-right:.8em; }
 
+#realizarPago { width:50em; padding:1em; margin:2em auto; border:1px solid #ccc; }
+#realizarPago span.label { display:block; float:left; width:17em; font-size:.7em; text-align:right; margin-right:.8em; }
+
+
+
 #getAdobeReader { font-size:.9em; padding:.5em .5em .5em 3.5em; background:#fff url(../imgs/icones/desar_pdf.gif) no-repeat left center; }
 
 form div.botonera { text-align:center; padding:1em; }
@@ -270,5 +280,15 @@ table#aportarDocs th { text-align:left; padding:.5em 1em; background-color:#f7f7
 table#aportarDocs td { padding:.5em 1em; }
 table#aportarDocs td.doc { width:14em; padding-left:3.7em; background:#fff url(../imgs/icona/mode_presencial.gif) no-repeat 1em .5em; }
 
+/* capa información */
+
+div#capaInfoFondo { position:absolute; display:none; top:0; left:0; width:100%; background-color:#000; z-index:11; padding-bottom:1em; }
+
+div#capaInfo { position:absolute; display:none; top:0; left:0; width:35em; background:url(../imgs/capainfo/info.gif) no-repeat center 1em #fff; border:1em solid #bec7ca; padding:3em 1em 0 1em; z-index:12; }
+div#capaInfo p.atencion { text-align:center; font-weight:bold; }
+div#capaInfo.error { background-image:url(../imgs/capainfo/error.gif); border-color:#e5d8d8; }
+div#capaInfo.ok { background-image:url(../imgs/capainfo/ok.gif); border-color:#bfcabe; }
+
+div#capaInfoForms { position:absolute; display:none; top:0; left:0; width:45em; text-align:center; background:url(../imgs/enviando.gif) no-repeat center 1em #fff; border:1em solid #85bbe4; padding:5em 1em 2em 1em; z-index:12; }
 
 

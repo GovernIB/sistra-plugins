@@ -1,9 +1,8 @@
 package es.caib.pagos.exceptions;
 
-import es.caib.pagos.client.ClientePagos;
 
 /**
- *  Clase de la que heredarán todas las posibles excepciones del Cliente de Pagos
+ *  Clase para las excepciones producidas en el cliente del WS
  * 
  * @author jcsoler
  *
@@ -15,32 +14,27 @@ public class ClienteException extends Exception {
 
 	public ClienteException() {
 		super();
-		init();
+//		init();
 	}
 
-	public ClienteException(String message) {
+	public ClienteException(int code, String message) {
 		super(message);
-		init();
+		this.code = code;
 	}
 
-	public ClienteException(String message, Throwable cause) {
+	public ClienteException(int code, String message, Throwable cause) {
 		super(message, cause);
-		init();
+		this.code = code;
 	}
 
 	public ClienteException(Throwable cause) {
 		super(cause);
-		init();
 	}
 	
-	protected void init()
-	{
-		this.code = ClientePagos.ERROR_GENERAL;
-	}
 
 	/**
 	 * 
-	 * Devuelve el Código del Error. Los códigos están definidos en ClientePagos
+	 * Devuelve el Código del Error. Los códigos están definidos en UtilWs
 	 * 
 	 * @return
 	 */

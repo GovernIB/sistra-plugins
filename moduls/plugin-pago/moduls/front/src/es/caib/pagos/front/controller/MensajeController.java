@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.struts.tiles.ComponentContext;
 
 import es.caib.pagos.front.Constants;
-import es.caib.pagos.persistence.util.Configuracion;
 
 public class MensajeController extends BaseController
 {

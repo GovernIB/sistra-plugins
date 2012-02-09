@@ -5,6 +5,24 @@
           "http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
 
 <form-validation>
-
-
-</form-validation>
+	<formset>
+		<form name="pagoTarjetaForm">
+            <field property="codigoVerificacionTarjeta" depends="required">
+                <arg0 key="pago.codigoVerificacionTarjeta"/>
+            </field>
+            <field property="numeroTarjeta" depends="required,creditCard">
+                <arg0 key="pago.numeroTarjeta"/>
+            </field>
+            <field property="titularTarjeta" depends="required">
+                <arg0 key="pago.titularTarjeta"/>
+            </field>
+        </form>
+    </formset>
+    <formset>
+    	<form name="pagoBancaForm">
+    		<field property="banco" depends="required">
+    			<arg0 key="pago.banca.entidad" />
+    		</field>
+    	</form>
+    </formset>
+ </form-validation>

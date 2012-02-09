@@ -1,5 +1,9 @@
 package es.caib.pagos.persistence.util;
 
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -7,7 +11,13 @@ import es.caib.pagos.client.ClientePagos;
 import es.caib.pagos.client.ResultadoInicioPago;
 import es.caib.pagos.client.Tasa;
 import es.caib.pagos.exceptions.ClienteException;
-import es.caib.pagos.exceptions.DUINoPagadoException;
+import es.caib.pagos.exceptions.ComprobarPagoException;
+import es.caib.pagos.exceptions.GetPdf046Exception;
+import es.caib.pagos.exceptions.GetUrlPagoException;
+import es.caib.pagos.exceptions.ImporteTasaException;
+import es.caib.pagos.exceptions.InicioPagoException;
+import es.caib.pagos.exceptions.PagarConTarjetaException;
+import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.sistra.plugins.pagos.DatosPago;
 
 /**
@@ -19,16 +29,19 @@ public class PasarelaPagos {
 	
 	private static Log log = LogFactory.getLog(PasarelaPagos.class);
 	
+	private static String ERROR_CLIENTE = "Error en el cliente de pagos.";
+	private static String ERROR_WS = "Error en el WebService.";
+	private static String ERROR_GET_CLIENTE = "Error al obtener ClientePagos.";
+	
 	/**
 	 * Inicia sesión de pagos
 	 * 
 	 * @param datosPago
 	 * @return Token de acceso y localizador
-	 * @throws Exception 
-	 * @throws ClienteException 
-	 * @throws Exception
+	 * @throws InicioPagoException
 	 */
-	public static ResultadoInicioPago iniciarSesionPagos(DatosPago datosPago, String tipo) throws Exception{ 	
+	public static ResultadoInicioPago iniciarSesionPagos(DatosPago datosPago, String tipo) 
+		throws  InicioPagoException{ 	
 		// Construimos tasa
 		Tasa tasa = new Tasa();		
 		tasa.setTipoPago(tipo);
@@ -39,8 +52,16 @@ public class PasarelaPagos {
 		tasa.setNif(datosPago.getNifDeclarante()); 
 		tasa.setNombre(datosPago.getNombreDeclarante());
 		 
-		// Iniciamos pago
-		ResultadoInicioPago res = ClientePagos.getInstance().inicioPago(tasa);
+		ResultadoInicioPago res = null;
+		try {
+			res = ClientePagos.getInstance().inicioPago(tasa);
+		} catch (DelegateException de) { 
+			log.error(de.getMessage());
+			throw new InicioPagoException(de);
+		} catch (ClienteException ce) {
+			log.error(ce.getMessage());
+			throw new InicioPagoException(ce);
+		} 
 		return res;	
 	}
 	
@@ -48,76 +69,127 @@ public class PasarelaPagos {
 	 * Comprueba pago a través del localizador
 	 *  
 	 * @param datosPago
-	 * @return Justificante de pago
-	 * @throws Exception
+	 * @return fecha de realización del pago ( si se ha realizado) / null (en caso contrario)
+	 * @throws ComprobarPagoException
 	 */	
-	public static String comprobarPago(String localizador) throws ClienteException{ 		
-		//  Comprobamos pago
+	public static String comprobarPago(String localizador) throws ComprobarPagoException{ 		
+		
 		String res;
-		try{
+		try {
 			res = ClientePagos.getInstance().comprobarPago(localizador);			
-		}catch(DUINoPagadoException cex){
-			log.debug("Localizador no ha sido pagado");
-			res = "-1";
-		}catch(Exception ex){
-			log.error("Error comprobando pago",ex);
-			res = "-2";
-		}
+		} catch (DelegateException de) { 
+			log.error(ERROR_GET_CLIENTE + de.getMessage());
+			throw new ComprobarPagoException(ERROR_GET_CLIENTE, de);
+		} catch(ClienteException ce){
+			log.error(ce.getMessage());
+			throw new ComprobarPagoException(String.valueOf(ce.getCode()), ce);
+		} 
 		
 		// Devolvemos resultado
 		log.debug("ComprobarPago para localizador = " + localizador + ". Resultado = " + res);
 		return res;
+		
 	}
 	
 	/**
-	 * 
-	 * ESTA FUNCION YA NO SE UTILIZA
-	 * 
-	 * Obtiene token para acceder al justificante
-	 *  
-	 * @param localizador
-	 * @return Token acceso. En caso de error: null
-	 * 
-	 
-	public static String justificantePago(String localizador){ 		
-		try{			
-			String res = ClientePagos.getInstance().imprimirTasaPagada(localizador);				
-			return res;
-		}catch(Exception ex){
-			return null;
-		}
-	}
-	*/
-	
-	/**
-	 * Devuelve url acceso inicio pago a la cual se debe redirigir el navegador tras
-	 * iniciar sesión de pagos
-	 * @param token
-	 * @return Url
-	 */
-	public static String getUrlInicioPago(String idioma,String token) throws Exception{
-		return ClientePagos.getInstance().getUrlInicioPago(idioma,token);
-	}
-	
-	/**
-	 * Devuelve url acceso justificante pago a la cual se debe redirigir el navegador tras
-	 * pedir justificante pago
-	 * @param token
-	 * @return Url
-	 */
-	public static String getUrlJustificantePago(String idioma,String token) throws Exception{
-		return ClientePagos.getInstance().getUrlJustificantePago(idioma,token);		
-	}
-	
-	/**
-	 * Función que permite calcular el importe de una tasa
+	 * Función que permite obtener el importe de una tasa
 	 * @param idTasa
 	 * @return Importe tasa en cents
-	 * @throws Exception 
-	 * @throws ClienteException 
+	 *  
+	 * @throws ImporteTasaException 
+	 * 
 	 */
-	public static long consultarImporteTasa(String idTasa) throws Exception{
-		Long res = ClientePagos.getInstance().getImporte(idTasa);						
-		return res.longValue();							
+	public static long consultarImporteTasa(String idTasa) throws ImporteTasaException{
+		
+		try {
+			Long res = ClientePagos.getInstance().getImporte(idTasa);
+			return res.longValue();
+		} catch (DelegateException d) {
+			log.error(ERROR_GET_CLIENTE + d.getMessage());
+			throw new ImporteTasaException(ERROR_GET_CLIENTE, d);
+		} catch(ClienteException ce){
+			log.error(ce.getMessage());
+			throw new ImporteTasaException(String.valueOf(ce.getCode()), ce);
+		} 
+									
 	}
+	
+	/**
+	 * Función que permite obtener el PDF para entregar en el pago presencial
+	 * @param localizador
+	 * @param importe
+	 * @param nif
+	 * @param fecha
+	 * @return Array de bytes con los datos del PDF
+	 * @throws GetPdf046Exception
+	 */
+	public static byte[] getPdf046(String localizador, String importe, String nif, 
+			Date fecha) throws GetPdf046Exception{
+		SimpleDateFormat formato = new SimpleDateFormat("dd/MM/yyyy");
+		String cadenaFecha = formato.format(fecha);
+		// Importe (convertimos de cents)
+		double impDec = Double.parseDouble(importe) / 100 ;	
+		DecimalFormat f = (DecimalFormat) DecimalFormat.getInstance();
+		f.setDecimalSeparatorAlwaysShown(true);
+		f.setMaximumFractionDigits(2);
+		f.setMinimumFractionDigits(2);
+		f.setMinimumIntegerDigits(1);
+		String importeDec = f.format(impDec);
+		try {
+			byte[] pdf = ClientePagos.getInstance().getPdf046(localizador, importeDec, nif, cadenaFecha);
+			return pdf;
+		} catch(DelegateException d) {
+			log.error(ERROR_GET_CLIENTE + d.getMessage());
+			throw new GetPdf046Exception(ERROR_GET_CLIENTE, d);
+		} catch(ClienteException ce) {
+			log.error(ERROR_CLIENTE + ce.getMessage());
+			throw new GetPdf046Exception(String.valueOf(ce.getCode()), ce);
+		} 
+	}
+	
+	/**
+	 * Funcion que permite realizar el pago mediante tarjeta bancaria
+	 * @param refsModelos
+	 * @param numeroTarjeta
+	 * @param caducidadTarjeta
+	 * @param titularTarjeta
+	 * @param cvvTarjeta
+	 * @return
+	 * @throws PagarConTarjetaException
+	 */
+	public static Boolean pagarConTarjeta(String[] refsModelos, String numeroTarjeta, 
+			String caducidadTarjeta, String titularTarjeta, String cvvTarjeta) throws PagarConTarjetaException {
+		
+		try {
+			Boolean resultado = ClientePagos.getInstance().pagarConTarjeta(refsModelos, numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta);
+			return resultado;
+		} catch(DelegateException d) {
+			log.error(ERROR_GET_CLIENTE + d.getMessage());
+			throw new PagarConTarjetaException(ERROR_GET_CLIENTE, d);
+		} catch(ClienteException ce) {
+			log.error(ce.getMessage());
+			throw new PagarConTarjetaException(ce);
+		} 
+	}
+	
+	/**
+	 * Función que permite obtener la url para realizar el pago mediante banca online
+	 * @param refsModelos
+	 * @param codigoEntidad
+	 * @return
+	 * @throws GetUrlPagoException
+	 */
+	public static String getUrlPago(String[] refsModelos, String codigoEntidad) throws GetUrlPagoException{
+		try {
+			String res = ClientePagos.getInstance().getUrlPago(refsModelos, codigoEntidad);
+			return res;
+		} catch (DelegateException d) {
+			log.error(ERROR_GET_CLIENTE + d.getMessage());
+			throw new GetUrlPagoException(ERROR_GET_CLIENTE, d);
+		} catch(ClienteException ce){
+			log.error(ce.getMessage());
+			throw new GetUrlPagoException(String.valueOf(ce.getCode()), ce);
+		} 
+	}
+	
 }

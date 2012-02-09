@@ -24,7 +24,7 @@
 </script>
 
 
-<h2><bean:message key="pago.telematico" /></h2>
+<h2><bean:message key="pago.banca" /></h2>
 
 <!-- datos pago -->
 <div id="datosPago">
