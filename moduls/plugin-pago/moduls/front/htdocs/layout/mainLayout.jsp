@@ -52,4 +52,4 @@
 	<tiles:insert name="footer"/>
 </div>
 </body>
-</html:html>
+
