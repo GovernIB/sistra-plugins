@@ -155,6 +155,17 @@ public class SesionPagoDelegate implements Delegate
 		}
 	}
 	
+	public byte[] obtenerJustificantePago() throws DelegateException
+	{
+		try
+		{
+			return local.obtenerJustificantePago();
+		} catch (EJBException e)
+		{
+			throw new DelegateException(e);
+		}
+	}
+	
 	/* ========================================================= */
     /* ======================== REFERENCIA AL FACADE  ========== */
     /* ========================================================= */

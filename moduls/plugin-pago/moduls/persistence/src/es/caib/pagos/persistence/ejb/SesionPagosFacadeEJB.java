@@ -616,6 +616,31 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
         
 		return resultado;
 	}
+	
+	/**
+	 * Obtiene el justificante de un pago ya realizado
+	 * 
+     * @ejb.interface-method
+     * @ejb.permission role-name="${role.todos}"
+     */
+	public byte[] obtenerJustificantePago() {
+		
+		log.debug("Obtener justificante de pago");
+		
+		byte[] datosFichero = null;
+		
+		try{
+			datosFichero = PasarelaPagos.getPdf046(sesionPago.getEstadoPago().getIdentificadorPago(), sesionPago.getDatosPago().getImporte(), 
+		    		sesionPago.getDatosPago().getNifDeclarante(), sesionPago.getDatosPago().getFechaDevengo());
+		} catch (GetPdf046Exception ce) {
+			//log.error("Error al obtener el justificante de pago.");
+			throw new EJBException("sesionPagos.errorGenericoComprobarPago");
+		}
+    
+        return datosFichero;
+		
+	}
+
 
 
 }

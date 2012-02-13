@@ -4,6 +4,10 @@
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic"%>
 <%@ taglib prefix="tiles" uri="http://jakarta.apache.org/struts/tags-tiles"%>
 
+<bean:define id="urlAbrirDocumento" type="java.lang.String">
+	<html:rewrite page="/obtenerJustificantePago.do"/>
+</bean:define>
+
 <h2>	<bean:message key="pago.resultado" /></h2>
 
 <!-- 
@@ -30,12 +34,15 @@
 <p>
 	<logic:equal name="resultadoPago" value="1">
 		<bean:message key="pago.tarjeta.resultadoOK" />
+		<a href="<%=urlAbrirDocumento%>" class="veure">
+			<bean:message key="pago.tarjeta.justificante" />
+		</a>
+	
 		<bean:message key="pago.tarjeta.salirAsistente" />
 		<!--  Enlace volver  -->
 	<html:link href="<%=urlRetornoSistra%>">
 		<bean:message key="pago.volver.asistenteTramitacion" />
 	</html:link>
-
 	</logic:equal>
 	<logic:equal name="resultadoPago" value="0">
 		<bean:message key="pago.tarjeta.resultadoNK" />
