@@ -9,7 +9,6 @@ import es.caib.pagos.exceptions.ClienteException;
 import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.persistence.delegate.DelegateUtil;
 import es.caib.pagos.util.Constants;
-import es.caib.pagos.util.UtilWs;
 
 
 /**
@@ -137,18 +136,17 @@ public class ClientePagos {
 	/**
 	 * Servicio para comprobar un Pago a través del localizador
 	 * @param localizador
-	 * @return Devuelve justificante de pago, o null en caso de que haya cualquier error
+	 * @return Devuelve un hashtable con la fecha de pago, el localizador y la firma
 	 * @throws ClienteException
 	 */
-	public String comprobarPago(String localizador) throws ClienteException
+	public Hashtable comprobarPago(String localizador) throws ClienteException
 	{
 
 		Hashtable data = new Hashtable();
 		data.put(Constants.KEY_LOCALIZADOR, localizador);
 		log.debug("comprobarPago (" + localizador + ")");
 		Hashtable results = ejecutarAccion(data, COMPROBAR_PAGO);
-		String resultado = (String) results.get(Constants.KEY_FECHA_PAGO);
-		return resultado;
+		return results;
 		
 	}
 	
@@ -195,7 +193,7 @@ public class ClientePagos {
 	 * @return
 	 * @throws ClienteException
 	 */
-	public Boolean pagarConTarjeta(String[] refsModelos, String numeroTarjeta, 
+	public boolean pagarConTarjeta(String[] refsModelos, String numeroTarjeta, 
 			String caducidadTarjeta, String titularTarjeta, String cvvTarjeta) throws ClienteException
 	{
 		
@@ -215,7 +213,7 @@ public class ClientePagos {
 		
 		Hashtable results = ejecutarAccion(data, PAGAR_CON_TARJETA);
 	
-		return (Boolean)results.get(Constants.KEY_RESULTADO);
+		return Constants.ESTADO_PAGADO.equals((String)results.get(Constants.KEY_RESULTADO));
 		
 	}
 
@@ -226,7 +224,7 @@ public class ClientePagos {
 	 * @return
 	 * @throws ClienteException
 	 */
-	public String getUrlPago(String[] refsModelos, String codigoEntidad) throws ClienteException
+	public Hashtable getUrlPago(String[] refsModelos, String codigoEntidad) throws ClienteException
 	{
 		
 		Hashtable data = new Hashtable();
@@ -239,7 +237,7 @@ public class ClientePagos {
 
 		Hashtable results = ejecutarAccion(data, GET_URL_PAGO);
 	
-		return (String)results.get(Constants.KEY_RESULTADO);
+		return results;
 
 	}
 	
@@ -258,10 +256,14 @@ public class ClientePagos {
 		} catch (Exception e) {
 			throw new ClienteException(WebServiceError.ERROR_INDETERMINADO, "Error indeterminado.", e);
 		}
-		UtilWs.validateResults(results);
+		if(results.containsKey(Constants.KEY_ERROR))
+		{
+			WebServiceError error = (WebServiceError) results.get(Constants.KEY_ERROR);
+			throw new ClienteException(error.getCodigo(), error.getError());
+		}
 		return results;
 	}
-
+	
 	
 	/**
 	 * Metodo que devuelve la URL del WebService

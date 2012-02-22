@@ -31,6 +31,4 @@ public class PagarConTarjetaService {
 		return res;
 	}
 
-
-	
 }

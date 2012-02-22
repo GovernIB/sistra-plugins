@@ -11,18 +11,19 @@ public interface Service_TasaSoap extends java.rmi.Remote {
 
     /**
      * Dado un localizador, devuelve un array de bytes de la carta
-     * de pago o justificante, generada en PDF.
+     * de pago o justificante generado, en PDF.
      */
     public byte[] getPdf046(java.lang.String localizador, java.lang.String importeaingresar, java.lang.String nifsujetopasivo, java.lang.String fechacreacion) throws java.rmi.RemoteException;
 
     /**
-     * Inicio de Servico con un String del XML en base64: Devuelve
-     * un token valido para 20 minutos para efectuar el Pago
+     * Inicio del trámite con un String del XML en base64. Devuelve
+     * un registro de tipo DATOSRESPUESTA046, con el que se puede realizar
+     * el pago de la tasa descrita en el parámetro XML
      */
     public es.caib.pagos.services.wsdl.DatosRespuesta046 inserta046(java.lang.String sB64) throws java.rmi.RemoteException;
 
     /**
-     * Devuelve un error si existe algún servicio con problemas
+     * Comprobación del estado del servicio.
      */
     public es.caib.pagos.services.wsdl.DatosRespuesta046 ping046(java.lang.String incoming) throws java.rmi.RemoteException;
 
@@ -32,23 +33,31 @@ public interface Service_TasaSoap extends java.rmi.Remote {
     public es.caib.pagos.services.wsdl.DatosTasa046 consultaDatosTasa046(java.lang.String identificador) throws java.rmi.RemoteException;
 
     /**
-     * Analiza el estado del Localizador
+     * Analiza el estado del pago de un localizador
      */
     public es.caib.pagos.services.wsdl.DatosRespuesta046 estado046(java.lang.String localizador) throws java.rmi.RemoteException;
 
     /**
-     * Dado un rango de fechas, devuelve una lista de DATOSDEMODELO.
+     * Dado un guid de pago, devuelve una lista del tipo de datos
+     * DATOSDEMODELO.
+     */
+    public es.caib.pagos.services.wsdl.DatosDeModeloList getModelos_OBJ_Token(java.lang.String tokenPago) throws java.rmi.RemoteException;
+
+    /**
+     * Dado un rango de fechas, devuelve una lista del tipo de datos
+     * DATOSDEMODELO.
      */
     public es.caib.pagos.services.wsdl.DatosDeModeloList getModelos_OBJ(java.lang.String fechaInicio, java.lang.String fechaFin, java.lang.String identificador) throws java.rmi.RemoteException;
 
     /**
-     * Soicita una url para realizar el pago B64
+     * Solicita una url para realizar el pago de una lista de modelos,
+     * en la entidad bancaria seleccionada.
      */
-    public java.lang.String getUrlPago(java.lang.String[] refsModelos, java.lang.String codigoEntidad) throws java.rmi.RemoteException;
+    public es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago getUrlPago(java.lang.String[] refsModelos, java.lang.String codigoEntidad) throws java.rmi.RemoteException;
 
     /**
-     * Realiza un intento de pago con tarjeta de n modelos en el SGP.
-     * Devuelve los datos del pago del SGP
+     * Realiza un intento de pago con tarjeta de n localizadores.
+     * Devuelve los datos del pago en un registro del tipo DATOSRESPUESTAPAGO.
      */
     public es.caib.pagos.services.wsdl.DatosRespuestaPago pagarConTarjeta(java.lang.String[] refsModelos, java.lang.String numeroTarjeta, java.lang.String caducidadTarjeta, java.lang.String titularTarjeta, java.lang.String cvvTarjeta) throws java.rmi.RemoteException;
 }

@@ -107,6 +107,23 @@ public class Constants implements Serializable {
      */
     public static final String KEY_CODIGO_ENTIDAD = "codigoEntidad";
     
+    
+    /**
+     * Clave para almacenar los valores de la url
+     */
+    public static final String KEY_URL = "url";
+    
+    /**
+     * Clave para almacenar los valores de la firma
+     */
+    public static final String KEY_FIRMA = "firma";
+    
+    
+    /**
+     * Clave para almacenar los valores del justificante
+     */
+    public static final String KEY_JUSTIFICANTE = "justificante";
+    
     /**
      * Nombre del servicio soap
      */
@@ -125,5 +142,7 @@ public class Constants implements Serializable {
 	public static final String ESTADO_PAGADO = "OK";
 	
 	public static final String ESTADO_NO_PAGADO = "NK";
+	
+	public static final String FIRMA_SIMULADA = "FIRMA SIMULADA PARA PAGO SIMULADO";
 	
 }

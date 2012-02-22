@@ -39,6 +39,7 @@ public class RealizarPagoPresencialAction extends BaseAction
 		try{
 			SesionPagoDelegate dlg = getSesionPago(request);
 			datos = dlg.realizarPagoPresencial();
+			
 			String nombreFichero = "cartapago.pdf";
 			byte[] datosFichero = datos;
 

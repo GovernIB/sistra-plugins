@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 
 import javax.xml.rpc.ServiceException;
 
+import es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago;
 import es.caib.pagos.services.wsdl.Service_TasaLocator;
 import es.caib.pagos.services.wsdl.Service_TasaSoap;
 import es.caib.pagos.services.wsdl.Service_TasaSoapStub;
@@ -19,15 +20,13 @@ public class GetUrlPagoService {
 		this.url = url;
 	}
 
-	public String execute(String[] refsModelos, String codigoEntidad, UsuariosWebServices usuario) throws ServiceException, RemoteException{
+	public DatosRespuestaGetUrlPago execute(String[] refsModelos, String codigoEntidad, UsuariosWebServices usuario) throws ServiceException, RemoteException{
 		Service_TasaLocator sl = new Service_TasaLocator();
 		sl.setEndpointAddress(Constants.SERVICE_SOAP, url);
 		Service_TasaSoap port = sl.getService_TasaSoap();
 		((Service_TasaSoapStub)port).setHeader(Constants.NAMESPACE_ATIB, Constants.PARTNAME_USUARIOS_WEBSERVICES, usuario);
-		String res = port.getUrlPago(refsModelos, codigoEntidad);
+		DatosRespuestaGetUrlPago res = port.getUrlPago(refsModelos, codigoEntidad);
 		return res;
 	}
-
-
 	
 }

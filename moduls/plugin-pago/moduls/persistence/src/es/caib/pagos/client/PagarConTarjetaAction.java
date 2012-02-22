@@ -47,13 +47,14 @@ public class PagarConTarjetaAction implements WebServiceAction {
 		if (ls_resultado == null) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio PagarConTarjeta."));
 		} else {
-			if (ls_resultado.getError() == null) {
-				resultado.put(Constants.KEY_REF_PAGO, ls_resultado.getRefPago());//TODO se va a hacer algo con este dato ?
-				Boolean pagado = new Boolean(ls_resultado.isPagado());
-				resultado.put(Constants.KEY_RESULTADO, pagado);
+			if (ls_resultado.isPagado()) {
+				resultado.put(Constants.KEY_REF_PAGO, ls_resultado.getRefPago());
+				resultado.put(Constants.KEY_RESULTADO, Constants.ESTADO_PAGADO);
 			} else {
 				resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_TARJETA, ls_resultado.getError()));
+				resultado.put(Constants.KEY_RESULTADO, Constants.ESTADO_NO_PAGADO);
 			}
+
 		}
 
 		return resultado;

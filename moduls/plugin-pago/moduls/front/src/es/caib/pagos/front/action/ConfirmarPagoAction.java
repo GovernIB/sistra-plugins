@@ -10,7 +10,9 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 import es.caib.pagos.front.Constants;
+import es.caib.pagos.front.form.PagoForm;
 import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
+import es.caib.sistra.plugins.pagos.ConstantesPago;
 
 /**
  * @struts.action 
@@ -21,10 +23,11 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
  *  input=".datosPago"
  *  
  * @struts.action-forward
- *  name="fail" path=".error"  
+ *  name="fail" path=".error"
  *  
  * @struts.action-forward
- *  name="success" path=".pagoPresencial" 
+ *  name="presencial" path=".pagoPresencial"
+ *  
  */
 public class ConfirmarPagoAction extends BaseAction
 {
@@ -36,6 +39,7 @@ public class ConfirmarPagoAction extends BaseAction
     {
 		// Realizamos la confirmacion del pago
 		try{
+			PagoForm pagoForm = (PagoForm) form;
 			SesionPagoDelegate dlg = getSesionPago(request);
 			
 			int resultado = dlg.confirmarPago();
@@ -49,9 +53,13 @@ public class ConfirmarPagoAction extends BaseAction
 					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorConfirmarPago.noPagado");
 					return mapping.findForward("fail");
 				case -1: // ERROR ESTADO DIFERENTE PENDIENTE DE PAGO 
-					//TODO 					
-					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
-					return mapping.findForward("fail");	
+					if (String.valueOf(ConstantesPago.TIPOPAGO_PRESENCIAL).equals(pagoForm.getModoPago())) {
+						request.setAttribute("mostrarAlerta","sesionPagos.errorComprobarPago");
+						return mapping.findForward("presencial");
+					} else {
+						request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
+						return mapping.findForward("fail");
+					}
 				default: 
 					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
 					return mapping.findForward("fail");	

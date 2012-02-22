@@ -24,7 +24,6 @@ import es.caib.xml.taxa.factoria.ServicioTaxaXML;
 import es.caib.xml.taxa.factoria.impl.Declarant;
 import es.caib.xml.taxa.factoria.impl.Domicili;
 import es.caib.xml.taxa.factoria.impl.Taxa;
-import gva.ideas.excepciones.ExcepcionMensaje;
 
 public class InicioPagoAction implements WebServiceAction {
 
@@ -63,6 +62,7 @@ public class InicioPagoAction implements WebServiceAction {
 		try {
 			UsuariosWebServices usuario = UtilWs.getUsuario();
 			ls_resultado = service.execute(ls_handleB64, usuario);
+			log.debug("Localizador: " + ls_resultado.getLocalizador());
 		} catch (DelegateException de) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_PROPERTIES, "Error obteniendo los valores de usuario web service. " + de.getMessage()));
 			return resultado;
@@ -77,28 +77,10 @@ public class InicioPagoAction implements WebServiceAction {
 		if (ls_resultado == null) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio InicioPago."));
 		} else {
-			if (ls_resultado.getCodError() == null) {//no tenemos errores
-				//antes de hacer nada comprobamos la firma
-//				boolean firmaOk = false;
-//				try {
-//					firmaOk = UtilWs.comprobarFirma(ls_resultado.getFirma());
-//				} catch (ExcepcionMensaje em) {
-//					resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_GENERAL, "Error comprobando la firma. Mensaje incorrecto"));
-//					return resultado;
-//				} catch (UnsupportedEncodingException uee) {
-//					resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_GENERAL, "Error al pasar a String con el CHARSET " + Constants.CHARSET));
-//					return resultado;
-//				}
-//
-//				if (firmaOk) {
-					//og.debug("Se ha comprobado correctamente la firma: " + ls_resultado.getFirma());
+			if (ls_resultado.getCodError() == null) {
 					resultado.put(Constants.KEY_LOCALIZADOR, ls_resultado.getLocalizador());
 					resultado.put(Constants.KEY_TOKEN, ls_resultado.getToken());
-//				} else {
-//					resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_WS_FIRMA, "La respuesta no se reconoce como autentica. Error al comprobar la firma"));
-//				}
-				
-			} else {//pasamos el error de la respuesta
+			} else {
 				resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
 			}
 		}

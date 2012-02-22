@@ -16,7 +16,7 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
     static org.apache.axis.description.OperationDesc [] _operations;
 
     static {
-        _operations = new org.apache.axis.description.OperationDesc[8];
+        _operations = new org.apache.axis.description.OperationDesc[9];
         _initOperationDesc1();
     }
 
@@ -93,6 +93,17 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
         _operations[4] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
+        oper.setName("GetModelos_OBJ_Token");
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "TokenPago"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://microsoft.com/wsdl/types/", "guid"), java.lang.String.class, false, false);
+        oper.addParameter(param);
+        oper.setReturnType(new javax.xml.namespace.QName("http://atib.es/", "DatosDeModeloList"));
+        oper.setReturnClass(es.caib.pagos.services.wsdl.DatosDeModeloList.class);
+        oper.setReturnQName(new javax.xml.namespace.QName("http://atib.es/", "GetModelos_OBJ_TokenResult"));
+        oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
+        oper.setUse(org.apache.axis.constants.Use.LITERAL);
+        _operations[5] = oper;
+
+        oper = new org.apache.axis.description.OperationDesc();
         oper.setName("GetModelos_OBJ");
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "fechaInicio"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         param.setOmittable(true);
@@ -108,7 +119,7 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
         oper.setReturnQName(new javax.xml.namespace.QName("http://atib.es/", "GetModelos_OBJResult"));
         oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[5] = oper;
+        _operations[6] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
         oper.setName("GetUrlPago");
@@ -119,12 +130,12 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "CodigoEntidad"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         param.setOmittable(true);
         oper.addParameter(param);
-        oper.setReturnType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
-        oper.setReturnClass(java.lang.String.class);
+        oper.setReturnType(new javax.xml.namespace.QName("http://atib.es/", "DatosRespuestaGetUrlPago"));
+        oper.setReturnClass(es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago.class);
         oper.setReturnQName(new javax.xml.namespace.QName("http://atib.es/", "GetUrlPagoResult"));
         oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[6] = oper;
+        _operations[7] = oper;
 
         oper = new org.apache.axis.description.OperationDesc();
         oper.setName("PagarConTarjeta");
@@ -149,7 +160,7 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
         oper.setReturnQName(new javax.xml.namespace.QName("http://atib.es/", "PagarConTarjetaResult"));
         oper.setStyle(org.apache.axis.constants.Style.WRAPPED);
         oper.setUse(org.apache.axis.constants.Use.LITERAL);
-        _operations[7] = oper;
+        _operations[8] = oper;
 
     }
 
@@ -217,6 +228,13 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
             qName = new javax.xml.namespace.QName("http://atib.es/", "DatosRespuesta046");
             cachedSerQNames.add(qName);
             cls = es.caib.pagos.services.wsdl.DatosRespuesta046.class;
+            cachedSerClasses.add(cls);
+            cachedSerFactories.add(beansf);
+            cachedDeserFactories.add(beandf);
+
+            qName = new javax.xml.namespace.QName("http://atib.es/", "DatosRespuestaGetUrlPago");
+            cachedSerQNames.add(qName);
+            cls = es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago.class;
             cachedSerClasses.add(cls);
             cachedSerFactories.add(beansf);
             cachedDeserFactories.add(beandf);
@@ -485,12 +503,46 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
 }
     }
 
-    public es.caib.pagos.services.wsdl.DatosDeModeloList getModelos_OBJ(java.lang.String fechaInicio, java.lang.String fechaFin, java.lang.String identificador) throws java.rmi.RemoteException {
+    public es.caib.pagos.services.wsdl.DatosDeModeloList getModelos_OBJ_Token(java.lang.String tokenPago) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call _call = createCall();
         _call.setOperation(_operations[5]);
+        _call.setUseSOAPAction(true);
+        _call.setSOAPActionURI("http://atib.es/GetModelos_OBJ_Token");
+        _call.setEncodingStyle(null);
+        _call.setProperty(org.apache.axis.client.Call.SEND_TYPE_ATTR, Boolean.FALSE);
+        _call.setProperty(org.apache.axis.AxisEngine.PROP_DOMULTIREFS, Boolean.FALSE);
+        _call.setSOAPVersion(org.apache.axis.soap.SOAPConstants.SOAP11_CONSTANTS);
+        _call.setOperationName(new javax.xml.namespace.QName("http://atib.es/", "GetModelos_OBJ_Token"));
+
+        setRequestHeaders(_call);
+        setAttachments(_call);
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {tokenPago});
+
+        if (_resp instanceof java.rmi.RemoteException) {
+            throw (java.rmi.RemoteException)_resp;
+        }
+        else {
+            extractAttachments(_call);
+            try {
+                return (es.caib.pagos.services.wsdl.DatosDeModeloList) _resp;
+            } catch (java.lang.Exception _exception) {
+                return (es.caib.pagos.services.wsdl.DatosDeModeloList) org.apache.axis.utils.JavaUtils.convert(_resp, es.caib.pagos.services.wsdl.DatosDeModeloList.class);
+            }
+        }
+  } catch (org.apache.axis.AxisFault axisFaultException) {
+  throw axisFaultException;
+}
+    }
+
+    public es.caib.pagos.services.wsdl.DatosDeModeloList getModelos_OBJ(java.lang.String fechaInicio, java.lang.String fechaFin, java.lang.String identificador) throws java.rmi.RemoteException {
+        if (super.cachedEndpoint == null) {
+            throw new org.apache.axis.NoEndPointException();
+        }
+        org.apache.axis.client.Call _call = createCall();
+        _call.setOperation(_operations[6]);
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("http://atib.es/GetModelos_OBJ");
         _call.setEncodingStyle(null);
@@ -519,12 +571,12 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
 }
     }
 
-    public java.lang.String getUrlPago(java.lang.String[] refsModelos, java.lang.String codigoEntidad) throws java.rmi.RemoteException {
+    public es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago getUrlPago(java.lang.String[] refsModelos, java.lang.String codigoEntidad) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[6]);
+        _call.setOperation(_operations[7]);
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("http://atib.es/GetUrlPago");
         _call.setEncodingStyle(null);
@@ -543,9 +595,9 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
         else {
             extractAttachments(_call);
             try {
-                return (java.lang.String) _resp;
+                return (es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago) _resp;
             } catch (java.lang.Exception _exception) {
-                return (java.lang.String) org.apache.axis.utils.JavaUtils.convert(_resp, java.lang.String.class);
+                return (es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago) org.apache.axis.utils.JavaUtils.convert(_resp, es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago.class);
             }
         }
   } catch (org.apache.axis.AxisFault axisFaultException) {
@@ -558,7 +610,7 @@ public class Service_TasaSoapStub extends org.apache.axis.client.Stub implements
             throw new org.apache.axis.NoEndPointException();
         }
         org.apache.axis.client.Call _call = createCall();
-        _call.setOperation(_operations[7]);
+        _call.setOperation(_operations[8]);
         _call.setUseSOAPAction(true);
         _call.setSOAPActionURI("http://atib.es/PagarConTarjeta");
         _call.setEncodingStyle(null);

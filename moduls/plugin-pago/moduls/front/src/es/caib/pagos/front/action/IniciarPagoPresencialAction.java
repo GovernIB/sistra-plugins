@@ -13,6 +13,7 @@ import es.caib.pagos.front.Constants;
 import es.caib.pagos.front.form.PagoForm;
 import es.caib.pagos.persistence.delegate.DelegateUtil;
 import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
+import es.caib.pagos.util.UtilWs;
 
 /**
  * @struts.action 
@@ -35,6 +36,8 @@ public class IniciarPagoPresencialAction extends BaseAction
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
+		
+		UtilWs.testFirma();
 		return mapping.findForward("success");
 
     }

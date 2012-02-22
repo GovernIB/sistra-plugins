@@ -3,6 +3,7 @@ package es.caib.pagos.persistence.util;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Hashtable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -18,6 +19,7 @@ import es.caib.pagos.exceptions.ImporteTasaException;
 import es.caib.pagos.exceptions.InicioPagoException;
 import es.caib.pagos.exceptions.PagarConTarjetaException;
 import es.caib.pagos.persistence.delegate.DelegateException;
+import es.caib.pagos.util.Constants;
 import es.caib.sistra.plugins.pagos.DatosPago;
 
 /**
@@ -72,9 +74,9 @@ public class PasarelaPagos {
 	 * @return fecha de realización del pago ( si se ha realizado) / null (en caso contrario)
 	 * @throws ComprobarPagoException
 	 */	
-	public static String comprobarPago(String localizador) throws ComprobarPagoException{ 		
+	public static Hashtable comprobarPago(String localizador) throws ComprobarPagoException{ 		
 		
-		String res;
+		Hashtable res = null;
 		try {
 			res = ClientePagos.getInstance().comprobarPago(localizador);			
 		} catch (DelegateException de) { 
@@ -157,11 +159,11 @@ public class PasarelaPagos {
 	 * @return
 	 * @throws PagarConTarjetaException
 	 */
-	public static Boolean pagarConTarjeta(String[] refsModelos, String numeroTarjeta, 
+	public static boolean pagarConTarjeta(String[] refsModelos, String numeroTarjeta, 
 			String caducidadTarjeta, String titularTarjeta, String cvvTarjeta) throws PagarConTarjetaException {
 		
 		try {
-			Boolean resultado = ClientePagos.getInstance().pagarConTarjeta(refsModelos, numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta);
+			boolean resultado = ClientePagos.getInstance().pagarConTarjeta(refsModelos, numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta);
 			return resultado;
 		} catch(DelegateException d) {
 			log.error(ERROR_GET_CLIENTE + d.getMessage());
@@ -181,8 +183,9 @@ public class PasarelaPagos {
 	 */
 	public static String getUrlPago(String[] refsModelos, String codigoEntidad) throws GetUrlPagoException{
 		try {
-			String res = ClientePagos.getInstance().getUrlPago(refsModelos, codigoEntidad);
-			return res;
+			Hashtable res = ClientePagos.getInstance().getUrlPago(refsModelos, codigoEntidad);
+			//TODO pemndiente ver que hacemos con el refpago que nos llega
+			return (String)res.get(Constants.KEY_URL);
 		} catch (DelegateException d) {
 			log.error(ERROR_GET_CLIENTE + d.getMessage());
 			throw new GetUrlPagoException(ERROR_GET_CLIENTE, d);

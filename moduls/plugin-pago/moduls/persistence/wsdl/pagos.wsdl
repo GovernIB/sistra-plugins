@@ -51,6 +51,7 @@
           <s:element minOccurs="0" maxOccurs="1" name="TextError" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="EstadoPago" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="FechaPago" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="Firma" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="Ping046">
@@ -106,19 +107,17 @@
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="GetModelos_OBJ">
+      <s:element name="GetModelos_OBJ_Token">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="fechaInicio" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="fechaFin" type="s:string" />
-            <s:element minOccurs="0" maxOccurs="1" name="identificador" type="s:string" />
+            <s:element minOccurs="1" maxOccurs="1" name="TokenPago" type="s1:guid" />
           </s:sequence>
         </s:complexType>
       </s:element>
-      <s:element name="GetModelos_OBJResponse">
+      <s:element name="GetModelos_OBJ_TokenResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetModelos_OBJResult" type="tns:DatosDeModeloList" />
+            <s:element minOccurs="0" maxOccurs="1" name="GetModelos_OBJ_TokenResult" type="tns:DatosDeModeloList" />
           </s:sequence>
         </s:complexType>
       </s:element>
@@ -144,6 +143,22 @@
           <s:element minOccurs="1" maxOccurs="1" name="fechapago" type="s:dateTime" />
         </s:sequence>
       </s:complexType>
+      <s:element name="GetModelos_OBJ">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="fechaInicio" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="fechaFin" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="identificador" type="s:string" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
+      <s:element name="GetModelos_OBJResponse">
+        <s:complexType>
+          <s:sequence>
+            <s:element minOccurs="0" maxOccurs="1" name="GetModelos_OBJResult" type="tns:DatosDeModeloList" />
+          </s:sequence>
+        </s:complexType>
+      </s:element>
       <s:element name="GetUrlPago">
         <s:complexType>
           <s:sequence>
@@ -160,10 +175,16 @@
       <s:element name="GetUrlPagoResponse">
         <s:complexType>
           <s:sequence>
-            <s:element minOccurs="0" maxOccurs="1" name="GetUrlPagoResult" type="s:string" />
+            <s:element minOccurs="0" maxOccurs="1" name="GetUrlPagoResult" type="tns:DatosRespuestaGetUrlPago" />
           </s:sequence>
         </s:complexType>
       </s:element>
+      <s:complexType name="DatosRespuestaGetUrlPago">
+        <s:sequence>
+          <s:element minOccurs="0" maxOccurs="1" name="Url" type="s:string" />
+          <s:element minOccurs="1" maxOccurs="1" name="RefPago" type="s1:guid" />
+        </s:sequence>
+      </s:complexType>
       <s:element name="PagarConTarjeta">
         <s:complexType>
           <s:sequence>
@@ -243,6 +264,15 @@
   <wsdl:message name="Estado046UsuariosWebServices">
     <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
   </wsdl:message>
+  <wsdl:message name="GetModelos_OBJ_TokenSoapIn">
+    <wsdl:part name="parameters" element="tns:GetModelos_OBJ_Token" />
+  </wsdl:message>
+  <wsdl:message name="GetModelos_OBJ_TokenSoapOut">
+    <wsdl:part name="parameters" element="tns:GetModelos_OBJ_TokenResponse" />
+  </wsdl:message>
+  <wsdl:message name="GetModelos_OBJ_TokenUsuariosWebServices">
+    <wsdl:part name="UsuariosWebServices" element="tns:UsuariosWebServices" />
+  </wsdl:message>
   <wsdl:message name="GetModelos_OBJSoapIn">
     <wsdl:part name="parameters" element="tns:GetModelos_OBJ" />
   </wsdl:message>
@@ -272,17 +302,17 @@
   </wsdl:message>
   <wsdl:portType name="Service_TasaSoap">
     <wsdl:operation name="GetPdf046">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Dado un localizador, devuelve un array de bytes de la carta de pago o justificante, generada en PDF.</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Dado un localizador, devuelve un array de bytes de la carta de pago o justificante generado, en PDF.</wsdl:documentation>
       <wsdl:input message="tns:GetPdf046SoapIn" />
       <wsdl:output message="tns:GetPdf046SoapOut" />
     </wsdl:operation>
     <wsdl:operation name="Inserta046">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Inicio de Servico con un String del XML en base64: Devuelve un token valido para 20 minutos para efectuar el Pago</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Inicio del trámite con un String del XML en base64. Devuelve un registro de tipo DATOSRESPUESTA046, con el que se puede realizar el pago de la tasa descrita en el parámetro XML</wsdl:documentation>
       <wsdl:input message="tns:Inserta046SoapIn" />
       <wsdl:output message="tns:Inserta046SoapOut" />
     </wsdl:operation>
     <wsdl:operation name="Ping046">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Devuelve un error si existe algún servicio con problemas</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Comprobación del estado del servicio.</wsdl:documentation>
       <wsdl:input message="tns:Ping046SoapIn" />
       <wsdl:output message="tns:Ping046SoapOut" />
     </wsdl:operation>
@@ -292,22 +322,27 @@
       <wsdl:output message="tns:ConsultaDatosTasa046SoapOut" />
     </wsdl:operation>
     <wsdl:operation name="Estado046">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Analiza el estado del Localizador</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Analiza el estado del pago de un localizador</wsdl:documentation>
       <wsdl:input message="tns:Estado046SoapIn" />
       <wsdl:output message="tns:Estado046SoapOut" />
     </wsdl:operation>
+    <wsdl:operation name="GetModelos_OBJ_Token">
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Dado un guid de pago, devuelve una lista del tipo de datos DATOSDEMODELO.</wsdl:documentation>
+      <wsdl:input message="tns:GetModelos_OBJ_TokenSoapIn" />
+      <wsdl:output message="tns:GetModelos_OBJ_TokenSoapOut" />
+    </wsdl:operation>
     <wsdl:operation name="GetModelos_OBJ">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Dado un rango de fechas, devuelve una lista de DATOSDEMODELO.</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Dado un rango de fechas, devuelve una lista del tipo de datos DATOSDEMODELO.</wsdl:documentation>
       <wsdl:input message="tns:GetModelos_OBJSoapIn" />
       <wsdl:output message="tns:GetModelos_OBJSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="GetUrlPago">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Soicita una url para realizar el pago B64</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Solicita una url para realizar el pago de una lista de modelos, en la entidad bancaria seleccionada.</wsdl:documentation>
       <wsdl:input message="tns:GetUrlPagoSoapIn" />
       <wsdl:output message="tns:GetUrlPagoSoapOut" />
     </wsdl:operation>
     <wsdl:operation name="PagarConTarjeta">
-      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Realiza un intento de pago con tarjeta de n modelos en el SGP. Devuelve los datos del pago del SGP</wsdl:documentation>
+      <wsdl:documentation xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/">Realiza un intento de pago con tarjeta de n localizadores. Devuelve los datos del pago en un registro del tipo DATOSRESPUESTAPAGO.</wsdl:documentation>
       <wsdl:input message="tns:PagarConTarjetaSoapIn" />
       <wsdl:output message="tns:PagarConTarjetaSoapOut" />
     </wsdl:operation>
@@ -359,6 +394,16 @@
       <wsdl:input>
         <soap:body use="literal" />
         <soap:header message="tns:Estado046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetModelos_OBJ_Token">
+      <soap:operation soapAction="http://atib.es/GetModelos_OBJ_Token" style="document" />
+      <wsdl:input>
+        <soap:body use="literal" />
+        <soap:header message="tns:GetModelos_OBJ_TokenUsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap:body use="literal" />
@@ -442,6 +487,16 @@
       <wsdl:input>
         <soap12:body use="literal" />
         <soap12:header message="tns:Estado046UsuariosWebServices" part="UsuariosWebServices" use="literal" />
+      </wsdl:input>
+      <wsdl:output>
+        <soap12:body use="literal" />
+      </wsdl:output>
+    </wsdl:operation>
+    <wsdl:operation name="GetModelos_OBJ_Token">
+      <soap12:operation soapAction="http://atib.es/GetModelos_OBJ_Token" style="document" />
+      <wsdl:input>
+        <soap12:body use="literal" />
+        <soap12:header message="tns:GetModelos_OBJ_TokenUsuariosWebServices" part="UsuariosWebServices" use="literal" />
       </wsdl:input>
       <wsdl:output>
         <soap12:body use="literal" />

@@ -20,6 +20,8 @@ public class DatosRespuesta046  implements java.io.Serializable {
 
     private java.lang.String fechaPago;
 
+    private java.lang.String firma;
+
     public DatosRespuesta046() {
     }
 
@@ -29,13 +31,15 @@ public class DatosRespuesta046  implements java.io.Serializable {
            java.lang.Integer codError,
            java.lang.String textError,
            java.lang.String estadoPago,
-           java.lang.String fechaPago) {
+           java.lang.String fechaPago,
+           java.lang.String firma) {
            this.token = token;
            this.localizador = localizador;
            this.codError = codError;
            this.textError = textError;
            this.estadoPago = estadoPago;
            this.fechaPago = fechaPago;
+           this.firma = firma;
     }
 
 
@@ -158,6 +162,26 @@ public class DatosRespuesta046  implements java.io.Serializable {
         this.fechaPago = fechaPago;
     }
 
+
+    /**
+     * Gets the firma value for this DatosRespuesta046.
+     * 
+     * @return firma
+     */
+    public java.lang.String getFirma() {
+        return firma;
+    }
+
+
+    /**
+     * Sets the firma value for this DatosRespuesta046.
+     * 
+     * @param firma
+     */
+    public void setFirma(java.lang.String firma) {
+        this.firma = firma;
+    }
+
     private java.lang.Object __equalsCalc = null;
     public synchronized boolean equals(java.lang.Object obj) {
         if (!(obj instanceof DatosRespuesta046)) return false;
@@ -187,7 +211,10 @@ public class DatosRespuesta046  implements java.io.Serializable {
               this.estadoPago.equals(other.getEstadoPago()))) &&
             ((this.fechaPago==null && other.getFechaPago()==null) || 
              (this.fechaPago!=null &&
-              this.fechaPago.equals(other.getFechaPago())));
+              this.fechaPago.equals(other.getFechaPago()))) &&
+            ((this.firma==null && other.getFirma()==null) || 
+             (this.firma!=null &&
+              this.firma.equals(other.getFirma())));
         __equalsCalc = null;
         return _equals;
     }
@@ -216,6 +243,9 @@ public class DatosRespuesta046  implements java.io.Serializable {
         }
         if (getFechaPago() != null) {
             _hashCode += getFechaPago().hashCode();
+        }
+        if (getFirma() != null) {
+            _hashCode += getFirma().hashCode();
         }
         __hashCodeCalc = false;
         return _hashCode;
@@ -264,6 +294,13 @@ public class DatosRespuesta046  implements java.io.Serializable {
         elemField = new org.apache.axis.description.ElementDesc();
         elemField.setFieldName("fechaPago");
         elemField.setXmlName(new javax.xml.namespace.QName("http://atib.es/", "FechaPago"));
+        elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
+        elemField.setMinOccurs(0);
+        elemField.setNillable(false);
+        typeDesc.addFieldDesc(elemField);
+        elemField = new org.apache.axis.description.ElementDesc();
+        elemField.setFieldName("firma");
+        elemField.setXmlName(new javax.xml.namespace.QName("http://atib.es/", "Firma"));
         elemField.setXmlType(new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"));
         elemField.setMinOccurs(0);
         elemField.setNillable(false);

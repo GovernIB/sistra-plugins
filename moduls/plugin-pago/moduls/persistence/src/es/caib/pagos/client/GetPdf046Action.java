@@ -40,7 +40,7 @@ public class GetPdf046Action implements WebServiceAction {
 		}
 		
 		if (ls_resultado == null) {
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio InicioPago."));
+			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio GetPdf046."));
 		} else {
 			resultado.put(Constants.KEY_RESULTADO, ls_resultado);
 		}
