@@ -74,11 +74,11 @@
 			<label for="fechaCaducidadTarjeta">
 				<span class="etiqueta"><bean:message key="pago.fechaCaducidadTarjeta"/></span>
 				<html:select property="mesCaducidadTarjeta">
-					<html:option value="-">-</html:option>
+					<html:option value="">-</html:option>
 					<html:options property="meses"/>
 				</html:select>
 				<html:select property="anyoCaducidadTarjeta">
-					<html:option value="-">-</html:option>
+					<html:option value="">-</html:option>
 					<html:options property="anyos"/>
 				</html:select>
 									
@@ -107,5 +107,12 @@
 <div id="capaInfoFondo"></div>
 <div id="capaInfoForms"></div>
 <div class="sep"></div>
-
+<script type="text/javascript">
+<!--
+	// Deshabilitamos autorellenar
+	document.forms[0].setAttribute("autocomplete","off");	
+ 	// Mantenemos sesion sistra
+ 	//syncPost(URL_SISTRA_MANTENIMIENTO_SESION,"");
+// -->
+</script>
 
