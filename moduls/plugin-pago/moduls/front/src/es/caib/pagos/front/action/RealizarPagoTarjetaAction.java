@@ -18,7 +18,7 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
  * @struts.action 
  * 	name="pagoTarjetaForm"
  *  path="/realizarPagoTarjeta"        
- *  scope="session"
+ *  scope="request"
  *  validate="true"
  *  input=".pagoTarjeta"
  *  

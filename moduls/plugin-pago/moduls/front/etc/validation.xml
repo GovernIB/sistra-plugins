@@ -1,28 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<!DOCTYPE form-validation PUBLIC
-          "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
-          "http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
-
+<!DOCTYPE form-validation PUBLIC "-//Apache Software Foundation//DTD Commons Validator Rules Configuration 1.0//EN"
+                                 "http://jakarta.apache.org/commons/dtds/validator_1_0.dtd">
 <form-validation>
-	<formset>
-		<form name="pagoTarjetaForm">
-            <field property="codigoVerificacionTarjeta" depends="required">
-                <arg0 key="pago.codigoVerificacionTarjeta"/>
-            </field>
-            <field property="numeroTarjeta" depends="required,creditCard">
-                <arg0 key="pago.numeroTarjeta"/>
-            </field>
-            <field property="titularTarjeta" depends="required">
-                <arg0 key="pago.titularTarjeta"/>
-            </field>
-        </form>
-    </formset>
-    <formset>
-    	<form name="pagoBancaForm">
-    		<field property="banco" depends="required">
-    			<arg0 key="pago.banca.entidad" />
-    		</field>
-    	</form>
-    </formset>
- </form-validation>
+ <formset>
+  <form name="pagoBancaForm">
+   <field depends="required" property="banco">
+    <arg0 key="pago.banca.entidad"/>
+   </field>
+  </form>
+ </formset>
+ <formset>
+  <form name="pagoTarjetaForm">
+   <field depends="required" property="codigoVerificacionTarjeta">
+    <arg0 key="pago.codigoVerificacionTarjeta"/>
+   </field>
+   <field depends="required,creditCard" property="numeroTarjeta">
+    <arg0 key="pago.numeroTarjeta"/>
+   </field>
+   <field depends="required" property="titularTarjeta">
+    <arg0 key="pago.titularTarjeta"/>
+   </field>
+   <field depends="required" property="mesCaducidadTarjeta">
+    <arg0 key="pago.mesCaducidadTarjeta"/>
+   </field>
+   <field depends="required" property="anyoCaducidadTarjeta">
+    <arg0 key="pago.anyoCaducidadTarjeta"/>
+   </field>
+  </form>
+ </formset>
+</form-validation>
