@@ -87,24 +87,22 @@ public class ClientePagos {
 	 * @return Devuelve un Long con el valor de la Tasa. 
 	 * @throws ClienteException
 	 */
-	public Long getImporte(String tasa) throws ClienteException
+	public Long getImporte(final String tasa) throws ClienteException
 	{		
-		Long resultado = null;
 	
-		Hashtable data = new Hashtable();
+		final Hashtable data = new Hashtable();
 		data.put(Constants.KEY_ID_TASA, tasa);
 		log.debug("importeTasa (" + tasa + ")");
-		Hashtable results = ejecutarAccion(data, IMPORTE_TASA);
+		final Hashtable results = ejecutarAccion(data, IMPORTE_TASA);
 
 		String ls_importe = (String) results.get(Constants.KEY_IMPORTE);
-		int idx = ls_importe.indexOf(",");
+		final int idx = ls_importe.indexOf(',');//TODO comprobar que va bien el cambio de "," por ','
 		if(idx != -1) // Proteccion
 		{
 			ls_importe = ls_importe.substring(0,idx);
 		}
-		resultado = Long.valueOf(ls_importe);
+		return Long.valueOf(ls_importe);
 		
-		return resultado;
 	} 
 	
 	/**
@@ -115,19 +113,18 @@ public class ClientePagos {
 	 * @throws ClienteException, WebServiceException
 	 * 
 	 */
-	public ResultadoInicioPago inicioPago(Tasa tasa) throws ClienteException
+	public ResultadoInicioPago inicioPago(final Tasa tasa) throws ClienteException
 	{
-		ResultadoInicioPago resultado = null;
 		
-		Hashtable data = new Hashtable();
+		final Hashtable data = new Hashtable();
 		data.put(Constants.KEY_TASA, tasa);
 		log.debug("inicioPago (" + tasa.getIdTasa() + ")");
 		
-		Hashtable results = ejecutarAccion(data, INICIO_PAGO);
+		final Hashtable results = ejecutarAccion(data, INICIO_PAGO);
 		
-		String ls_localizador = (String) results.get(Constants.KEY_LOCALIZADOR);
-		String ls_token = (String) results.get(Constants.KEY_TOKEN);
-		resultado = new ResultadoInicioPago(ls_token,ls_localizador);
+		final String ls_localizador = (String) results.get(Constants.KEY_LOCALIZADOR);
+		final String ls_token = (String) results.get(Constants.KEY_TOKEN);
+		final ResultadoInicioPago resultado = new ResultadoInicioPago(ls_token,ls_localizador);
 
 		return resultado;
 		
@@ -139,15 +136,12 @@ public class ClientePagos {
 	 * @return Devuelve un hashtable con la fecha de pago, el localizador y la firma
 	 * @throws ClienteException
 	 */
-	public Hashtable comprobarPago(String localizador) throws ClienteException
+	public Hashtable comprobarPago(final String localizador) throws ClienteException
 	{
-
-		Hashtable data = new Hashtable();
+		final Hashtable data = new Hashtable();
 		data.put(Constants.KEY_LOCALIZADOR, localizador);
 		log.debug("comprobarPago (" + localizador + ")");
-		Hashtable results = ejecutarAccion(data, COMPROBAR_PAGO);
-		return results;
-		
+		return ejecutarAccion(data, COMPROBAR_PAGO);
 	}
 	
 
@@ -160,11 +154,11 @@ public class ClientePagos {
 	 * @return
 	 * @throws ClienteException
 	 */
-	public byte[] getPdf046(String localizador, String importe, String nif, 
-			String fecha) throws ClienteException
+	public byte[] getPdf046(final String localizador, final String importe, final String nif, 
+			final String fecha) throws ClienteException
 	{
 	
-		Hashtable data = new Hashtable();
+		final Hashtable data = new Hashtable();
 		data.put(Constants.KEY_LOCALIZADOR, localizador);
 		data.put(Constants.KEY_IMPORTE_INGRESAR, importe);
 		data.put(Constants.KEY_NIF_SP, nif);
@@ -176,10 +170,9 @@ public class ClientePagos {
 		log.debug("nifsujetopasivo: " + nif);
 		log.debug("fechacreacion: " + fecha);
 		
-		Hashtable results = ejecutarAccion(data, GET_PDF_046);
+		final Hashtable results = ejecutarAccion(data, GET_PDF_046);
 		
-		byte[] datos = (byte[])results.get(Constants.KEY_RESULTADO);
-		return datos;
+		return (byte[])results.get(Constants.KEY_RESULTADO);
 
 	}
 	
@@ -193,11 +186,11 @@ public class ClientePagos {
 	 * @return
 	 * @throws ClienteException
 	 */
-	public boolean pagarConTarjeta(String[] refsModelos, String numeroTarjeta, 
-			String caducidadTarjeta, String titularTarjeta, String cvvTarjeta) throws ClienteException
+	public boolean pagarConTarjeta(final String[] refsModelos, final String numeroTarjeta, 
+			final String caducidadTarjeta, final String titularTarjeta, final String cvvTarjeta) throws ClienteException
 	{
 		
-		Hashtable data = new Hashtable();
+		final Hashtable data = new Hashtable();
 		data.put(Constants.KEY_REFS_MODELOS, refsModelos);
 		data.put(Constants.KEY_NUM_TARJETA, numeroTarjeta);
 		data.put(Constants.KEY_CAD_TARJETA, caducidadTarjeta);
@@ -211,7 +204,7 @@ public class ClientePagos {
 //		log.debug("Titular " + titularTarjeta);
 //		log.debug("CVV " + cvvTarjeta);
 		
-		Hashtable results = ejecutarAccion(data, PAGAR_CON_TARJETA);
+		final Hashtable results = ejecutarAccion(data, PAGAR_CON_TARJETA);
 	
 		return Constants.ESTADO_PAGADO.equals((String)results.get(Constants.KEY_RESULTADO));
 		
@@ -224,18 +217,20 @@ public class ClientePagos {
 	 * @return
 	 * @throws ClienteException
 	 */
-	public Hashtable getUrlPago(String[] refsModelos, String codigoEntidad) throws ClienteException
+	public Hashtable getUrlPago(final String[] refsModelos, final String codigoEntidad, final String urlVuelta) throws ClienteException
 	{
 		
-		Hashtable data = new Hashtable();
+		final Hashtable data = new Hashtable();
 		data.put(Constants.KEY_REFS_MODELOS, refsModelos);
 		data.put(Constants.KEY_CODIGO_ENTIDAD, codigoEntidad);
+		data.put(Constants.KEY_URL, urlVuelta);
 
 		log.debug(GET_URL_PAGO);
 		log.debug("Modelo: " + refsModelos[0]);
 		log.debug("Codigo entidad: " + codigoEntidad);
+		log.debug("Codigo entidad: " + urlVuelta);
 
-		Hashtable results = ejecutarAccion(data, GET_URL_PAGO);
+		final Hashtable results = ejecutarAccion(data, GET_URL_PAGO);
 	
 		return results;
 
@@ -248,17 +243,17 @@ public class ClientePagos {
 	 * @return Resultado de la ejecución
 	 * @throws ClienteException 
 	 */
-	private Hashtable ejecutarAccion(Hashtable data, String accion) throws ClienteException {
-		WebServiceAction action = (WebServiceAction) actions.get(accion);
+	private Hashtable ejecutarAccion(final Hashtable data, final String accion) throws ClienteException {
+		final WebServiceAction action = (WebServiceAction) actions.get(accion);
 		Hashtable results = null;
 		try {
 			results = action.execute(this,data);
 		} catch (Exception e) {
 			throw new ClienteException(WebServiceError.ERROR_INDETERMINADO, "Error indeterminado.", e);
 		}
-		if(results.containsKey(Constants.KEY_ERROR))
+		if(results != null && results.containsKey(Constants.KEY_ERROR))
 		{
-			WebServiceError error = (WebServiceError) results.get(Constants.KEY_ERROR);
+			final WebServiceError error = (WebServiceError) results.get(Constants.KEY_ERROR);
 			throw new ClienteException(error.getCodigo(), error.getError());
 		}
 		return results;

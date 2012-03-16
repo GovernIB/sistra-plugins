@@ -144,11 +144,11 @@ public class SesionPagoDelegate implements Delegate
 		}
 	}
 	
-	public String realizarPagoBanca(String codigoEntidad) throws DelegateException
+	public String realizarPagoBanca(String codigoEntidad, String urlVuelta) throws DelegateException
 	{
 		try
 		{
-			return local.realizarPagoBanca(codigoEntidad);
+			return local.realizarPagoBanca(codigoEntidad, urlVuelta);
 		} catch (EJBException e)
 		{
 			throw new DelegateException(e);

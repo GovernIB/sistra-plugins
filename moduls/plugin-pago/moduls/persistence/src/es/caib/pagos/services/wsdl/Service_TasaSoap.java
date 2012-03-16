@@ -53,7 +53,7 @@ public interface Service_TasaSoap extends java.rmi.Remote {
      * Solicita una url para realizar el pago de una lista de modelos,
      * en la entidad bancaria seleccionada.
      */
-    public es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago getUrlPago(java.lang.String[] refsModelos, java.lang.String codigoEntidad) throws java.rmi.RemoteException;
+    public es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago getUrlPago(java.lang.String[] refsModelos, java.lang.String codigoEntidad, java.lang.String urlDeVuelta) throws java.rmi.RemoteException;
 
     /**
      * Realiza un intento de pago con tarjeta de n localizadores.

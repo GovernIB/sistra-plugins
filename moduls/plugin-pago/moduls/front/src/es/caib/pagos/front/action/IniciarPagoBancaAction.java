@@ -9,10 +9,6 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
-import es.caib.pagos.front.Constants;
-import es.caib.pagos.front.form.PagoForm;
-import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
-
 /**
  * @struts.action 
  * 	name="pagoBancaForm"
@@ -28,8 +24,6 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
  */
 public class IniciarPagoBancaAction extends BaseAction
 {
-
-	Log logger = LogFactory.getLog( IniciarPagoBancaAction.class );
 	
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 

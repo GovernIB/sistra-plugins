@@ -181,9 +181,9 @@ public class PasarelaPagos {
 	 * @return
 	 * @throws GetUrlPagoException
 	 */
-	public static String getUrlPago(String[] refsModelos, String codigoEntidad) throws GetUrlPagoException{
+	public static String getUrlPago(String[] refsModelos, String codigoEntidad, String urlVuelta) throws GetUrlPagoException{
 		try {
-			Hashtable res = ClientePagos.getInstance().getUrlPago(refsModelos, codigoEntidad);
+			Hashtable res = ClientePagos.getInstance().getUrlPago(refsModelos, codigoEntidad, urlVuelta);
 			//TODO pemndiente ver que hacemos con el refpago que nos llega
 			return (String)res.get(Constants.KEY_URL);
 		} catch (DelegateException d) {

@@ -130,6 +130,9 @@ public class Service_TasaSoap12Stub extends org.apache.axis.client.Stub implemen
         param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "CodigoEntidad"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         param.setOmittable(true);
         oper.addParameter(param);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "UrlDeVuelta"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
+        param.setOmittable(true);
+        oper.addParameter(param);
         oper.setReturnType(new javax.xml.namespace.QName("http://atib.es/", "DatosRespuestaGetUrlPago"));
         oper.setReturnClass(es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago.class);
         oper.setReturnQName(new javax.xml.namespace.QName("http://atib.es/", "GetUrlPagoResult"));
@@ -571,7 +574,7 @@ public class Service_TasaSoap12Stub extends org.apache.axis.client.Stub implemen
 }
     }
 
-    public es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago getUrlPago(java.lang.String[] refsModelos, java.lang.String codigoEntidad) throws java.rmi.RemoteException {
+    public es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago getUrlPago(java.lang.String[] refsModelos, java.lang.String codigoEntidad, java.lang.String urlDeVuelta) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -587,7 +590,7 @@ public class Service_TasaSoap12Stub extends org.apache.axis.client.Stub implemen
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {refsModelos, codigoEntidad});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {refsModelos, codigoEntidad, urlDeVuelta});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;

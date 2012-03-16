@@ -191,26 +191,21 @@ public class PagosFacadeEJB extends HibernateEJB  {
 				return estado;
 			}
 			log.debug("Estado=" + sesionCAIB.getEstadoPago().getEstado() );
-			
-			
+
 			estado.setEstado(sesionCAIB.getEstadoPago().getEstado());
 			
-			switch (sesionCAIB.getEstadoPago().getEstado()) {
-				case ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR:
-					//	SI EL ESTADO ES "PENDIENTE DE CONFIRMAR" SE ESTABLECE MENSAJE DEBUG				
-					estado.setTipo(sesionCAIB.getEstadoPago().getTipo());
-					if(sesionCAIB.getEstadoPago().getIdentificadorPago() != null){
-						estado.setDescripcionEstado("Pago iniciado en la pasarela de pago con localizador "+sesionCAIB.getEstadoPago().getIdentificadorPago());					  	
-					}
-					break;
-				case ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO:
-					// SI EL ESTADO ES "CONFIRMADO" SE ESTABLECEN DATOS PAGO EFECTUADO
-					estado.setTipo(sesionCAIB.getEstadoPago().getTipo());
-					estado.setIdentificadorPago(sesionCAIB.getEstadoPago().getIdentificadorPago());
-					estado.setFechaPago(sesionCAIB.getEstadoPago().getFechaPago());
-					estado.setReciboB64PagoTelematico(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico());	
-					break;
-				
+			if (sesionCAIB.getEstadoPago().getEstado() == ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR) {
+//				SI EL ESTADO ES "PENDIENTE DE CONFIRMAR" SE ESTABLECE MENSAJE DEBUG				
+				estado.setTipo(sesionCAIB.getEstadoPago().getTipo());
+				if(sesionCAIB.getEstadoPago().getIdentificadorPago() != null){
+					estado.setDescripcionEstado("Pago iniciado en la pasarela de pago con localizador "+sesionCAIB.getEstadoPago().getIdentificadorPago());					  	
+				}
+			} else if (sesionCAIB.getEstadoPago().getEstado() == ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO) {
+				// SI EL ESTADO ES "CONFIRMADO" SE ESTABLECEN DATOS PAGO EFECTUADO
+				estado.setTipo(sesionCAIB.getEstadoPago().getTipo());
+				estado.setIdentificadorPago(sesionCAIB.getEstadoPago().getIdentificadorPago());
+				estado.setFechaPago(sesionCAIB.getEstadoPago().getFechaPago());
+				estado.setReciboB64PagoTelematico(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico());
 			}
 			
 			return estado;

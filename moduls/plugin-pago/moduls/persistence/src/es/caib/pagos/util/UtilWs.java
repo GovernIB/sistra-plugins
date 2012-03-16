@@ -1,13 +1,9 @@
 package es.caib.pagos.util;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Hashtable;
-
 import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.persistence.delegate.DelegateUtil;
 import es.caib.pagos.services.wsdl.UsuariosWebServices;
 import gva.ideas.MensajeFirmado;
-import gva.ideas.excepciones.ExcepcionMensaje;
 
 /**
  * Clase de utilidades para las WebServiceAction
@@ -31,59 +27,6 @@ public class UtilWs {
 		usuario.setPassword(password);
 		return usuario;
 		
-	}
-	
-	/**
-	 * Obtiene una cadena con el formato
-	 * &lt;DATOS_PAGO>&lt;LOCALIZADOR>localizador&lt;/LOCALIZADOR>&lt;DUI>dui&lt;/DUI>&lt;FECHA_PAGO>fecha&lt;/FECHA_PAGO>&lt;/DATOS_PAGO>
-	 * 		
-	 * @param datos
-	 * @return
-	 */
-	public static String getCadenaDatos(Hashtable datos) {
-	
-		StringBuffer str = new StringBuffer();
-		str.append("<DATOS_PAGO><LOCALIZADOR>");
-		str.append((String)datos.get(Constants.KEY_LOCALIZADOR));
-		str.append("</LOCALIZADOR><DUI>");
-		str.append((String)datos.get(Constants.KEY_LOCALIZADOR));
-		str.append("</DUI><FECHA_PAGO>");
-		str.append((String)datos.get(Constants.KEY_FECHA_PAGO));
-		str.append("</FECHA_PAGO></DATOS_PAGO>");
-		return str.toString();
-	}
-
-	/**
-	 * Valida que la respuesta proviene de la ATIB
-	 * @param datos
-	 * @param firma
-	 * @return
-	 * @throws ExcepcionMensaje
-	 * @throws UnsupportedEncodingException
-	 */
-	public static boolean validarRespuesta(String cadenaDatos, String firma) throws ExcepcionMensaje, UnsupportedEncodingException {
-		
-		MensajeFirmado mf = new MensajeFirmado();
-		mf.cargarDeString(firma);
-		mf.setDatos(cadenaDatos.getBytes(FuncionesCadena.getCharset()));
-		return mf.comprobarIntegridadFirma();
-
-	}
-	
-	/**
-	 * Obtiene el justificante del pago 
-	 * @param datos
-	 * @param firma
-	 * @return
-	 */
-	public static String getJustificante(String datos, String firma) {
-		StringBuffer justificante = new StringBuffer();
-		justificante.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-		justificante.append(datos);
-		justificante.append("<FIRMA>");
-		justificante.append(firma);
-		justificante.append("</FIRMA>");
-		return justificante.toString();
 	}
 	
 	/**

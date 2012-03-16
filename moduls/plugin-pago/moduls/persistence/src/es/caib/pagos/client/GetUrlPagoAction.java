@@ -5,9 +5,6 @@ import java.util.Hashtable;
 
 import javax.xml.rpc.ServiceException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.services.GetUrlPagoService;
 import es.caib.pagos.services.wsdl.DatosRespuestaGetUrlPago;
@@ -17,17 +14,14 @@ import es.caib.pagos.util.UtilWs;
 
 public class GetUrlPagoAction implements WebServiceAction {
 
-	private static Log log = LogFactory.getLog(GetUrlPagoAction.class);
-
-	
 	public Hashtable execute(ClientePagos cliente, Hashtable data)  throws Exception{
 		
-		Hashtable resultado = new Hashtable();
+		final Hashtable resultado = new Hashtable();
 		DatosRespuestaGetUrlPago ls_resultado = null;
 		GetUrlPagoService service = new GetUrlPagoService(cliente.getUrl());
 		try {
-			UsuariosWebServices usuario = UtilWs.getUsuario();
-			ls_resultado = service.execute((String[])data.get(Constants.KEY_REFS_MODELOS), (String)data.get(Constants.KEY_CODIGO_ENTIDAD), usuario);
+			final UsuariosWebServices usuario = UtilWs.getUsuario();
+			ls_resultado = service.execute((String[])data.get(Constants.KEY_REFS_MODELOS), (String)data.get(Constants.KEY_CODIGO_ENTIDAD), (String)data.get(Constants.KEY_URL), usuario);
 		}catch (DelegateException de) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_PROPERTIES, "Error obteniendo los valores de usuario web service"));
 			return resultado;
