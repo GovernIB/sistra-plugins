@@ -10,6 +10,7 @@
 	<!--  Libs plugins -->
 	<module><java>lib/plugin-regtelCAIB.jar</java></module>
     <module><java>lib/plugin-smsCAIB.jar</java></module>
+    <module><java>lib/plugin-emailCAIB.jar</java></module>
    	<module><java>lib/plugin-loginCAIB.jar</java></module>
 	<module><java>lib/plugin-firmaCAIB.jar</java></module>
 	<module><java>lib/plugin-pagosCAIB.jar</java></module>   	
@@ -30,6 +31,14 @@
         <web>
             <web-uri>sistra-portal.war</web-uri>
             <context-root>sistraportal</context-root>
+        </web>
+    </module>
+    
+    <!-- Check envios email --> 
+   <module>
+        <web>
+            <web-uri>sistra-checkEmail.war</web-uri>
+            <context-root>sistraCheckEmail</context-root>
         </web>
     </module>
     

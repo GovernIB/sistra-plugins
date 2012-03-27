@@ -30,6 +30,8 @@
 	<ant dir="${moduls.dir}/plugin-pago/moduls" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-regtel/moduls" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-sms/moduls/plugin" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-email/moduls/plugin" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-email/moduls/checkEmail" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-custodia/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/sistraportal/moduls/portal" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/formateadores/moduls/formateadores" target="${task}" inheritall="false"/>
@@ -68,6 +70,7 @@
 			<include name="plugin-pagosCAIB.jar"/>
 			<include name="plugin-regtelCAIB.jar"/>
 			<include name="plugin-smsCAIB.jar"/>
+			<include name="plugin-emailCAIB.jar"/>
 			<include name="pagosCAIB-client.jar"/>
 			<include name="regtelCAIB-client.jar"/>
 			<include name="libreria-formateadoresCAIB.jar"/>			
@@ -79,6 +82,7 @@
 			<include name="regtelCAIB-model.jar"/>
 			<include name="regtelCAIB-persistence.jar"/>
 			<include name="sistra-portal.war"/>
+			<include name="sistra-checkEmail.war"/>
 		</zipfileset>
 	</ear>
 </target>
