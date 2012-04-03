@@ -39,7 +39,7 @@ public class ChekEmailServlet extends HttpServlet
     		return;
     	}
     	
-    	char estadoEnvio;
+    	String estadoEnvio;
     	if ("OK".equals(estado)) {
     		estadoEnvio = ConstantesEmail.ESTADO_ENVIADO;    		
     	} else if ("KO".equals(estado)) {
@@ -57,7 +57,7 @@ public class ChekEmailServlet extends HttpServlet
     }
 
     
-	private String checkEmail(String id, char estado, String mensaje) throws ServletException {
+	private String checkEmail(String id, String estado, String mensaje) throws ServletException {
 
 		// Insertar en tabla check envios
 		Connection con = null;
@@ -74,7 +74,7 @@ public class ChekEmailServlet extends HttpServlet
 			con = ds.getConnection();			
 			stmt = con.prepareStatement(sql);
 			stmt.setString(1, id);
-			stmt.setString(2, Character.toString(estado));
+			stmt.setString(2, estado);
 			stmt.setString(3, mensaje);
 			stmt.executeUpdate();				
 			

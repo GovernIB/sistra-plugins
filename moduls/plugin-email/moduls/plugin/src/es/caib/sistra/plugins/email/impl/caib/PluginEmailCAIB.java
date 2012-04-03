@@ -43,7 +43,7 @@ public class PluginEmailCAIB implements PluginEmailIntf{
 			
 			EstadoEnvio ee = new EstadoEnvio();
 			if (rs.next()) {
-				ee.setEstado(rs.getString("MCE_ESTADO").charAt(0));
+				ee.setEstado(rs.getString("MCE_ESTADO"));
 				ee.setDescripcionEstado(rs.getString("MCE_DESCERR"));
 				log.debug("Existe en la tabla. Estado: " + ee.getEstado());
 			} else {
