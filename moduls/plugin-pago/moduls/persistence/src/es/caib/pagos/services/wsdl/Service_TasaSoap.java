@@ -59,5 +59,5 @@ public interface Service_TasaSoap extends java.rmi.Remote {
      * Realiza un intento de pago con tarjeta de n localizadores.
      * Devuelve los datos del pago en un registro del tipo DATOSRESPUESTAPAGO.
      */
-    public es.caib.pagos.services.wsdl.DatosRespuestaPago pagarConTarjeta(java.lang.String[] refsModelos, java.lang.String numeroTarjeta, java.lang.String caducidadTarjeta, java.lang.String titularTarjeta, java.lang.String cvvTarjeta) throws java.rmi.RemoteException;
+    public es.caib.pagos.services.wsdl.DatosRespuestaPago pagarConTarjeta(java.lang.String[] refsModelos, java.lang.String datosTarjeta) throws java.rmi.RemoteException;
 }

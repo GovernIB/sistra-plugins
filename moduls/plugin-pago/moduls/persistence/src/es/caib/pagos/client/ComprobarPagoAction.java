@@ -24,30 +24,40 @@ public class ComprobarPagoAction implements WebServiceAction {
 
 	private static Log log = LogFactory.getLog(ComprobarPagoAction.class);
 
-	public Hashtable execute(ClientePagos cliente, Hashtable data)  throws Exception{
-		final Hashtable resultado = new Hashtable();
-		String localizador = (String)data.get(Constants.KEY_LOCALIZADOR);
-		
+	public Hashtable execute(final ClientePagos cliente, final Hashtable data){
+
+		Hashtable resultado = new Hashtable();
+		final String localizador = (String)data.get(Constants.KEY_LOCALIZADOR);
         final ComprobarPagoService comprobante = new ComprobarPagoService(cliente.getUrl());
-		DatosRespuesta046 ls_resultado = null;
+
 		try {
 			final UsuariosWebServices usuario = UtilWs.getUsuario();
 			//localizador = "0462812795471";//TODO hardcode para pruebas
-			ls_resultado = comprobante.execute(localizador, usuario);
+			final DatosRespuesta046 ls_resultado = comprobante.execute(localizador, usuario);
+			resultado = tratarResultado(ls_resultado);
 		} catch(DelegateException de) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_PROPERTIES, "Error obteniendo los valores de usuario web service"));
 			log.error("Error obteniendo los valores de usuario web service");
-			return resultado;
 		} catch(ServiceException se){
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la URL sel servicio ComprobarPago"));
 			log.error("Error en la URL sel servicio ComprobarPago");
-			return resultado;
 		} catch(RemoteException re) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la comunicacón con el servicio comprobarPago"));
 			log.error("Error en la comunicacón con el servicio comprobarPago");
-			return resultado;
 		}
 	
+		return resultado;
+	}
+
+	/**
+	 * Trata el resultado obtenido de la llamada al WS
+	 * @param ls_resultado resultado
+	 * @return
+	 */
+	private Hashtable tratarResultado(final DatosRespuesta046 ls_resultado) {
+		
+		final Hashtable resultado = new Hashtable();
+		
 		if (ls_resultado == null) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio ComprobarPago."));
 			log.error("No se ha obtenido respuesta del servicio ComprobarPago.");
@@ -69,16 +79,14 @@ public class ComprobarPagoAction implements WebServiceAction {
 					log.error("Error comprobando la firma: ", em);
 					//final String error = em.getCodigoError()+"\n"+em.getDescripcionError()+"\n"+em.getDescripcionErrorNativo();
 					resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_FIRMA, "Error comprobando la firma. Mensaje incorrecto"));
-					return resultado;
 				} catch (UnsupportedEncodingException uee) {
 					resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_FIRMA, "Error al pasar a String con el CHARSET " + Constants.CHARSET));
 					log.error("Error al pasar a String con el CHARSET " + Constants.CHARSET);
-					return resultado;
 				}
-			}
-			
-			if (ls_resultado.getCodError() != null) {
-				resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
+			} else {
+				if (ls_resultado.getCodError() != null) {
+					resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
+				}
 			}
 		}
 
@@ -98,12 +106,12 @@ public class ComprobarPagoAction implements WebServiceAction {
 		
 		int li_ini = justificante.indexOf("<DATOS_PAGO>");
 		int li_fin = justificante.indexOf("</DATOS_PAGO>");				
-		String ls_datos = justificante.substring(li_ini,li_fin + 13);
+		final String ls_datos = justificante.substring(li_ini,li_fin + 13);
 		li_ini = justificante.indexOf("<FIRMA>");
 		li_fin = justificante.indexOf("</FIRMA>");
-		String ls_pkcs7 = justificante.substring(li_ini + 7,li_fin);
+		final String ls_pkcs7 = justificante.substring(li_ini + 7,li_fin);
 
-		MensajeFirmado l_mf = new MensajeFirmado();
+		final MensajeFirmado l_mf = new MensajeFirmado();
 		l_mf.cargarDeString(ls_pkcs7);	
 		l_mf.setDatos(ls_datos.getBytes(FuncionesCadena.getCharset()));
 		return l_mf.comprobarIntegridadFirma();

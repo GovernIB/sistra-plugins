@@ -19,34 +19,33 @@ public class ImporteTasaAction implements WebServiceAction {
 
 	private static Log log = LogFactory.getLog(ImporteTasaAction.class);
 	
+	public Hashtable execute(final ClientePagos cliente, final Hashtable data){
 
-	public Hashtable execute(ClientePagos cliente, Hashtable data) throws Exception{
-		Hashtable resultado = new Hashtable();
-		String idTasa = (String)data.get(Constants.KEY_ID_TASA);
-
-		ImporteTasaService importe = new ImporteTasaService(cliente.getUrl());
-		DatosTasa046 ls_resultado = null;
+		final Hashtable resultado = new Hashtable();
+		final ImporteTasaService importe = new ImporteTasaService(cliente.getUrl());
+		
 		try {
-			UsuariosWebServices usuario = UtilWs.getUsuario();
-			ls_resultado = importe.execute(idTasa, usuario);
+			final UsuariosWebServices usuario = UtilWs.getUsuario();
+			final String idTasa = (String)data.get(Constants.KEY_ID_TASA);
+			final DatosTasa046 ls_resultado = importe.execute(idTasa, usuario);
+			if (ls_resultado == null) {
+				resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido resultado"));
+			} else {
+				if (ls_resultado.getCodError() == null) {
+					resultado.put(Constants.KEY_IMPORTE, ls_resultado.getImporte());
+				} else {
+					resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
+				}
+			}
 		} catch (DelegateException de) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_PROPERTIES, "Error obteniendo los valores de usuario web service " + de.getMessage()));
-			return resultado;
+			log.error("Error obteniendo los valores de usuario web service ");
 		} catch (ServiceException e) { 
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la URL sel servicio ImporteTasa " + e.getMessage()));
-			return resultado;
+			log.error("Error en la URL sel servicio ImporteTasa ");
 		} catch (RemoteException e) { 
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la comunicacón con el servicio ImporteTasa " + e.getMessage()));
-			return resultado;
-		}
-		if (ls_resultado == null) {
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido resultado"));
-		} else {
-			if (ls_resultado.getCodError() == null) {
-				resultado.put(Constants.KEY_IMPORTE, ls_resultado.getImporte());
-			} else {
-				resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
-			}
+			log.error("Error en la comunicacón con el servicio ImporteTasa ");
 		}
 		
 		return resultado;

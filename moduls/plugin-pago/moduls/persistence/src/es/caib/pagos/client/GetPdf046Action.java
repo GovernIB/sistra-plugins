@@ -17,32 +17,29 @@ import es.caib.pagos.util.UtilWs;
 public class GetPdf046Action implements WebServiceAction {
 
 	private static Log log = LogFactory.getLog(GetPdf046Action.class);
-
 	
-	public Hashtable execute(ClientePagos cliente, Hashtable data)  throws Exception{
+	public Hashtable execute(final ClientePagos cliente, final Hashtable data){
 		
-		Hashtable resultado = new Hashtable();
-		byte[] ls_resultado = null;
-		GetPdf046Service service = new GetPdf046Service(cliente.getUrl());
+		final Hashtable resultado = new Hashtable();
+		final GetPdf046Service service = new GetPdf046Service(cliente.getUrl());
 		try {
-			UsuariosWebServices usuario = UtilWs.getUsuario();
-			ls_resultado = service.execute((String)data.get(Constants.KEY_LOCALIZADOR), (String)data.get(Constants.KEY_IMPORTE_INGRESAR), 
+			final UsuariosWebServices usuario = UtilWs.getUsuario();
+			final byte[] ls_resultado = service.execute((String)data.get(Constants.KEY_LOCALIZADOR), (String)data.get(Constants.KEY_IMPORTE_INGRESAR), 
 				(String)data.get(Constants.KEY_NIF_SP), (String)data.get(Constants.KEY_FECHA_CREACION), usuario);
+			if (ls_resultado == null) {
+				resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio GetPdf046."));
+			} else {
+				resultado.put(Constants.KEY_RESULTADO, ls_resultado);
+			}
 		}catch (DelegateException de) {
+			log.error("Error obteniendo los valores de usuario web service");
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_PROPERTIES, "Error obteniendo los valores de usuario web service"));
-			return resultado;
 		} catch (ServiceException e) { 
+			log.error("Error en la URL del servicio GetPdf046");
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la URL del servicio GetPdf046"));
-			return resultado;
 		} catch (RemoteException e) { 
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la comunicacón con el servicio GetPdf046"));
-			return resultado;
-		}
-		
-		if (ls_resultado == null) {
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio GetPdf046."));
-		} else {
-			resultado.put(Constants.KEY_RESULTADO, ls_resultado);
+			log.error("Error en la comunicación con el servicio GetPdf046");
+			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error en la comunicación con el servicio GetPdf046"));
 		}
 		
 		return resultado;

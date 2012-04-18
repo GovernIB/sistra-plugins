@@ -13,19 +13,18 @@ import es.caib.pagos.util.Constants;
 
 public class InicioPagoService {
 	
-	private String url;
+	private final String url;
 	
-	public InicioPagoService(String url) {
+	public InicioPagoService(final String url) {
 		this.url = url;
 	}
 	
-	public DatosRespuesta046 execute(String value, UsuariosWebServices usuario) throws ServiceException, RemoteException {
-		Service_TasaLocator sl = new Service_TasaLocator();
+	public DatosRespuesta046 execute(final String value, final UsuariosWebServices usuario) throws ServiceException, RemoteException {
+		final Service_TasaLocator sl = new Service_TasaLocator();
 		sl.setEndpointAddress(Constants.SERVICE_SOAP, url);
-		Service_TasaSoap port = sl.getService_TasaSoap();
+		final Service_TasaSoap port = sl.getService_TasaSoap();
 		((Service_TasaSoapStub)port).setHeader(Constants.NAMESPACE_ATIB, Constants.PARTNAME_USUARIOS_WEBSERVICES, usuario);
-		DatosRespuesta046 res = port.inserta046(value);
-		return res;
+		return port.inserta046(value);
 	}
 	
 }

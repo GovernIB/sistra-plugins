@@ -146,16 +146,7 @@ public class Service_TasaSoap12Stub extends org.apache.axis.client.Stub implemen
         param.setItemQName(new javax.xml.namespace.QName("http://atib.es/", "guid"));
         param.setOmittable(true);
         oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "numeroTarjeta"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setOmittable(true);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "caducidadTarjeta"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setOmittable(true);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "titularTarjeta"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
-        param.setOmittable(true);
-        oper.addParameter(param);
-        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "cvvTarjeta"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
+        param = new org.apache.axis.description.ParameterDesc(new javax.xml.namespace.QName("http://atib.es/", "datosTarjeta"), org.apache.axis.description.ParameterDesc.IN, new javax.xml.namespace.QName("http://www.w3.org/2001/XMLSchema", "string"), java.lang.String.class, false, false);
         param.setOmittable(true);
         oper.addParameter(param);
         oper.setReturnType(new javax.xml.namespace.QName("http://atib.es/", "DatosRespuestaPago"));
@@ -608,7 +599,7 @@ public class Service_TasaSoap12Stub extends org.apache.axis.client.Stub implemen
 }
     }
 
-    public es.caib.pagos.services.wsdl.DatosRespuestaPago pagarConTarjeta(java.lang.String[] refsModelos, java.lang.String numeroTarjeta, java.lang.String caducidadTarjeta, java.lang.String titularTarjeta, java.lang.String cvvTarjeta) throws java.rmi.RemoteException {
+    public es.caib.pagos.services.wsdl.DatosRespuestaPago pagarConTarjeta(java.lang.String[] refsModelos, java.lang.String datosTarjeta) throws java.rmi.RemoteException {
         if (super.cachedEndpoint == null) {
             throw new org.apache.axis.NoEndPointException();
         }
@@ -624,7 +615,7 @@ public class Service_TasaSoap12Stub extends org.apache.axis.client.Stub implemen
 
         setRequestHeaders(_call);
         setAttachments(_call);
- try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {refsModelos, numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta});
+ try {        java.lang.Object _resp = _call.invoke(new java.lang.Object[] {refsModelos, datosTarjeta});
 
         if (_resp instanceof java.rmi.RemoteException) {
             throw (java.rmi.RemoteException)_resp;

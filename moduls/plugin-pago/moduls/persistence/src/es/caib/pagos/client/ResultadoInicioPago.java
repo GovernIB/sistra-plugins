@@ -9,7 +9,7 @@ public class ResultadoInicioPago {
 	public ResultadoInicioPago() {
 	}
 
-	public ResultadoInicioPago(String token, String localizador) {
+	public ResultadoInicioPago(final String token, final String localizador) {
 		super();
 		this.token = token;
 		this.localizador = localizador;
@@ -19,7 +19,7 @@ public class ResultadoInicioPago {
 		return localizador;
 	}
 
-	public void setLocalizador(String localizador) {
+	public void setLocalizador(final String localizador) {
 		this.localizador = localizador;
 	}
 
@@ -27,7 +27,7 @@ public class ResultadoInicioPago {
 		return token;
 	}
 
-	public void setToken(String token) {
+	public void setToken(final String token) {
 		this.token = token;
 	}
 

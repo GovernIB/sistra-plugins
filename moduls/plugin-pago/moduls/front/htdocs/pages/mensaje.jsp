@@ -9,6 +9,9 @@
 <!-- informacio -->
 <p class="alerta">	
 	<bean:message name="texto" />
+	<logic:notEmpty name="respuesta">
+		<bean:write name="respuesta" />
+	</logic:notEmpty>
 </p>
 
 <!--  Enlace volver  -->

@@ -14,21 +14,18 @@ import es.caib.pagos.util.Constants;
 
 public class PagarConTarjetaService {
 	
-	private String url;
+	private final String url;
 	
-	public PagarConTarjetaService(String url) {
+	public PagarConTarjetaService(final String url) {
 		this.url = url;
 	}
 	
-	public DatosRespuestaPago execute(String[] refsModelos, String numeroTarjeta, 
-			String caducidadTarjeta, String titularTarjeta, String cvvTarjeta,
-			UsuariosWebServices usuario) throws ServiceException, RemoteException{
-		Service_TasaLocator sl = new Service_TasaLocator();
+	public DatosRespuestaPago execute(final String[] refsModelos, final String datosTarjeta, final UsuariosWebServices usuario) throws ServiceException, RemoteException{
+		final Service_TasaLocator sl = new Service_TasaLocator();
 		sl.setEndpointAddress(Constants.SERVICE_SOAP, url);
-		Service_TasaSoap port = sl.getService_TasaSoap();
+		final Service_TasaSoap port = sl.getService_TasaSoap();
 		((Service_TasaSoapStub)port).setHeader(Constants.NAMESPACE_ATIB, Constants.PARTNAME_USUARIOS_WEBSERVICES, usuario);
-		DatosRespuestaPago res = port.pagarConTarjeta(refsModelos, numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta);
-		return res;
+		return port.pagarConTarjeta(refsModelos, datosTarjeta);
 	}
 
 }

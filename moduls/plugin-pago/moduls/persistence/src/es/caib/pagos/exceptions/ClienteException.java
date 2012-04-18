@@ -14,7 +14,6 @@ public class ClienteException extends Exception {
 
 	public ClienteException() {
 		super();
-//		init();
 	}
 
 	public ClienteException(int code, String message) {

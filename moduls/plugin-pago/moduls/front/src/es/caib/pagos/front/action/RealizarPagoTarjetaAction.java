@@ -3,11 +3,13 @@ package es.caib.pagos.front.action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
+
 
 import es.caib.pagos.front.Constants;
 import es.caib.pagos.front.form.PagoTarjetaForm;
@@ -49,9 +51,18 @@ public class RealizarPagoTarjetaAction extends BaseAction
 					pagoTarjetaForm.getTitularTarjeta(), pagoTarjetaForm.getCodigoVerificacionTarjeta());
 			request.setAttribute("resultadoPago", resultado);
 			return mapping.findForward("success");
-		} catch (DelegateException de){
+		} catch (DelegateException de){ 
+			String msg = de.getMessage();
+			int idx = msg.indexOf("ClienteException:");
+			if (idx == -1) {
 				request.setAttribute(Constants.MESSAGE_KEY, de.getMessage());
-				return mapping.findForward("fail");
+				request.setAttribute("respuesta", "");
+			} else {
+				int length = "ClienteException:".length();
+				request.setAttribute("respuesta", msg.substring(idx + length));
+			}
+			
+			return mapping.findForward("fail");
 		}
     }
 		

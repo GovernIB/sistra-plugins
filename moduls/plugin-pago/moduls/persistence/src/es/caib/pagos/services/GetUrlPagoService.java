@@ -14,19 +14,18 @@ import es.caib.pagos.util.Constants;
 
 public class GetUrlPagoService { 
 	
-	private String url;
+	private final String url;
 	
-	public GetUrlPagoService(String url) {
+	public GetUrlPagoService(final String url) {
 		this.url = url;
 	}
 
-	public DatosRespuestaGetUrlPago execute(String[] refsModelos, String codigoEntidad, String urlVuelta, UsuariosWebServices usuario) throws ServiceException, RemoteException{
-		Service_TasaLocator sl = new Service_TasaLocator();
+	public DatosRespuestaGetUrlPago execute(final String[] refsModelos, final String codigoEntidad, final String urlVuelta, final UsuariosWebServices usuario) throws ServiceException, RemoteException{
+		final Service_TasaLocator sl = new Service_TasaLocator();
 		sl.setEndpointAddress(Constants.SERVICE_SOAP, url);
-		Service_TasaSoap port = sl.getService_TasaSoap();
+		final Service_TasaSoap port = sl.getService_TasaSoap();
 		((Service_TasaSoapStub)port).setHeader(Constants.NAMESPACE_ATIB, Constants.PARTNAME_USUARIOS_WEBSERVICES, usuario);
-		DatosRespuestaGetUrlPago res = port.getUrlPago(refsModelos, codigoEntidad, urlVuelta);
-		return res;
+		return port.getUrlPago(refsModelos, codigoEntidad, urlVuelta);
 	}
 	
 }

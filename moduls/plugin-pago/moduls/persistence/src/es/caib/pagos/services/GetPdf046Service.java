@@ -13,20 +13,19 @@ import es.caib.pagos.util.Constants;
 
 public class GetPdf046Service { 
 	
-	private String url;
+	private final String url;
 	
-	public GetPdf046Service(String url) {
+	public GetPdf046Service(final String url) {
 		this.url = url;
 	}
 
-	public byte[] execute(String localizador, String importeaingresar,
-			String nifsujetopasivo, String fechacreacion, UsuariosWebServices usuario) throws ServiceException, RemoteException{
-		Service_TasaLocator sl = new Service_TasaLocator();
+	public byte[] execute(final String localizador, final String importeaingresar,
+			final String nifsujetopasivo, final String fechacreacion, final UsuariosWebServices usuario) throws ServiceException, RemoteException{
+		final Service_TasaLocator sl = new Service_TasaLocator();
 		sl.setEndpointAddress(Constants.SERVICE_SOAP, url);
-		Service_TasaSoap port = sl.getService_TasaSoap();
+		final Service_TasaSoap port = sl.getService_TasaSoap();
 		((Service_TasaSoapStub)port).setHeader(Constants.NAMESPACE_ATIB, Constants.PARTNAME_USUARIOS_WEBSERVICES, usuario);
-		byte[] res = port.getPdf046(localizador, importeaingresar, nifsujetopasivo, fechacreacion);
-		return res;
+		return port.getPdf046(localizador, importeaingresar, nifsujetopasivo, fechacreacion);
 	}
 
 

@@ -40,16 +40,16 @@ public class JustificantePago extends DocXml{
 		return localizador;
 	}
 
-	public JustificantePago(String justificanteXML) {
-		ByteArrayInputStream bais = new ByteArrayInputStream(justificanteXML.getBytes());
+	public JustificantePago(final String justificanteXML) {
+		final ByteArrayInputStream bais = new ByteArrayInputStream(justificanteXML.getBytes());
 		parse(bais);
 		initialize();
 	}
 	
 	
-	private void initDatosPago(Node nodo)
+	private void initDatosPago(final Node nodo)
 	{
-		Node l_child = UtilXml.getFirstChild(nodo);
+		final Node l_child = UtilXml.getFirstChild(nodo);
 
 		if (l_child != null)
 		{
@@ -61,7 +61,7 @@ public class JustificantePago extends DocXml{
 				{
 					if (l_xchild.getNodeName().equalsIgnoreCase("LOCALIZADOR"))
 					{
-						Node l_textChild = UtilXml.getFirstChild(l_xchild);
+						final Node l_textChild = UtilXml.getFirstChild(l_xchild);
 						if (l_textChild != null)
 						{
 							this.localizador = (String)l_textChild.getNodeValue();
@@ -69,7 +69,7 @@ public class JustificantePago extends DocXml{
 					}
 					else if (l_xchild.getNodeName().equalsIgnoreCase("DUI"))
 					{
-						Node l_textChild = UtilXml.getFirstChild(l_xchild);
+						final Node l_textChild = UtilXml.getFirstChild(l_xchild);
 						if (l_textChild != null)
 						{
 							this.dui = (String)l_textChild.getNodeValue();
@@ -77,7 +77,7 @@ public class JustificantePago extends DocXml{
 					}
 					else if (l_xchild.getNodeName().equalsIgnoreCase("FECHA_PAGO"))
 					{
-						Node l_textChild = UtilXml.getFirstChild(l_xchild);
+						final Node l_textChild = UtilXml.getFirstChild(l_xchild);
 						if (l_textChild != null)
 						{
 							this.fechaPago = (String)l_textChild.getNodeValue();
@@ -94,7 +94,7 @@ public class JustificantePago extends DocXml{
 	}
 
 	
-	private int initDatos(Node nodo)
+	private int initDatos(final Node nodo)
 	{
 		Node l_child = UtilXml.getFirstChild(nodo);
 
@@ -106,7 +106,7 @@ public class JustificantePago extends DocXml{
 				{
 					if (l_child.getNodeName().equalsIgnoreCase("FIRMA"))
 					{
-						Node l_textChild = UtilXml.getFirstChild(l_child);
+						final Node l_textChild = UtilXml.getFirstChild(l_child);
 						if (l_textChild != null)
 						{
 							this.firma = (String)l_textChild.getNodeValue();
@@ -130,7 +130,7 @@ public class JustificantePago extends DocXml{
 	}
 
 	
-	public void initialize(){
+	private void initialize(){
 
 		try{		
 			

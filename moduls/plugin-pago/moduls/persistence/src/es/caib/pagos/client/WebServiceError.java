@@ -26,17 +26,18 @@ public class WebServiceError {
 	public static final int ERROR_FECHA_PAGO = 95; //Código error al convertir fecha de pago
 	public static final int ERROR_MSG_XML = 96; //Código error al crear mensaje XML
 	public static final int ERROR_INDETERMINADO = 99; //Código error indeterminado
+	public static final int ERROR_CIFRADO = 100; //Código error al cifrar
 	
 	private int codigo;
 	private String error = null;
 	
-	public WebServiceError(int codigo, String error) {
+	public WebServiceError(final int codigo, final String error) {
 		super();
 		this.codigo = codigo;
 		this.error = error;
 	}
 	
-	public WebServiceError(Integer codigo, String error) {
+	public WebServiceError(final Integer codigo, final String error) {
 		super();
 		this.codigo = codigo.intValue();
 		this.error = error;
@@ -46,7 +47,7 @@ public class WebServiceError {
 		return error;
 	}
 
-	public void setError(String error) {
+	public void setError(final String error) {
 		this.error = error;
 	}
 
@@ -54,7 +55,7 @@ public class WebServiceError {
 		return codigo;
 	}
 
-	public void setCodigo(int codigo) {
+	public void setCodigo(final int codigo) {
 		this.codigo = codigo;
 	}
 	

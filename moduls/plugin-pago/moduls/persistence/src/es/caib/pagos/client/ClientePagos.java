@@ -1,14 +1,18 @@
 package es.caib.pagos.client;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Hashtable;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.caib.pagos.exceptions.CifradoException;
 import es.caib.pagos.exceptions.ClienteException;
 import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.persistence.delegate.DelegateUtil;
+import es.caib.pagos.util.Cifrar;
 import es.caib.pagos.util.Constants;
+import es.caib.signatura.utils.Base64;
 
 
 /**
@@ -18,7 +22,7 @@ import es.caib.pagos.util.Constants;
  *
  */
 
-public class ClientePagos {
+public final class ClientePagos {
 
 	private static Log log = LogFactory.getLog(ClientePagos.class);
 	
@@ -31,11 +35,14 @@ public class ClientePagos {
 	private static final String GET_PDF_046 = "getPdf046";
 	private static final String GET_URL_PAGO = "getUrlPago";
 	private static final String PAGAR_CON_TARJETA = "pagarConTarjeta";
+	
+	//clave cifrar datos tarjeta
 
-		
+	private static final String CLAVE = "8B4tuXwn";
+	private static final String INIT_VECTOR = "8B4tuXwn";
+	
 	private Hashtable actions = null;
 	private String url = "";
-	private String fase = "pruebas";
 
 	/** 
 	 * Constructor
@@ -60,15 +67,15 @@ public class ClientePagos {
 	/**
 	 * Metodo que inicializa las acciones que se pueden hacer con el Cliente de Pagos.
 	 * 
-	 * Inicializa la url a la que se enviar醤 las peticiones del WebService. Dicho valor se coge
+	 * Inicializa la url a la que se enviar谩n las peticiones del WebService. Dicho valor se coge
 	 * del fichero ClientePagos.properties
 	 * @throws DelegateException 
 	 *
 	 */
 	protected void init() throws DelegateException 
 	{ 
-		this.fase = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("fase");
-		this.url = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("url." + this.fase);
+		final String fase = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("fase");
+		this.url = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("url." + fase);
 				
 		this.actions = new Hashtable();
 		this.actions.put(IMPORTE_TASA,new ImporteTasaAction()); //ConsultaDatosTasa046
@@ -81,7 +88,7 @@ public class ClientePagos {
 	}
 	
 	/**
-	 * Llama a la operaci髇 ConsultaDatosTasa046
+	 * Llama a la operaci贸n ConsultaDatosTasa046
 	 * Servicio para Saber el Importe de una Tasa
 	 * @param tasa
 	 * @return Devuelve un Long con el valor de la Tasa. 
@@ -96,7 +103,7 @@ public class ClientePagos {
 		final Hashtable results = ejecutarAccion(data, IMPORTE_TASA);
 
 		String ls_importe = (String) results.get(Constants.KEY_IMPORTE);
-		final int idx = ls_importe.indexOf(',');//TODO comprobar que va bien el cambio de "," por ','
+		final int idx = ls_importe.indexOf(',');
 		if(idx != -1) // Proteccion
 		{
 			ls_importe = ls_importe.substring(0,idx);
@@ -131,7 +138,7 @@ public class ClientePagos {
 	}
 	
 	/**
-	 * Servicio para comprobar un Pago a trav閟 del localizador
+	 * Servicio para comprobar un Pago a trav茅s del localizador
 	 * @param localizador
 	 * @return Devuelve un hashtable con la fecha de pago, el localizador y la firma
 	 * @throws ClienteException
@@ -192,17 +199,34 @@ public class ClientePagos {
 		
 		final Hashtable data = new Hashtable();
 		data.put(Constants.KEY_REFS_MODELOS, refsModelos);
-		data.put(Constants.KEY_NUM_TARJETA, numeroTarjeta);
-		data.put(Constants.KEY_CAD_TARJETA, caducidadTarjeta);
-		data.put(Constants.KEY_TIT_TARJETA, titularTarjeta);
-		data.put(Constants.KEY_CVV_TARJETA, cvvTarjeta);
 		
+		//encriptamos los datos de la tarjeta
+		//3 por los tres #
+		final int longitud = 3 + numeroTarjeta.length() + caducidadTarjeta.length() + titularTarjeta.length() + cvvTarjeta.length();
+		final StringBuilder sb = new StringBuilder(longitud);
+		
+		sb.append(numeroTarjeta);
+		sb.append("#");
+		sb.append(caducidadTarjeta);
+		sb.append("#");
+		sb.append(titularTarjeta);
+		sb.append("#");
+		sb.append(cvvTarjeta);
+
+		final String datosTarjeta = sb.toString();
+		
+		try {
+			final byte[] datosCifrados = Cifrar.cifrar(datosTarjeta.getBytes(Constants.CHARSET), CLAVE, INIT_VECTOR);
+			data.put(Constants.KEY_DATOS_TARJETA, Base64.encodeBytes(datosCifrados));
+		} catch (UnsupportedEncodingException ue) { 
+			//TODO revisar mensaje
+			throw new ClienteException(WebServiceError.ERROR_CIFRADO, "Error durante el cifrado de datos de la tarjeta", ue);
+		} catch (CifradoException ce) {
+			//TODO revisar mensaje
+			throw new ClienteException(WebServiceError.ERROR_CIFRADO, "Error durante el cifrado de datos de la tarjeta", ce);
+		}
+
 		log.debug(PAGAR_CON_TARJETA);
-		//No es seguro imprimir esto en el log
-//		log.debug("Numero tarjeta: " + numeroTarjeta);
-//		log.debug("Fecha caducidad: " + caducidadTarjeta);
-//		log.debug("Titular " + titularTarjeta);
-//		log.debug("CVV " + cvvTarjeta);
 		
 		final Hashtable results = ejecutarAccion(data, PAGAR_CON_TARJETA);
 	
@@ -237,20 +261,16 @@ public class ClientePagos {
 	}
 	
 	/**
-	 * Ejecuta una acci髇 del WS
-	 * @param data Par醡etros de la acci髇
-	 * @param accion Nombre de la acci髇 a ejecutar
-	 * @return Resultado de la ejecuci髇
+	 * Ejecuta una acci贸n del WS
+	 * @param data Par谩metros de la acci贸n
+	 * @param accion Nombre de la acci贸n a ejecutar
+	 * @return Resultado de la ejecuci贸n
 	 * @throws ClienteException 
 	 */
 	private Hashtable ejecutarAccion(final Hashtable data, final String accion) throws ClienteException {
 		final WebServiceAction action = (WebServiceAction) actions.get(accion);
-		Hashtable results = null;
-		try {
-			results = action.execute(this,data);
-		} catch (Exception e) {
-			throw new ClienteException(WebServiceError.ERROR_INDETERMINADO, "Error indeterminado.", e);
-		}
+		final Hashtable results = action.execute(this,data);
+	
 		if(results != null && results.containsKey(Constants.KEY_ERROR))
 		{
 			final WebServiceError error = (WebServiceError) results.get(Constants.KEY_ERROR);
@@ -273,7 +293,7 @@ public class ClientePagos {
 	 * Metodo para establecer la URL del WebService
 	 * @param url
 	 */
-	public void setUrl(String url) {
+	public void setUrl(final String url) {
 		this.url = url;
 	}
 

@@ -125,6 +125,11 @@ public class Constants implements Serializable {
     public static final String KEY_JUSTIFICANTE = "justificante";
     
     /**
+     * Clave para almacenar los valores del justificante
+     */
+    public static final String KEY_DATOS_TARJETA = "datosTarjeta";
+    
+    /**
      * Nombre del servicio soap
      */
 	public static final String SERVICE_SOAP = "Service_TasaSoap";

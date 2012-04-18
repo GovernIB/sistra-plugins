@@ -7,9 +7,11 @@ import java.util.Hashtable;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.axis.encoding.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.caib.pagos.exceptions.ParametroTasaException;
 import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.services.InicioPagoService;
 import es.caib.pagos.services.wsdl.DatosRespuesta046;
@@ -29,67 +31,51 @@ public class InicioPagoAction implements WebServiceAction {
 
 	private static Log log = LogFactory.getLog(InicioPagoAction.class);
 
-	public Hashtable execute(ClientePagos cliente, Hashtable data) throws Exception{
-		Hashtable resultado = new Hashtable();
-		Tasa tasa = (Tasa)data.get(Constants.KEY_TASA);
-		String ls_handleB64;
-				
+	public Hashtable execute(final ClientePagos cliente, final Hashtable data) {
+
+		final Hashtable resultado = new Hashtable();
 		try {
-			ls_handleB64 = getParametroPeticion(tasa);
-		} catch (InicializacionFactoriaException e) {
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_MSG_XML, "Error en la Inicializacion de la Factoria de Objetos XML"));
-			//log.error("Error en la Inicializacion de la Factoria de Objetos XML. Excepción: " + e.getMessage());
-			return resultado;
-		} catch (EstablecerPropiedadException e) {
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_MSG_XML, "Error en la construccion del XML:" + e.toString()));
-			//log.error("Error en la construccion del XML:" + e.toString() + " Excepción: " + e.getMessage());
-			return resultado;
-		} catch (GuardaObjetoXMLException e) {
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_MSG_XML, "Error al pasar el objeto Tasa a XML: " + e.toString()));
-			//log.error("Error al pasar el objeto Tasa a XML: " + e.toString() + " Excepción: " + e.getMessage());
-			return resultado;
-		} catch (UnsupportedEncodingException e) {
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_MSG_XML, "Error al convertir a Base64"));
-			//log.error("Error al convertir a Base64. Excepción: " + e.getMessage());
-			return resultado;
-		}
+			final Tasa tasa = (Tasa)data.get(Constants.KEY_TASA);
+			final String ls_handleB64 = getParametroTasa(tasa);
 						
-		//llamamos al servicio
-		
-		InicioPagoService service = new InicioPagoService(cliente.getUrl());
-		
-		DatosRespuesta046 ls_resultado = null;
-		try {
-			UsuariosWebServices usuario = UtilWs.getUsuario();
-			ls_resultado = service.execute(ls_handleB64, usuario);
+			final InicioPagoService service = new InicioPagoService(cliente.getUrl());
+			 
+			final UsuariosWebServices usuario = UtilWs.getUsuario();
+			final DatosRespuesta046 ls_resultado = service.execute(ls_handleB64, usuario);
 			log.debug("Localizador: " + ls_resultado.getLocalizador());
+	
+			if (ls_resultado == null) {
+				resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio InicioPago."));
+				log.error("No se ha obtenido respuesta del servicio InicioPago.");
+			} else {
+				if (ls_resultado.getCodError() == null) {
+						resultado.put(Constants.KEY_LOCALIZADOR, ls_resultado.getLocalizador());
+						resultado.put(Constants.KEY_TOKEN, ls_resultado.getToken());
+				} else {
+					resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
+					log.error(ls_resultado.getTextError());
+				}
+			}
+			
+		} catch (ParametroTasaException pte) {
+			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_MSG_XML, pte.getMessage()));
+			log.error(pte.getMessage());
 		} catch (DelegateException de) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_PROPERTIES, "Error obteniendo los valores de usuario web service. " + de.getMessage()));
-			return resultado;
+			log.error("Error obteniendo los valores de usuario web service. " + de.getMessage());
 		} catch (ServiceException e) {
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error de comunicación con el servicio InicioPago. " + e.getMessage()));
-			return resultado;
+			log.error("Error de comunicación con el servicio InicioPago. " + e.getMessage());
 		} catch (RemoteException e) { 
 			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_COMUNICACION, "Error de comunicación con el servicio InicioPago. " + e.getMessage()));
-			return resultado;
-		}
-		
-		if (ls_resultado == null) {
-			resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_RESPUESTA_NULA, "No se ha obtenido respuesta del servicio InicioPago."));
-		} else {
-			if (ls_resultado.getCodError() == null) {
-					resultado.put(Constants.KEY_LOCALIZADOR, ls_resultado.getLocalizador());
-					resultado.put(Constants.KEY_TOKEN, ls_resultado.getToken());
-			} else {
-				resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
-			}
+			log.error("Error de comunicación con el servicio InicioPago. " + e.getMessage());
 		}
 
 		return resultado;
 	}
 	
 	/**
-	 * Construimos el parametro para enviar en la petición al WS
+	 * Construimos el parametro de la tasa para enviar en la petición al WS
 	 * @param tasa 
 	 * @return
 	 * @throws InicializacionFactoriaException 
@@ -98,17 +84,29 @@ public class InicioPagoAction implements WebServiceAction {
 	 * @throws UnsupportedEncodingException 
 	 * @throws Exception
 	 */
-	private String getParametroPeticion(Tasa tasa) throws EstablecerPropiedadException, InicializacionFactoriaException ,
-		GuardaObjetoXMLException, UnsupportedEncodingException {
-		 //TODO Mejorar este método
-		FactoriaObjetosXMLTaxa factoria = ServicioTaxaXML.crearFactoriaObjetosXML();
-		Taxa tx = factoria.crearTaxa();
-		copyTasa2Taxa(tasa,tx);
-		String tasaXML = factoria.guardarTaxa(tx);
+	private String getParametroTasa(final Tasa tasa) throws ParametroTasaException {
+		 
+		FactoriaObjetosXMLTaxa factoria;
+		try {
+			factoria = ServicioTaxaXML.crearFactoriaObjetosXML();
+			final Taxa tx = factoria.crearTaxa();
+			copyTasa2Taxa(tasa,tx);
+			final String tasaXML = factoria.guardarTaxa(tx);
+			
+			final byte[] handleContent = tasaXML.getBytes(Constants.CHARSET);
+			return new String(Base64.encode(handleContent));
+			
+		} catch (InicializacionFactoriaException ife) {
+			throw new ParametroTasaException("Error en la Inicializacion de la Factoria de Objetos XML: " + ife.getMessage(), ife);
+		} catch (EstablecerPropiedadException epe) {
+			throw new ParametroTasaException("Error en la construccion del XML: " + epe.getMessage(), epe);
+		} catch (GuardaObjetoXMLException goxe) {
+			throw new ParametroTasaException("Error al pasar el objeto Tasa a XML: " + goxe.getMessage(), goxe);
+		} catch (UnsupportedEncodingException uee) {
+			throw new ParametroTasaException("Error al convertir a Base64: " + uee.getMessage(), uee);
+		}
 		
-		byte[] handleContent = tasaXML.getBytes(Constants.CHARSET);
 		
-		return new String(Base64.encode(handleContent));
 	}
 	
 	/**
@@ -119,7 +117,7 @@ public class InicioPagoAction implements WebServiceAction {
 	 * @throws InicializacionFactoriaException 
 	 * @throws Exception
 	 */
-	private void copyTasa2Taxa(Tasa ts, Taxa tx) throws EstablecerPropiedadException, InicializacionFactoriaException 
+	private void copyTasa2Taxa(final Tasa ts, final Taxa tx) throws EstablecerPropiedadException, InicializacionFactoriaException 
 	{
 		// copiamos cada uno de los atributos
 		
@@ -164,7 +162,7 @@ public class InicioPagoAction implements WebServiceAction {
 			tx.setSubconcepte(ts.getSubConcepto());
 		}
 		
-		Declarant decl = getDeclarant(ts);
+		final Declarant decl = getDeclarant(ts);
 		
 		tx.setDeclarant(decl);
 		
@@ -178,10 +176,12 @@ public class InicioPagoAction implements WebServiceAction {
 	 * @throws EstablecerPropiedadException
 	 * @throws InicializacionFactoriaException
 	 */
-	private Declarant getDeclarant(Tasa ts) throws EstablecerPropiedadException, InicializacionFactoriaException
+	private Declarant getDeclarant(final Tasa ts) throws EstablecerPropiedadException, InicializacionFactoriaException
 	{
-		FactoriaObjetosXMLTaxa factoria = ServicioTaxaXML.crearFactoriaObjetosXML();
-		Declarant decl = factoria.crearDeclarant();
+		//TODO -- > refactorizar y eliminar los if (...!= null)
+		final FactoriaObjetosXMLTaxa factoria = ServicioTaxaXML.crearFactoriaObjetosXML();
+		final Declarant decl = factoria.crearDeclarant();
+		
 		decl.setCodiCodiPostal(ts.getCodigoCodigoPostal());
 		if(ts.getCodigoPostal() != null)
 		{
@@ -200,13 +200,8 @@ public class InicioPagoAction implements WebServiceAction {
 		if(ts.getNif() != null)
 		{
 			decl.setCodiNIF(ts.getCodigoNif());
-			if (ts.getNif().length() < 9){
-				String relleno = "";
-				for (int i=ts.getNif().length();i<9;i++) relleno += "0";
-				decl.setNIF(relleno + ts.getNif());  
-			}else{				
-				decl.setNIF(ts.getNif());
-			}
+			final String nif = StringUtils.leftPad(ts.getNif(), 9, "0");
+			decl.setNIF(nif);
 		}
 		if(ts.getNombre() != null)
 		{
@@ -223,59 +218,57 @@ public class InicioPagoAction implements WebServiceAction {
 		{
 			decl.setTelefon(ts.getTelefono());
 		}
-		int filled = 0;
-		Domicili domicili = factoria.crearDomicili();
-		{
-			if(ts.getEscala() != null)
-			{
-				domicili.setCodiEscala(ts.getCodigoEscala());
-				domicili.setEscala(ts.getEscala());
-				filled++;
-			}
-			if(ts.getLetra() != null)
-			{
-				domicili.setCodiLletra(ts.getCodigoLetra());
-				domicili.setLletra(ts.getLetra());
-				filled++;
-			}
-			if(ts.getNombreVia() != null)
-			{
-				domicili.setCodiNomVia(ts.getCodigoNombreVia());
-				domicili.setNomVia(ts.getNombreVia());
-				filled++;
-			}
-			if(ts.getNumero() != null)
-			{
-				domicili.setCodiNumero(ts.getCodigoNumero());
-				domicili.setNumero(ts.getNumero());
-				filled++;
-			}
-			if(ts.getPiso() != null)
-			{
-				domicili.setCodiPis(ts.getCodigoPiso());
-				domicili.setPis(ts.getPiso());
-				filled++;
-			}
-			if(ts.getPuerta() != null)
-			{
-				domicili.setCodiPorta(ts.getCodigoPuerta());
-				domicili.setPorta(ts.getPuerta());
-				filled++;
-			}
-			if(ts.getSiglas() != null)
-			{
-				domicili.setCodiSigles(ts.getCodigoSiglas());
-				domicili.setSigles(ts.getSiglas());
-				filled++;
-			}
-		}
-		if(filled > 0)
-		{
-			decl.setDomicili(domicili);
-		}
 		
+		final Domicili domicili = getDomicili(ts, factoria);
+		
+		decl.setDomicili(domicili);
+
 		return decl;
 		
+	}
+
+	private Domicili getDomicili(final Tasa ts,	final FactoriaObjetosXMLTaxa factoria) throws EstablecerPropiedadException {
+		
+		final Domicili domicili = factoria.crearDomicili();
+		
+		if(ts.getEscala() != null)
+		{
+			domicili.setCodiEscala(ts.getCodigoEscala());
+			domicili.setEscala(ts.getEscala());
+		}
+		if(ts.getLetra() != null)
+		{
+			domicili.setCodiLletra(ts.getCodigoLetra());
+			domicili.setLletra(ts.getLetra());
+		}
+		if(ts.getNombreVia() != null)
+		{
+			domicili.setCodiNomVia(ts.getCodigoNombreVia());
+			domicili.setNomVia(ts.getNombreVia());
+		}
+		if(ts.getNumero() != null)
+		{
+			domicili.setCodiNumero(ts.getCodigoNumero());
+			domicili.setNumero(ts.getNumero());
+		}
+		if(ts.getPiso() != null)
+		{
+			domicili.setCodiPis(ts.getCodigoPiso());
+			domicili.setPis(ts.getPiso());
+		}
+		if(ts.getPuerta() != null)
+		{
+			domicili.setCodiPorta(ts.getCodigoPuerta());
+			domicili.setPorta(ts.getPuerta());
+		}
+		if(ts.getSiglas() != null)
+		{
+			domicili.setCodiSigles(ts.getCodigoSiglas());
+			domicili.setSigles(ts.getSiglas());
+		}
+		
+		return domicili;
+
 	}
 
 }

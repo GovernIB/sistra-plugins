@@ -13,7 +13,7 @@ import es.caib.sistra.plugins.pagos.EstadoSesionPago;
 public class SesionPagoDelegate implements Delegate 
 {
 
-	public void create(String token)
+	public void create(final String token)
 			throws DelegateException
 	{
 		try
@@ -133,7 +133,7 @@ public class SesionPagoDelegate implements Delegate
 	}
 	
 	
-	public int realizarPagoTarjeta(String numeroTarjeta, String caducidadTarjeta, String titularTarjeta, String cvvTarjeta) throws DelegateException
+	public int realizarPagoTarjeta(final String numeroTarjeta, final String caducidadTarjeta, final String titularTarjeta, final String cvvTarjeta) throws DelegateException
 	{
 		try
 		{
@@ -141,10 +141,10 @@ public class SesionPagoDelegate implements Delegate
 		} catch (EJBException e)
 		{
 			throw new DelegateException(e);
-		}
+		} 
 	}
 	
-	public String realizarPagoBanca(String codigoEntidad, String urlVuelta) throws DelegateException
+	public String realizarPagoBanca(final String codigoEntidad, final String urlVuelta) throws DelegateException
 	{
 		try
 		{
