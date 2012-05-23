@@ -38,7 +38,7 @@
    <module>
         <web>
             <web-uri>sistra-checkEmail.war</web-uri>
-            <context-root>sistraCheckEmail</context-root>
+            <context-root>/mobtratelback/checkEmail</context-root>
         </web>
     </module>
     
