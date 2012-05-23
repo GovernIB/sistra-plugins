@@ -692,22 +692,36 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	}
 	
 	private Vector buscarOficinas() throws Exception {
+		
+		// Comprobamos si esta configurada una unica oficina de registro telematico configurada en properties
+		String oficina = getCodigoOficinaRegistroTelematica();
 		Vector resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
-			ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					ValoresFacadeHome.class);
-			resposta = home.create().buscarOficinasFisicasDescripcion("tots", "totes");
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
+		if (oficina != null) {
+			resposta = new Vector();
+			String[] cods = descomponerOficinaFisica(oficina);
+			String[] desc = descomponerOficinaFisica(getDescripcionOficinaRegistroTelematica());
+			resposta.add(cods[0]);
+			resposta.add(cods[1]);
+			resposta.add(desc[0]);
+			resposta.add(desc[1]);			
+		} else {
+			// Si no hay configurada una unica, devolvemos todas
+			LoginContext lc = null;
+			try {
+				lc = doLogin();
+				Context ctx = getInitialContext();
+				Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
+				ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
+						objRef,
+						ValoresFacadeHome.class);
+				resposta = home.create().buscarOficinasFisicasDescripcion("tots", "totes");
+				ctx.close();
+			} finally {
+				if (lc != null)
+					lc.logout();
+			}
 		}
-		return resposta;
+		return resposta;	
 	}
 	
 	
@@ -847,5 +861,21 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	
 	private String[] descomponerOficinaFisica(String oficinaFisica) {
 		return oficinaFisica.split(REGEXP_SEPARADOR_OFICINA_FISICA);
+	}
+	
+	private String getCodigoOficinaRegistroTelematica() throws Exception {
+		String oficina = getConfig().getProperty("plugin.regweb.oficinaTelematicaUnica.codigo");
+		if (oficina != null) {
+			oficina = oficina.trim();
+		}
+		return oficina;		
+	}
+	
+	private String getDescripcionOficinaRegistroTelematica() throws Exception {
+		String oficina = getConfig().getProperty("plugin.regweb.oficinaTelematicaUnica.descripcion");
+		if (oficina != null) {
+			oficina = oficina.trim();
+		}
+		return oficina;		
 	}
 }
