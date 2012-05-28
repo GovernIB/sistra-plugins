@@ -120,11 +120,13 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		log.debug("Confirmar pago");
 	
 		// Comprobamos si esta en estado pendiente de confirmacion
+		// en ese caso no es necesario hacer la comprobación 
 		if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR){
-			log.error("El pago no está pendiente de confirmar");
+			log.info("El pago no está pendiente de confirmar");
 			return -1;			   
 		}
 	   
+		
 		// Si es telematico comprobamos contra la pasarela de pagos si esta pagado  
 		if (sesionPago.getEstadoPago().getTipo() == ConstantesPago.TIPOPAGO_TELEMATICO){
 			 
@@ -137,7 +139,8 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				// Comprobamos contra pasarela de pagos
 				try {
 					Hashtable resultado = PasarelaPagos.comprobarPago(sesionPago.getEstadoPago().getIdentificadorPago());
-					if (((String)resultado.get(Constants.KEY_FIRMA)).length() > 0) {
+					
+					if (resultado.containsKey(Constants.KEY_FIRMA) && ((String)resultado.get(Constants.KEY_FIRMA)).length() > 0) {
 						justificantePagoXML = generarJustificante((String)resultado.get(Constants.KEY_FIRMA));
 					}
 				} catch(ComprobarPagoException e){
@@ -402,19 +405,18 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		    // Obtenemos el fichero 
 		    byte[] datosFichero = PasarelaPagos.getPdf046(resPagos.getLocalizador(), sesionPago.getDatosPago().getImporte(), 
 		    		sesionPago.getDatosPago().getNifDeclarante(), new Date());
-		    sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR);
+		    sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO);
 			actualizaModeloPagos();
 	    
 	        return datosFichero;
 		} catch (InicioPagoException ex) {
 			//log.error("Error al iniciar la sesion de pagos.");
-			throw new EJBException("sesionPagos.errorComprobarPago", ex);
+			throw new EJBException("sesionPagos.errorComprobarPago");
 		} catch (GetPdf046Exception ce) {
 			//log.error("Error al obtener la carta de pago.");
-			throw new EJBException("sesionPagos.errorGenericoComprobarPago", ce);
+			throw new EJBException("sesionPagos.errorGenericoComprobarPago");
 		}
-		
-		
+
 	}
 
 
@@ -535,7 +537,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		    		sesionPago.getDatosPago().getNifDeclarante(), sesionPago.getDatosPago().getFechaDevengo());
 		} catch (GetPdf046Exception ce) {
 			log.error("Error al obtener el justificante de pago.");
-			throw new EJBException("sesionPagos.errorGenericoComprobarPago", ce);
+			throw new EJBException("sesionPagos.errorGenericoComprobarPago");
 		}
     
 		

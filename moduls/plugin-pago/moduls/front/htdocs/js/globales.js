@@ -164,7 +164,6 @@ function mostrarFondo() {
 function accediendoEnviando(mensaje) {
 	
 	contenido = mensaje;
-
 	var capaIF = document.getElementById('capaInfoFondo');
 	var capaI = document.getElementById('capaInfoForms');
 	// tama?os de la ventana y la p?gina
@@ -220,8 +219,13 @@ function mostrarCapa() {
 		clearTimeout(tiempo);
 		opacidad = 0;
 	}
+	
 }
 
+function cerrarCapaDescarga() {
+	document.getElementById('capaInfoForms').style.display = 'none';
+	document.getElementById('capaInfoFondo').style.display = 'none';
+}
 // capa de informaci?n. Puede ser: info, error, ok.
 function mostrarInfo() {
 	var capaI = document.getElementById('capaInfo');

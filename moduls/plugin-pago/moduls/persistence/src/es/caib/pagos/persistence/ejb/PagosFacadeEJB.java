@@ -40,7 +40,7 @@ import es.caib.sistra.plugins.pagos.SesionSistra;
  *
  */
 public class PagosFacadeEJB extends HibernateEJB  {
-
+ 
 	private static Log log = LogFactory.getLog(PagosFacadeEJB.class);
 	
 	/**

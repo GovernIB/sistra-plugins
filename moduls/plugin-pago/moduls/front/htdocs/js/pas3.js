@@ -18,3 +18,7 @@ $(document).ready(function() {
 		$(this).parent().parent().find(".infoDoc").slideToggle("slow");
 	});
 });
+
+
+
+

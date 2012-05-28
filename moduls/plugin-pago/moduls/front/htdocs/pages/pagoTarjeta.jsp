@@ -34,12 +34,7 @@
 <p>
 	<bean:message key="pago.tarjeta.continuarTramitacion" />
 </p>
-<p class="alerta">
-		<bean:message key="pago.tarjeta.continuarTramitacion5" />
-		<a href="reanudarPago.do">
-		<bean:message key="pago.seleccionarPago" />
-		</a>.
-</p>
+
 <p>
 	<bean:message key="pago.tarjeta.continuarTramitacion2" />
 </p>
@@ -102,7 +97,11 @@
 		</html:form>
 	</div>
 </div>
-
+<p class="volver">
+	<html:link href="reanudarPago.do">
+		<bean:message key="pago.seleccionarPago" />
+	</html:link>
+</p>
 <!-- capa mensaje accediendo -->
 <div id="capaInfoFondo"></div>
 <div id="capaInfoForms"></div>

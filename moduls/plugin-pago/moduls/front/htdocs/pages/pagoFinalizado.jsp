@@ -30,42 +30,39 @@
 	</ul>
 </div>
 <bean:define id="urlRetornoSistra" value="<%=((java.lang.String) session.getAttribute(es.caib.pagos.front.Constants.URL_RETORNO_SISTRA_KEY))%>" type="java.lang.String"/>
-<div>
-<p>
+<div> 
 	<logic:equal name="resultadoPago" value="1">
+	<p>
 		<bean:message key="pago.tarjeta.resultadoOK" />
-		<a href="<%=urlAbrirDocumento%>" class="veure">
+	</p>
+	<p>
+		<bean:message key="pago.tarjeta.descargaJustificante" />
+	</p>
+	<p class="centro">	<a class="veure" href="<%=urlAbrirDocumento%>">
+			<img src="./imgs/icona/mode_presencial.gif" alt="" /> 
 			<bean:message key="pago.tarjeta.justificante" />
 		</a>
-	
-		<bean:message key="pago.tarjeta.salirAsistente" />
-		<!--  Enlace volver  -->
-	<html:link href="<%=urlRetornoSistra%>">
-		<bean:message key="pago.volver.asistenteTramitacion" />
-	</html:link>
+	</p>
 	</logic:equal>
 	<logic:equal name="resultadoPago" value="0">
+	<p>
 		<bean:message key="pago.tarjeta.resultadoNK" />
-		<bean:message key="pago.tarjeta.salirAsistente" />
-			<html:link href="<%=urlRetornoSistra%>">
-		<bean:message key="pago.volver.asistenteTramitacion" />
-	</html:link>
+	</p>
 	</logic:equal>
 	<logic:equal name="resultadoPago" value="-1">
+	<p>
 		<bean:message key="pago.tarjeta.errorComunicacion" />
-		<bean:message key="pago.telematico.continuarTramitacion" />
+		<bean:message key="pago.tarjeta.continuarTramitacion6" />
+	</p>
 	</logic:equal>
-</p>
-
 </div>
-<logic:equal name="resultadoPago" value="-1">
+
 <html:form action="/confirmarPago">		
 	<html:hidden property="modoPago" value="T"/>
 	<div class="botonera">
 		<html:submit>
-			<bean:message key="pago.confirmarPagoTelematico"/>
+			<bean:message key="pago.continuarTramitacion"/>
 		</html:submit>
 	</div>
 </html:form>
-</logic:equal>
 

@@ -45,5 +45,12 @@ $(document).ready(function() {
 		$("#tarjeta").hide();
 		$("#presencial").show();
 	});
+	//seleccion de banco
+	$("#banca a").click(function() {
+	    var value = $(this).attr( 'href' );
+	    $("#banco").val(value);
+	    $("#pagoBancaForm").submit();
+	    return false;
+	});
 	
 });

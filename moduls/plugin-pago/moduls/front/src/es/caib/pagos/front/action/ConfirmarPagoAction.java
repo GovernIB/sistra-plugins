@@ -13,6 +13,7 @@ import es.caib.pagos.front.Constants;
 import es.caib.pagos.front.form.PagoForm;
 import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
 import es.caib.sistra.plugins.pagos.ConstantesPago;
+import es.caib.sistra.plugins.pagos.EstadoSesionPago;
 
 /**
  * @struts.action 
@@ -28,6 +29,9 @@ import es.caib.sistra.plugins.pagos.ConstantesPago;
  * @struts.action-forward
  *  name="presencial" path=".pagoPresencial"
  *  
+ * @struts.action-forward
+ * 	name="success" path=".pagoFinalizado"
+ *  
  */
 public class ConfirmarPagoAction extends BaseAction
 {
@@ -39,27 +43,34 @@ public class ConfirmarPagoAction extends BaseAction
     {
 		// Realizamos la confirmacion del pago
 		try{
-			PagoForm pagoForm = (PagoForm) form;
 			SesionPagoDelegate dlg = getSesionPago(request);
-			
+			EstadoSesionPago estado = dlg.obtenerEstadoSesionPago();
+			PagoForm pagoForm = (PagoForm)form;
 			int resultado = dlg.confirmarPago();
 			
 			switch (resultado){
 				case 1: // PAGADO
-					String urlRetornoSistra = dlg.obtenerUrlRetornoSistra();
-		 			response.sendRedirect(urlRetornoSistra);
-					return null;
+					request.setAttribute("resultadoPago", resultado);
+					return mapping.findForward("success");
 				case 0: // NO PAGADO
 					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorConfirmarPago.noPagado");
 					return mapping.findForward("fail");
-				case -1: // ERROR ESTADO DIFERENTE PENDIENTE DE PAGO 
-					if (String.valueOf(ConstantesPago.TIPOPAGO_PRESENCIAL).equals(pagoForm.getModoPago())) {
-						request.setAttribute("mostrarAlerta","sesionPagos.errorComprobarPago");
-						return mapping.findForward("presencial");
+				case -1: // ESTADO DIFERENTE PENDIENTE DE PAGO
+					// PUEDE SER CONFIRMADO O QUE TODAVIA ESTA EN EL ESTADO INICIAL
+					if (ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO == estado.getEstado()) {
+						String urlRetornoSistra = dlg.obtenerUrlRetornoSistra();
+						response.sendRedirect(urlRetornoSistra);
+						return null;
 					} else {
-						request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
-						return mapping.findForward("fail");
+						if (ConstantesPago.TIPOPAGO_PRESENCIAL == estado.getTipo()) {
+							request.setAttribute("mostrarAlerta","sesionPagos.errorComprobarPago");
+							return mapping.findForward("presencial");
+						} else {
+							request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
+							return mapping.findForward("fail");
+						}
 					}
+					
 				default: 
 					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorComprobarPago");
 					return mapping.findForward("fail");	

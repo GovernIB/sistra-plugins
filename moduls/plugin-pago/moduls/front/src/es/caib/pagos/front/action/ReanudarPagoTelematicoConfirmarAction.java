@@ -9,6 +9,10 @@ import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
+import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
+import es.caib.sistra.plugins.pagos.DatosPago;
+import es.caib.sistra.plugins.pagos.EstadoSesionPago;
+
 /**
  * @struts.action
  *  path="/ReanudarPagoTelematico"
@@ -29,6 +33,10 @@ public class ReanudarPagoTelematicoConfirmarAction extends BaseAction
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
+		//TODO --> aquí llamar a la comprobación del pago y redireccionar a la pantalla que toque pagoFinalizado o error
+		SesionPagoDelegate dlg = getSesionPago(request);
+		DatosPago dp = dlg.obtenerDatosPago();
+		EstadoSesionPago es = dlg.obtenerEstadoSesionPago();
 		return mapping.findForward("success");		
     }
 		

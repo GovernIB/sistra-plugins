@@ -54,7 +54,7 @@ public class SesionPagoDelegate implements Delegate
         }
 	}
 	
-	public EstadoSesionPago obtenerEstadoSesionPago() throws DelegateException
+	public synchronized EstadoSesionPago obtenerEstadoSesionPago() throws DelegateException
 	{
 		try 
         {
@@ -88,7 +88,7 @@ public class SesionPagoDelegate implements Delegate
 	}
 	
 
-	public int confirmarPago() throws DelegateException
+	public synchronized int confirmarPago() throws DelegateException
 	{
 		try 
         {
@@ -121,7 +121,7 @@ public class SesionPagoDelegate implements Delegate
         }
 	}	
 	
-	public byte[] realizarPagoPresencial() throws DelegateException
+	public synchronized byte[] realizarPagoPresencial() throws DelegateException
 	{
 		try
 		{

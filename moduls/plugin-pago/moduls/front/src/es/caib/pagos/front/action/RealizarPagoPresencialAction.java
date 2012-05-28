@@ -1,5 +1,7 @@
 package es.caib.pagos.front.action;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -32,27 +34,36 @@ public class RealizarPagoPresencialAction extends BaseAction
 	Log logger = LogFactory.getLog( RealizarPagoPresencialAction.class );
 	
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception 
+            HttpServletResponse response) throws Exception
     {
-					
-		byte[] datos = null;
+		
 		try{
 			SesionPagoDelegate dlg = getSesionPago(request);
-			datos = dlg.realizarPagoPresencial();
-			
+			byte[] datos = dlg.realizarPagoPresencial();
 			String nombreFichero = "cartapago.pdf";
-			byte[] datosFichero = datos;
 
 			response.reset();
 			response.setContentType("application/octet-stream");
 			response.setHeader("Content-Disposition","attachment; filename="+ nombreFichero + ";");
-			response.getOutputStream().write(datosFichero);
-			return null;
+			response.getOutputStream().write(datos);
 			
 		} catch (DelegateException de){
 			request.setAttribute(Constants.MESSAGE_KEY, de.getMessage());
 			return mapping.findForward("fail");
-		} 
+		} catch (IOException ioe) {
+			logger.info("Client aborted");
+		} catch (Exception exc) {
+			logger.error(exc);
+		} finally {
+			try{
+				if ( !response.isCommitted() ) { 
+					response.flushBuffer();
+				}
+			} catch(Exception ex) {
+				logger.error(ex);
+			}
+		}
+		return null;
     }
-		
+	
 }

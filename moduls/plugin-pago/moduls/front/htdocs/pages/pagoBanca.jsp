@@ -9,6 +9,11 @@
 <bean:define id="idioma" value="<%=(java.lang.String) session.getAttribute(es.caib.pagos.front.Constants.DATOS_SESION_IDIOMA_KEY)%>" type="java.lang.String"/>
 <bean:define id="asunto" value="<%=(java.lang.String) session.getAttribute(es.caib.pagos.front.Constants.DATOS_SESION_NOMBRE_TRAMITE_KEY)%>" type="java.lang.String"/>
 
+<script type="text/javascript">
+<!--
+	var mensajeEnviando = '<bean:message key="pago.banca.accediendoEntidad"/>';
+//-->
+</script>
 
 <p>
 	<bean:message key="pago.mostrar.datospago" />
@@ -27,33 +32,35 @@
 	<bean:message key="pago.banca.continuarTramitacion" />
 </p>
 <p>
-	<bean:message key="pago.banca.continuarTramitacion2" />
+	<bean:message key="pago.banca.continuarTramitacion3" />
 </p>
 <p class="alerta">
-		<bean:message key="pago.banca.continuarTramitacion5" />
-		<a href="reanudarPago.do">
-		<bean:message key="pago.seleccionarPago" />
-		</a>.
-</p>
-<p>
 	<bean:message key="pago.banca.continuarTramitacion4" />
 </p>
 <div id="banca">
 	<div id="pagoInstrucciones">
-		<html:form action="/realizarPagoBanca">
+		<html:form action="/realizarPagoBanca" styleId="pagoBancaForm">
 			<p>
 				<bean:message key="pago.banca.seleccion" />
 			</p>
 			<html:errors />
-			<html:radio property="banco" value="BM"><bean:message key="pago.banca.march" /></html:radio>
-			<html:radio property="banco" value="LC"><bean:message key="pago.banca.lacaixa" /></html:radio>
-			<html:radio property="banco" value="SN"><bean:message key="pago.banca.sanostra" /></html:radio>
-			<div class="botonera">		
-			<html:submit>
-				<bean:message key="pago.realizarPago"/>
-			</html:submit>
-			</div>
+			<html:hidden property="banco" styleId="banco"/>	
+			<bean:message key="pago.banca.march" />
+			&nbsp;
+			<bean:message key="pago.banca.lacaixa" />
+			&nbsp;
+			<bean:message key="pago.banca.sanostra" />
 		</html:form>
 	</div>
 </div>
+<p class="volver">
+	<html:link href="reanudarPago.do">
+		<bean:message key="pago.seleccionarPago" />
+	</html:link>
+</p>
+<!-- capa mensaje accediendo -->
+<div id="capaInfoFondo"></div>
+<div id="capaInfoForms"></div>
+
+
 

@@ -24,11 +24,6 @@
 	if(bloqueador == 1) document.write(texto);
 	-->
 </script>
-<script type="text/javascript">
-<!--
-	var mensajeEnviando = '<bean:message key="pago.presencial.mensajeDescargando"/>';
-//-->
-</script>
 
 <h2><bean:message key="pago.presencial" /></h2>
 		
@@ -45,38 +40,36 @@
 <!-- /datos pago -->
 
 <p>
+	<bean:message key="pago.presencial.continuarTramitacion" />
 	<bean:message key="pago.presencial.continuarTramitacion2" />
 </p>
 
 <p>
-	<bean:message key="pago.presencial.noSePreocupe" />
+<bean:message key="pago.presencial.continuarTramitacion4"/>
 </p>
+<p class="centro">
 
-<p>
-<bean:message key="pago.presencial.continuarTramitacion4"/><a href="<%=urlAbrirDocumento%>" class="veure">
+
+<html:link href="<%=urlAbrirDocumento%>">
+<img src="./imgs/icona/mode_presencial.gif" alt="" /> 
 	<bean:message key="pago.documentoPago" />
-</a>
+</html:link>
 </p>
-								
-
-
-<p>
-	<bean:message key="pago.presencial.continuarTramitacion5" />
-</p>
+<div id="pagaments">
+	<div>
+	</div>
+</div>
 <html:form action="/confirmarPago">		
 	<html:hidden property="modoPago" value="P"/>
-	<p class="alerta">
-		<bean:message key="pago.presencial.continuarTramitacion6" />
-		<a href="reanudarPago.do">
-		<bean:message key="pago.seleccionarPago" />
-		</a>.
-	</p>
 	<div class="botonera">
 		<html:submit>
-			<bean:message key="pago.confirmarPagoPresencial"/>
+			<bean:message key="pago.continuarTramitacion"/>
 		</html:submit>
 	</div>
 </html:form>
-<!-- capa mensaje accediendo -->
-<div id="capaInfoFondo"></div>
-<div id="capaInfoForms"></div>
+<p class="volver">
+	<html:link href="reanudarPago.do">
+		<bean:message key="pago.seleccionarPago" />
+	</html:link>
+</p>
+

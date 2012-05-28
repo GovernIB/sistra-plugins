@@ -10,7 +10,7 @@ img { border:0; }
 body { font:normal 80% 'TrebuchetMS', 'Trebuchet MS', Arial, Helvetica, sans-serif; color:#666; background-color:#fff; }
 a { color:#000; text-decoration:underline; cursor:pointer; }
 a:hover { color:#c33; }
-
+a.veure { text-align:center; }
 a.destacat { color:#c33; }
 a.destacat:hover { color:#000; }
 
@@ -54,10 +54,11 @@ h2 { font-size:1.1em; margin-top:2em;  }
 h3 { font-size:1em; }
 
 p { line-height:1.2em; margin:.6em 0; }
+p.importante { padding:1em 1em 1em 3.7em; margin:1em 0; background:#f2f2f2 url(../imgs/icones/ico_alerta.gif) no-repeat 1em 1em;}
 p.alerta { padding:1em 1em 1em 3.7em; margin:1em 0; background:#f2f2f2 url(../imgs/icones/atencio.gif) no-repeat 1em 1em; }
 p.error { padding:1em 1em 1em 3.7em; margin:1em 0; background:#f2f2f2 url(../imgs/icones/ico_error.gif) no-repeat 1em 1em; }
 p.volver { position:relative; clear:both; border-top:1px dashed #f4f4f4; padding:1em 0 .5em 2em; background:url(../imgs/icones/04tornar.gif) no-repeat left 1em #fff; }
-
+p.centro { text-align:center;}
 .error
 {
 	color: Red;
@@ -292,3 +293,4 @@ div#capaInfo.ok { background-image:url(../imgs/capainfo/ok.gif); border-color:#b
 div#capaInfoForms { position:absolute; display:none; top:0; left:0; width:45em; text-align:center; background:url(../imgs/enviando.gif) no-repeat center 1em #fff; border:1em solid #85bbe4; padding:5em 1em 2em 1em; z-index:12; }
 
 
+#iframeDownload{visibility:hidden; display:none; position: absolute;  top:-30em; left:-30em; frameborder:0; width:0; height:0; scrolling:no; allowtransparency:true;}

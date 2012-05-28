@@ -46,7 +46,7 @@
     	<put name="main" value="/pages/pagoBanca.jsp" />
     </definition>
     
-	 <!-- Pantalla de pago presencial -->
+   	 <!-- Pantalla de pago presencial -->
     <definition
     	name=".pagoPresencial"	
     	extends=".mainLayout"

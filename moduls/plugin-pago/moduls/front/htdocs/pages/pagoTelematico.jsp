@@ -53,16 +53,7 @@
 	</p>
 	<div class="botonera">
 		<html:submit>
-			<bean:message key="pago.confirmarPagoTelematico"/>
+			<bean:message key="pago.continuarTramitacion"/>
 		</html:submit>
 	</div>
 </html:form>
-
-<!--  Enlace volver  -->
-<bean:define id="urlRetornoSistra" value="<%=((java.lang.String) session.getAttribute(es.caib.pagos.front.Constants.URL_RETORNO_SISTRA_KEY))%>" type="java.lang.String"/>
-<p class="volver">
-	<html:link href="<%=urlRetornoSistra%>">
-		<bean:message key="pago.volver.asistenteTramitacion" />
-	</html:link>
-</p>
-

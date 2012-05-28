@@ -26,8 +26,6 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
  * 	name="fail" path=".error"
  *  
  * 
- * @struts.action-forward
- * 	name="success" path=".pagoTelematico"
  *  
  */
 public class RealizarPagoBancaAction extends BaseAction
@@ -40,9 +38,10 @@ public class RealizarPagoBancaAction extends BaseAction
 		
 		try{
 			final SesionPagoDelegate dlg = getSesionPago(request);
-			final String urlSistra = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.url");
+			final String urlSistra = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.url"); //TODO constante
 			final String contextPath = request.getContextPath();
-			final String servlet = "/ReanudarPagoTelematico.do";
+			final String servlet = "/confirmarPago.do";//TODO constante
+			
 			final StringBuilder urlVuelta = new StringBuilder(urlSistra.length() + contextPath.length() + servlet.length());
 			urlVuelta.append(urlSistra);
 			urlVuelta.append(contextPath);

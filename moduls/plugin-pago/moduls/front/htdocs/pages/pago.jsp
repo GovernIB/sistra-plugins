@@ -47,27 +47,25 @@
 	</logic:equal>
 	<h3><a class="destacat"><bean:message key="pago.instrucciones.telematicas" /></a></h3>
 	<div class="instrucciones">
-		<!--  <p><bean:message key="pago.telematico.instruccion1" /></p>-->
 		<p><bean:message key="pago.telematico.instruccion2" /></p>
 		<ul>
-			<li><bean:message key="pago.telematico.instruccion3" /></li>
 			<li><bean:message key="pago.telematico.instruccion4" /></li>
+			<li><bean:message key="pago.telematico.instruccion3" /></li>
 		</ul>
-		<!--<p><bean:message key="pago.telematico.instruccion5" /></p>-->
 	</div>
 	<div style="float:left">
-	<html:form action="/iniciarPagoBanca">		
-		<html:hidden property="modoPago" value="T"/>
-		<html:submit>
-			<bean:message key="pago.banca"/>
-		</html:submit>
-	</html:form>
-	</div>
-	<div style="float:right">
 	<html:form action="/iniciarPagoTarjeta">		
 		<html:hidden property="modoPago" value="T"/>
 		<html:submit>
 			<bean:message key="pago.tarjetaBancaria"/>
+		</html:submit>
+	</html:form>
+	</div>
+	<div style="float:right">
+	<html:form action="/iniciarPagoBanca">		
+		<html:hidden property="modoPago" value="T"/>
+		<html:submit>
+			<bean:message key="pago.banca"/>
 		</html:submit>
 	</html:form>
 	</div>

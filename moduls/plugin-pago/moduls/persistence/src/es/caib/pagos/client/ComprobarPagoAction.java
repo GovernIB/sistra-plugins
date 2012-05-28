@@ -64,6 +64,7 @@ public class ComprobarPagoAction implements WebServiceAction {
 		} else {
 			
 			if (Constants.ESTADO_PAGADO.equals(ls_resultado.getEstadoPago())) {
+				log.debug("Estado del pago ---> PAGADO");
 				try {
 					final boolean mensajeOk = comprobarFirma(ls_resultado.getFirma());
 					
@@ -73,7 +74,7 @@ public class ComprobarPagoAction implements WebServiceAction {
 						resultado.put(Constants.KEY_FIRMA, ls_resultado.getFirma());
 					} else {
 						resultado.put(Constants.KEY_ERROR, new WebServiceError(WebServiceError.ERROR_FIRMA, "La respuesta no se reconoce como autentica. Error al comprobar la firma"));
-						log.error("La respuesta no se reconoce como autentica. Error al comprobar la firma");
+						log.error("La respuesta no se reconoce como auténtica. Error al comprobar la firma");
 					}
 				} catch (ExcepcionMensaje em) {
 					log.error("Error comprobando la firma: ", em);
@@ -84,6 +85,7 @@ public class ComprobarPagoAction implements WebServiceAction {
 					log.error("Error al pasar a String con el CHARSET " + Constants.CHARSET);
 				}
 			} else {
+				log.debug("Estado del pago ---> NO PAGADO");
 				if (ls_resultado.getCodError() != null) {
 					resultado.put(Constants.KEY_ERROR, new WebServiceError(ls_resultado.getCodError(), ls_resultado.getTextError()));
 				}
