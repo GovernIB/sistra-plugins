@@ -11,11 +11,17 @@
  </formset>
  <formset>
   <form name="pagoTarjetaForm">
-   <field depends="required" property="codigoVerificacionTarjeta">
+   <field depends="required, minlength, mask" property="codigoVerificacionTarjeta">
     <arg0 key="pago.codigoVerificacionTarjeta"/>
+    <arg1 name="minlength" key="${var:minlength}" resource="false"/>
+    <var><var-name>minlength</var-name><var-value>3</var-value></var>
+    <var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
    </field>
-   <field depends="required,creditCard" property="numeroTarjeta">
+   <field depends="required,minlength,mask" property="numeroTarjeta">
     <arg0 key="pago.numeroTarjeta"/>
+    <arg1 name="minlength" key="${var:minlength}" resource="false"/>
+    <var><var-name>minlength</var-name><var-value>16</var-value></var>
+    <var><var-name>mask</var-name><var-value>^[0-9]*$</var-value></var>
    </field>
    <field depends="required" property="titularTarjeta">
     <arg0 key="pago.titularTarjeta"/>
