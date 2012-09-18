@@ -62,7 +62,7 @@
     <path id="doclet.class.path">
         <path refid="ejb.class.path"/>
         <fileset dir="${lib.dir}">
-            <include name="commons-collections.jar"/>
+            <include name="commons-collections*.jar"/>
         </fileset>
         <fileset dir="${xdoclet.dir}">
             <include name="*.jar"/>

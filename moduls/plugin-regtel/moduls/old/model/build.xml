@@ -24,7 +24,7 @@
 
     <path id="jar.class.path">
     	<fileset dir="${lib.dir}">
-    		<include name="commons-beanutils.jar"/>
+    		<include name="commons-beanutils*.jar"/>
    		</fileset>	
     	<fileset dir="${lib.dir}/client">
     		<include name="redose-client.jar"/>

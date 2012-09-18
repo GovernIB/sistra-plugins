@@ -4,8 +4,7 @@ import java.sql.Timestamp;
 import java.text.NumberFormat;
 import java.util.*;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 
 
@@ -364,8 +363,11 @@ public class FuncionesCadena {
 		public static String BytestoBase64 (byte[] arg0)
 		throws Throwable
 		{
+			/*
 			BASE64Encoder enco = new BASE64Encoder();
-			String ls_res = enco.encode(arg0);			
+			String ls_res = enco.encode(arg0);
+			*/
+			String ls_res = new String(Base64.encodeBase64(arg0));
 			return ls_res;
 		}
 		
@@ -389,8 +391,13 @@ public class FuncionesCadena {
 		throws Throwable	
 		{
 				if (arg0 == null) return null;
+				
+				/*
 				BASE64Decoder l_dec = new BASE64Decoder();
 				byte[] lb_dec = l_dec.decodeBuffer(arg0);
+				*/
+				byte[] lb_dec = Base64.decodeBase64(arg0.getBytes());
+				
 				return BytestoString(lb_dec, as_charset);
 		}
 		

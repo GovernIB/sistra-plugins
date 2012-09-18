@@ -25,8 +25,8 @@
 
     <path id="jar.class.path">
     	<fileset dir="${lib.dir}">
-    		<include name="commons-lang.jar"/>
-    		<include name="commons-logging.jar"/>
+    		<include name="commons-lang*.jar"/>
+    		<include name="commons-logging*.jar"/>
     		<include name="servlet.jar"/>
     		<include name="seyconsession-common.jar"/>
    		</fileset>	

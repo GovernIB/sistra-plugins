@@ -31,7 +31,7 @@
        		<include name="redose-client.jar"/>	
    		</fileset>	
     	<fileset dir="${lib.dir}">
-    		<include name="commons-logging.jar"/>
+    		<include name="commons-logging*.jar"/>
     		<include name="sistra-valcert-axis-1.6.6.jar"/>	 
     		<include name="signaturaapi-2.5.2.jar"/>
     		<include name="dom4j.jar"/>

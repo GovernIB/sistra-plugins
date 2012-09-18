@@ -28,8 +28,8 @@
     <path id="jar.class.path">
     	<fileset dir="${lib.dir}">
     		<include name="seyconsession-common.jar"/>
-    		<include name="commons-lang.jar"/>
-    		<include name="commons-logging.jar"/>
+    		<include name="commons-lang*.jar"/>
+    		<include name="commons-logging*.jar"/>
 			<include name="signaturaapi-2.5.2.jar"/>
    		</fileset>	
     	<fileset dir="${lib.dir}/sistra">

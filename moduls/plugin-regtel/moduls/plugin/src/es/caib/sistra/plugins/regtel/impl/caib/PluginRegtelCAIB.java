@@ -30,6 +30,13 @@ import es.caib.sistra.plugins.regtel.PluginRegistroIntf;
 import es.caib.sistra.plugins.regtel.ResultadoRegistro;
 import es.caib.sistra.plugins.regtel.ServicioDestinatario;
 import es.caib.sistra.plugins.regtel.TipoAsunto;
+import es.caib.sistra.plugins.regtel.impl.caib.cxf.ClienteWS;
+import es.caib.sistra.plugins.regtel.impl.caib.cxf.model.ErrorEntrada;
+import es.caib.sistra.plugins.regtel.impl.caib.cxf.model.ErrorSalida;
+import es.caib.sistra.plugins.regtel.impl.caib.cxf.model.ListaResultados;
+import es.caib.sistra.plugins.regtel.impl.caib.cxf.model.ParametrosRegistroEntradaWS;
+import es.caib.sistra.plugins.regtel.impl.caib.cxf.model.ParametrosRegistroSalidaWS;
+import es.caib.sistra.plugins.regtel.impl.caib.cxf.services.RegwebFacade;
 import es.caib.util.EjbUtil;
 import es.caib.util.StringUtil;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
@@ -67,7 +74,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			logParametres(asiento, refAsiento, refAnexos);
 		
 		
-		ParametrosRegistroEntrada params = mapeaAsientoParametrosRegistroEntrada(asiento); 
+		ParametrosRegistroEntradaWS params = mapeaAsientoParametrosRegistroEntrada(asiento); 
 		
 		ResultadoRegistro res = realizarRegistroEntrada(params);
 		
@@ -83,7 +90,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		if (isPrintPeticio())
 			logParametres(asiento, refAsiento, refAnexos);
 		
-		ParametrosRegistroSalida params = mapearAsientoParametrosRegistroSalida(asiento);
+		ParametrosRegistroSalidaWS params = mapearAsientoParametrosRegistroSalida(asiento);
 		
 		ResultadoRegistro res = realizarRegistroSalida(params);
 		
@@ -107,24 +114,24 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			logParametres(justificantePreregistro.getAsientoRegistral(), refAsiento, refAnexos);
 		
 		// Mapeamos datos asiento
-		ParametrosRegistroEntrada params = mapeaAsientoParametrosRegistroEntrada(justificantePreregistro.getAsientoRegistral()); 
+		ParametrosRegistroEntradaWS params = mapeaAsientoParametrosRegistroEntrada(justificantePreregistro.getAsientoRegistral()); 
 		
 		// Particularizamos campos para preregistro
 		String[] codisOficina = descomponerOficinaFisica(oficina);
 		if (codisOficina.length == 2) {
-			params.setoficina(codisOficina[0]);
-			params.setoficinafisica(codisOficina[1]);
+			params.setOficina(codisOficina[0]);
+			params.setOficinafisica(codisOficina[1]);
 		} else {
 			throw new Exception("Codigo de oficina incorrecto");
 		}
 		if(codigoProvincia != null && CODIGO_PROVINCIA_CAIB.equals(codigoProvincia)){
-			params.setbalears(codigoMunicipio);
-			params.setfora("");
+			params.setBalears(codigoMunicipio);
+			params.setFora("");
 		}else{
-			params.setbalears("");
-			params.setfora(descripcionMunicipio);			
+			params.setBalears("");
+			params.setFora(descripcionMunicipio);			
 		}
-		params.setcomentario("Confirmació preregistre "+justificantePreregistro.getNumeroRegistro()+" - "+params.getComentario());
+		params.setComentario("Confirmació preregistre "+justificantePreregistro.getNumeroRegistro()+" - "+params.getComentario());
 				
 		// Registramos
 		ResultadoRegistro res = realizarRegistroEntrada(params);
@@ -186,129 +193,63 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			logger.error("Error al obtener los servicios destinatarios", ex);
 		}
 		return lista;
-		
-		/*
-		List lista = new ArrayList();
-		try {
-			Map<String, ServicioDestinatario> servicios = new HashMap<String, ServicioDestinatario>();
-			List<OficinaRegistro> oficines = obtenerOficinasRegistro();
-			for (OficinaRegistro oficina: oficines) {
-				String codiOficina = oficina.getCodigo();
-				String[] codisOficina = codiOficina.split("-");
-				if (codisOficina.length == 2) {
-					Vector v = buscarDestinatarios(codisOficina[0]);
-					Iterator it = v.iterator();
-					while (it.hasNext()) {
-						String codigo = (String)it.next();
-						if ("&nbsp;".equals(codigo))
-							break;
-						ServicioDestinatario of = new ServicioDestinatario();
-						of.setCodigo(codigo);
-						of.setDescripcion((String)it.next());
-						it.next();
-						servicios.put(of.getCodigo(), of);
-					}
-				}
-			}
-			for (String codi: servicios.keySet()) {
-				lista.add(servicios.get(codi));
-			}
-		} catch (Exception ex) {
-			// Si hi ha algun error no tornam cap servei
-			logger.error("Error al obtenir els serveis destinataris", ex);
-		}
-		return lista;
-		*/
+				
 	}
 	
     public void anularRegistroEntrada(String numeroRegistro, Date fechaRegistro) throws Exception {
 		
 		logger.debug("accediendo a anular registro entrada: " + numeroRegistro);
-				
-		LoginContext lc = null;
-		try {
-			
-			// Extraemos info del num de registro
-			String [] tokens = numeroRegistro.split("/");			
-			String codiOficina = tokens[0];
-			String numero = tokens[1];
-			String ano = tokens[2];
+						
+		// Extraemos info del num de registro
+		String [] tokens = numeroRegistro.split("/");			
+		String codiOficina = tokens[0];
+		String numero = tokens[1];
+		String ano = tokens[2];
+	
+		// Establecemos parametros
+		ParametrosRegistroEntradaWS registro = new ParametrosRegistroEntradaWS();
+		registro.setUsuario(getUsuarioRegistro());
+		registro.setPassword(getPasswdRegistro());
+		registro.setOrigenRegistro("SISTRA"); 
+		registro.setOficina(codiOficina);
+		registro.setNumeroEntrada(numero); 			
+		registro.setAnoEntrada(ano);
 		
-			// Establecemos parametros
-			ParametrosRegistroEntrada registro = new ParametrosRegistroEntrada();
-			registro.fijaUsuario(getUsuarioRegistro());
-			registro.setOrigenRegistro("SISTRA"); 
-			registro.setoficina(codiOficina);
-			registro.setNumeroEntrada(numero); 			
-			registro.setAnoEntrada(ano);
-			
-			// Conectamos a Registro
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.RegistroEntradaFacade");
-			RegistroEntradaFacadeHome home = (RegistroEntradaFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					RegistroEntradaFacadeHome.class);
-			RegistroEntradaFacade regent = home.create();
-			
-			if(regent.anular(registro,true)) {
-				logger.debug("Registro anulado");
-			} else { 
-				throw new Exception("No se ha podido anular el registro"); 
-			}
-
-			ctx.close();						
-		} finally {
-			if (lc != null)
-				lc.logout();
-		}										
+		// Conectamos a Registro
+		RegwebFacade regent = obtenerClienteWS();
+		if(regent.anularEntrada(registro,true)) {
+			logger.debug("Registro anulado");
+		} else { 
+			throw new Exception("No se ha podido anular el registro"); 
+		}
+												
 
 	}
 
 	public void anularRegistroSalida(String numeroRegistro, Date fechaRegistro) throws Exception {
 		logger.debug("accediendo a anular registro salida: " + numeroRegistro);
+	
+		// Extraemos info del num de registro
+		String [] tokens = numeroRegistro.split("/");
+		String codiOficina = tokens[0];
+		String numero = tokens[1];
+		String ano = tokens[2];
+	
+		// Establecemos parametros
+		ParametrosRegistroSalidaWS registro = new ParametrosRegistroSalidaWS();
+		registro.setUsuario(getUsuarioRegistro());
+		registro.setPassword(getPasswdRegistro());
+		registro.setAnoSalida(ano); 
+		registro.setNumeroSalida(numero); 
+		registro.setOficina(codiOficina);
 		
-		LoginContext lc = null;
-		try {
-			
-			// Extraemos info del num de registro
-			String [] tokens = numeroRegistro.split("/");
-			String codiOficina = tokens[0];
-			String numero = tokens[1];
-			String ano = tokens[2];
-		
-			// Establecemos parametros
-			ParametrosRegistroSalida registro = new ParametrosRegistroSalida();
-			registro.fijaUsuario(getUsuarioRegistro());
-			//registro.setOrigenRegistro("SISTRA"); 
-			registro.setAnoSalida(ano); 
-			registro.setNumeroSalida(numero); 
-			registro.setoficina(codiOficina);
-			
-			// Conectamos a Registro
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.RegistroSalidaFacade");
-			RegistroSalidaFacadeHome home = (RegistroSalidaFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					RegistroSalidaFacadeHome.class);
-			RegistroSalidaFacade regent = home.create();
-			
-			// Anulamos
-			if(regent.anular(registro,true)){
-				logger.debug("Registro anulado"); 
-			} else { 
-				throw new Exception("No se ha podido anular el registro");
-			}
-
-			
-			ctx.close();						
-		} finally {
-			if (lc != null)
-				lc.logout();
-		}										
-
-		
+		// Conectamos a Registro
+		RegwebFacade regent = obtenerClienteWS();
+		if(regent.anularSalida(registro,true)){
+			logger.debug("Registro anulado"); 
+		} else { 
+			throw new Exception("No se ha podido anular el registro");
+		}	
 	}
 
 	// -------------------------------------------------------------------------------------------------------------------------------
@@ -430,35 +371,21 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	}
 
 
-	private ParametrosRegistroEntrada validarRegistroEntrada(ParametrosRegistroEntrada params) throws Exception {
-		ParametrosRegistroEntrada resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.RegistroEntradaFacade");
-			RegistroEntradaFacadeHome home = (RegistroEntradaFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					RegistroEntradaFacadeHome.class);
-			resposta = home.create().validar(params);
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
-		}
-		return resposta;
+	private ParametrosRegistroEntradaWS validarRegistroEntrada(ParametrosRegistroEntradaWS params) throws Exception {
+		RegwebFacade regweb = obtenerClienteWS();
+		return regweb.validarEntrada(params);
 	}
 	
 	private ResultadoRegistro realizarRegistroSalida (
-			ParametrosRegistroSalida params) throws Exception {
+			ParametrosRegistroSalidaWS params) throws Exception {
 		logger.debug("realizarRegistroSalida: inicio");
 		
-		ParametrosRegistroSalida respostaValidacio = validarRegistroSalida(params);
-		if (respostaValidacio.getValidado()) {
-			ParametrosRegistroSalida respostaGrabacio = grabarRegistroSalida(params);
-			if (respostaGrabacio.getGrabado()) {
+		ParametrosRegistroSalidaWS respostaValidacio = validarRegistroSalida(params);
+		if (respostaValidacio.isValidado()) {
+			ParametrosRegistroSalidaWS respostaGrabacio = grabarRegistroSalida(params);
+			if (respostaGrabacio.isRegistroSalidaGrabado()) {
 				ResultadoRegistro res = new ResultadoRegistro();
-				res.setFechaRegistro(StringUtil.cadenaAFecha( params.getDataSalida() + " " + params.getHora(), "dd/MM/yyyy HH:mm"));
+				res.setFechaRegistro(StringUtil.cadenaAFecha( params.getDatasalida() + " " + params.getHora(), "dd/MM/yyyy HH:mm"));
 				
 				// INDRA: CONCATENAMOS OFICINA A NUM REGISTRO
 				//res.setNumeroRegistro(respostaGrabacio.getNumeroSalida() + "/" + respostaGrabacio.getAnoSalida());				
@@ -469,39 +396,45 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 				throw new Exception("La anotación de registro no se ha guardado");
 			}
 		} else {
-			Map<String, String> errors = respostaValidacio.getErrores();
-			StringBuilder sb = new StringBuilder();
-			for (String camp: errors.keySet())
-				sb.append("|[" + camp + "]:" + errors.get(camp));
-			throw new Exception("Errores de validación: " + sb.toString());
+			String error = "No se indica el error";
+			if (respostaValidacio.getErrores() != null && respostaValidacio.getErrores().getErrores() != null && respostaValidacio.getErrores().getErrores().size() > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (Iterator it = respostaValidacio.getErrores().getErrores().iterator(); it.hasNext();) {
+					ErrorSalida errorSalida = (ErrorSalida) it.next();
+					sb.append("|[" + errorSalida.getCodigo() + "]:" + errorSalida.getDescripcion());
+				}
+				error = sb.toString();				
+			}
+			throw new Exception("Errores de validación: " + error );
 		}		
 	}
 
-	private ParametrosRegistroSalida mapearAsientoParametrosRegistroSalida(
+	private ParametrosRegistroSalidaWS mapearAsientoParametrosRegistroSalida(
 			AsientoRegistral asiento) throws Exception {
-		ParametrosRegistroSalida params = new ParametrosRegistroSalida();
-		params.fijaUsuario(getUsuarioRegistro());
+		ParametrosRegistroSalidaWS params = new ParametrosRegistroSalidaWS();
+		params.setUsuario(getUsuarioRegistro());
+		params.setPassword(getPasswdRegistro());
 		//params.setOrigenRegistro("SISTRA"); 
 		Date ara = new Date();
 		DateFormat dfData = new SimpleDateFormat("dd/MM/yyyy");
 		DateFormat dfHora = new SimpleDateFormat("HH:mm");
-		params.setdatasalida(dfData.format(ara));
-		params.sethora(dfHora.format(ara));
-		params.setdata(dfData.format(ara));
+		params.setDatasalida(dfData.format(ara));
+		params.setHora(dfHora.format(ara));
+		params.setData(dfData.format(ara));
 		
 		String codiOficina = asiento.getDatosOrigen().getCodigoEntidadRegistralOrigen();
 		String[] codisOficina = descomponerOficinaFisica(codiOficina);
 		if (codisOficina.length == 2) {
-			params.setoficina(codisOficina[0]);
-			params.setoficinafisica(codisOficina[1]);
+			params.setOficina(codisOficina[0]);
+			params.setOficinafisica(codisOficina[1]);
 		} else {
 			throw new Exception("Codigo de oficina incorrecto");
 		}
 		
-		params.settipo(asiento.getDatosAsunto().getTipoAsunto());
-		params.setidioma(getIdiomaAsiento(asiento));
+		params.setTipo(asiento.getDatosAsunto().getTipoAsunto());
+		params.setIdioma(getIdiomaAsiento(asiento));
 		if (getIdentificacioRepresentant(asiento) != null)
-			params.setaltres(getIdentificacioRepresentant(asiento));
+			params.setAltres(getIdentificacioRepresentant(asiento));
 		
 		DireccionCodificada direccionCodificada = getProcedenciaRepresentant(asiento);
 		if( direccionCodificada != null )
@@ -529,28 +462,28 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 						municipioFuera = direccionCodificada.getPaisOrigen();     						
 			}
 			
-			params.setbalears(municipioBaleares);
-			params.setfora(municipioFuera);
+			params.setBalears(municipioBaleares);
+			params.setFora(municipioFuera);
 		}
 		
 		
 		if (asiento.getDatosAsunto().getCodigoOrganoDestino() != null)
-			params.setremitent(asiento.getDatosAsunto().getCodigoOrganoDestino());
-		params.setidioex(getIdiomaAsiento(asiento));
-		params.setcomentario(asiento.getDatosAsunto().getExtractoAsunto());
+			params.setRemitent(asiento.getDatosAsunto().getCodigoOrganoDestino());
+		params.setIdioex(getIdiomaAsiento(asiento));
+		params.setComentario(asiento.getDatosAsunto().getExtractoAsunto());
 		
 		return params;
 	}
 	
-	private ResultadoRegistro realizarRegistroEntrada(ParametrosRegistroEntrada params) throws Exception{	
+	private ResultadoRegistro realizarRegistroEntrada(ParametrosRegistroEntradaWS params) throws Exception{	
 		logger.debug("realizarRegistroEntrada: inicio");
-		ParametrosRegistroEntrada respostaValidacio = validarRegistroEntrada(params);
-		if (respostaValidacio.getValidado()) {
+		ParametrosRegistroEntradaWS respostaValidacio = validarRegistroEntrada(params);
+		if (respostaValidacio.isValidado()) {
 			logger.debug("realizarRegistroEntrada: pasa validación, pasamos a grabar");
-			ParametrosRegistroEntrada respostaGrabacio = grabarRegistroEntrada(params);
-			if (respostaGrabacio.getGrabado()) {
+			ParametrosRegistroEntradaWS respostaGrabacio = grabarRegistroEntrada(params);
+			if (respostaGrabacio.isRegistroGrabado() != null && respostaGrabacio.isRegistroGrabado().booleanValue()) {
 				ResultadoRegistro res = new ResultadoRegistro();
-				res.setFechaRegistro(StringUtil.cadenaAFecha( params.getDataEntrada() + " " + params.getHora(), "dd/MM/yyyy HH:mm"));				
+				res.setFechaRegistro(StringUtil.cadenaAFecha( params.getDataentrada() + " " + params.getHora(), "dd/MM/yyyy HH:mm"));				
 				
 				// INDRA: CONCATENAMOS OFICINA A NUM REGISTRO
 				//res.setNumeroRegistro(respostaGrabacio.getNumeroEntrada() + "/" + respostaGrabacio.getAnoEntrada());
@@ -565,38 +498,44 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			}
 		} else {
 			logger.debug("realizarRegistroEntrada: no pasa validación");
-			Map<String, String> errors = respostaValidacio.getErrores();
-			StringBuilder sb = new StringBuilder();
-			for (String camp: errors.keySet())
-				sb.append("|[" + camp + "]:" + errors.get(camp));
-			throw new Exception("Errores de validación: " + sb.toString());
+			String error = "No se indica el error";
+			if (respostaValidacio.getErrores() != null && respostaValidacio.getErrores().getErrores() != null && respostaValidacio.getErrores().getErrores().size() > 0) {
+				StringBuilder sb = new StringBuilder();
+				for (Iterator it = respostaValidacio.getErrores().getErrores().iterator(); it.hasNext();) {
+					ErrorEntrada errorEntrada = (ErrorEntrada) it.next();
+					sb.append("|[" + errorEntrada.getCodigo() + "]:" + errorEntrada.getDescripcion());
+				}
+				error = sb.toString();				
+			}
+			throw new Exception("Errores de validación: " + error );			
 		}
 	}
 	
-	private ParametrosRegistroEntrada mapeaAsientoParametrosRegistroEntrada(AsientoRegistral asiento) throws Exception{
-		ParametrosRegistroEntrada params = new ParametrosRegistroEntrada();
-		params.fijaUsuario(getUsuarioRegistro());
+	private ParametrosRegistroEntradaWS mapeaAsientoParametrosRegistroEntrada(AsientoRegistral asiento) throws Exception{
+		ParametrosRegistroEntradaWS params = new ParametrosRegistroEntradaWS();
+		params.setUsuario(getUsuarioRegistro());
+		params.setPassword(getPasswdRegistro());
 		params.setOrigenRegistro("SISTRA"); 	
 		Date ara = new Date();
 		DateFormat dfData = new SimpleDateFormat("dd/MM/yyyy");
 		DateFormat dfHora = new SimpleDateFormat("HH:mm");
-		params.setdataentrada(dfData.format(ara));
-		params.sethora(dfHora.format(ara));
-		params.setdata(dfData.format(ara));
+		params.setDataentrada(dfData.format(ara));
+		params.setHora(dfHora.format(ara));
+		params.setData(dfData.format(ara));
 		
 		String codiOficina = asiento.getDatosOrigen().getCodigoEntidadRegistralOrigen();
 		String[] codisOficina = descomponerOficinaFisica(codiOficina);
 		if (codisOficina.length == 2) {
-			params.setoficina(codisOficina[0]);
-			params.setoficinafisica(codisOficina[1]);
+			params.setOficina(codisOficina[0]);
+			params.setOficinafisica(codisOficina[1]);
 		} else {
 			throw new Exception("Codigo de oficina incorrecto");
 		}
 		
-		params.settipo(asiento.getDatosAsunto().getTipoAsunto());
-		params.setidioma(getIdiomaAsiento(asiento));
+		params.setTipo(asiento.getDatosAsunto().getTipoAsunto());
+		params.setIdioma(getIdiomaAsiento(asiento));
 		if (getIdentificacioRepresentant(asiento) != null)
-			params.setaltres(getIdentificacioRepresentant(asiento));
+			params.setAltres(getIdentificacioRepresentant(asiento));
 		
 		DireccionCodificada direccionCodificada = getProcedenciaRepresentant(asiento);
 		if( direccionCodificada != null )
@@ -624,71 +563,34 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 						municipioFuera = direccionCodificada.getPaisOrigen();     						
 			}
 			
-			params.setbalears(municipioBaleares);
-			params.setfora(municipioFuera);
+			params.setBalears(municipioBaleares);
+			params.setFora(municipioFuera);
 		}
 		
 		if (asiento.getDatosAsunto().getCodigoOrganoDestino() != null)
-			params.setdestinatari(asiento.getDatosAsunto().getCodigoOrganoDestino());
-		params.setidioex(getIdiomaAsiento(asiento));
-		params.setcomentario(asiento.getDatosAsunto().getExtractoAsunto());
+			params.setDestinatari(asiento.getDatosAsunto().getCodigoOrganoDestino());
+		params.setIdioex(getIdiomaAsiento(asiento));
+		params.setComentario(asiento.getDatosAsunto().getExtractoAsunto());
 		return params;
 	}
 	
 	
-	private ParametrosRegistroEntrada grabarRegistroEntrada(ParametrosRegistroEntrada params) throws Exception {
-		ParametrosRegistroEntrada resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.RegistroEntradaFacade");
-			RegistroEntradaFacadeHome home = (RegistroEntradaFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					RegistroEntradaFacadeHome.class);
-			resposta = home.create().grabar(params);
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
-		}
+	private ParametrosRegistroEntradaWS grabarRegistroEntrada(ParametrosRegistroEntradaWS params) throws Exception {
+		RegwebFacade regweb = obtenerClienteWS();
+		ParametrosRegistroEntradaWS resposta = regweb.grabarEntrada(params);
 		return resposta;
 	}
-	private ParametrosRegistroSalida validarRegistroSalida(ParametrosRegistroSalida params) throws Exception {
-		ParametrosRegistroSalida resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.RegistroSalidaFacade");
-			RegistroSalidaFacadeHome home = (RegistroSalidaFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					RegistroSalidaFacadeHome.class);
-			resposta = home.create().validar(params);
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
-		}
+	
+	private ParametrosRegistroSalidaWS validarRegistroSalida(ParametrosRegistroSalidaWS params) throws Exception {
+		RegwebFacade regweb = obtenerClienteWS();
+		ParametrosRegistroSalidaWS resposta = regweb.validarSalida(params);			
 		return resposta;
 	}
-	private ParametrosRegistroSalida grabarRegistroSalida(ParametrosRegistroSalida params) throws Exception {
-		ParametrosRegistroSalida resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.RegistroSalidaFacade");
-			RegistroSalidaFacadeHome home = (RegistroSalidaFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					RegistroSalidaFacadeHome.class);
-			resposta = home.create().grabar(params);
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
-		}
-		return resposta;
+	
+	private ParametrosRegistroSalidaWS grabarRegistroSalida(ParametrosRegistroSalidaWS params) throws Exception {
+		RegwebFacade regweb = obtenerClienteWS();
+		ParametrosRegistroSalidaWS resposta = regweb.grabarSalida(params);			
+		return resposta;		
 	}
 	
 	private Vector buscarOficinas() throws Exception {
@@ -706,19 +608,13 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			resposta.add(desc[1]);			
 		} else {
 			// Si no hay configurada una unica, devolvemos todas
-			LoginContext lc = null;
-			try {
-				lc = doLogin();
-				Context ctx = getInitialContext();
-				Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
-				ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-						objRef,
-						ValoresFacadeHome.class);
-				resposta = home.create().buscarOficinasFisicasDescripcion("tots", "totes");
-				ctx.close();
-			} finally {
-				if (lc != null)
-					lc.logout();
+			RegwebFacade regweb = obtenerClienteWS();
+			ListaResultados resp = regweb.buscarOficinasFisicasDescripcion(getUsuarioRegistro(), getPasswdRegistro(), "tots", "totes");
+			resposta = new Vector();
+			if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
+				for (int i = 0; i < resp.getResultado().size(); i++) {
+					resposta.add(resp.getResultado().get(i));
+				}
 			}
 		}
 		return resposta;	
@@ -726,99 +622,40 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	
 	
 	private Vector buscarOficinasUsuario(String usuario) throws Exception {
-		Vector resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
-			ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					ValoresFacadeHome.class);
-			resposta = home.create().buscarOficinasFisicas(usuario,"AE");
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
+		RegwebFacade regweb = obtenerClienteWS();
+		ListaResultados resp = regweb.buscarOficinasFisicas(getUsuarioRegistro(), getPasswdRegistro(), "AE");
+		Vector resposta = new Vector();
+		if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
+			for (int i = 0; i < resp.getResultado().size(); i++) {
+				resposta.add(resp.getResultado().get(i));
+			}
 		}
 		return resposta;
 	}
 	
 	private Vector buscarDocumentos() throws Exception {
-		Vector resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
-			ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					ValoresFacadeHome.class);
-			resposta = home.create().buscarDocumentos();
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
+		RegwebFacade regweb = obtenerClienteWS();
+		ListaResultados resp = regweb.buscarDocumentos(getUsuarioRegistro(), getPasswdRegistro());
+		Vector resposta = new Vector();
+		if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
+			for (int i = 0; i < resp.getResultado().size(); i++) {
+				resposta.add(resp.getResultado().get(i));
+			}
 		}
-		return resposta;
-	}
-	
-	/*
-	private Vector buscarDestinatarios(String oficinaCodigo) throws Exception {
-		Vector resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
-			ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					ValoresFacadeHome.class);
-			resposta = home.create().buscarDestinatarios(oficinaCodigo);
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
-		}
-		return resposta;
-	}
-	*/
+		return resposta;				
+	}	
 	
 	private Vector buscarDestinatarios() throws Exception {
-		Vector resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
-			ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					ValoresFacadeHome.class);
-			resposta = home.create().buscarTodosDestinatarios();
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
+		RegwebFacade regweb = obtenerClienteWS();
+		ListaResultados resp = regweb.buscarTodosDestinatarios(getUsuarioRegistro(), getPasswdRegistro());
+		Vector resposta = new Vector();
+		if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
+			for (int i = 0; i < resp.getResultado().size(); i++) {
+				resposta.add(resp.getResultado().get(i));
+			}
 		}
-		return resposta;
-	}
-
-	private LoginContext doLogin() throws Exception {
-		LoginContext lc = null;
-		String userName = getUsuarioRegistro();
-		String password = getPasswdRegistro();
-		if (userName != null && userName.length() > 0 && password != null && password.length() > 0) {
-			lc = new LoginContext(
-					"client-login",
-					new UsernamePasswordCallbackHandler(userName, password));
-			lc.login();
-		}
-		return lc;
-	}
-	
-	private Context getInitialContext() throws Exception {		
-		return EjbUtil.getInitialContext(false,getConfig().getProperty("plugin.regweb.url"));		
-	}
+		return resposta;				
+	}	
 
 	private Properties getConfig() throws Exception {
 		if (config == null) {
@@ -877,5 +714,9 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			oficina = oficina.trim();
 		}
 		return oficina;		
+	}
+	
+	private RegwebFacade obtenerClienteWS() throws Exception {
+		return ClienteWS.generarPort(getConfig().getProperty("plugin.regweb.url"), getUsuarioRegistro(), getPasswdRegistro());		
 	}
 }

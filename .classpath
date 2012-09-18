@@ -2,6 +2,8 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="src" path="moduls/plugin-custodia/moduls/plugin/src"/>
+	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/persistence/src"/>
+	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/model/src"/>
 	<classpathentry kind="src" path="moduls/plugin-email/moduls/checkEmail/src"/>
 	<classpathentry kind="src" path="moduls/plugin-email/moduls/plugin/src"/>
 	<classpathentry kind="src" path="moduls/plugin-firma/moduls/plugin/src"/>
@@ -18,10 +20,8 @@
 	<classpathentry kind="lib" path="lib/commons-beanutils.jar"/>
 	<classpathentry kind="lib" path="lib/commons-betwixt.jar"/>
 	<classpathentry kind="lib" path="lib/commons-codec-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/commons-collections.jar"/>
 	<classpathentry kind="lib" path="lib/commons-digester.jar"/>
 	<classpathentry kind="lib" path="lib/commons-fileupload.jar"/>
-	<classpathentry kind="lib" path="lib/commons-lang.jar"/>
 	<classpathentry kind="lib" path="lib/commons-logging.jar"/>
 	<classpathentry kind="lib" path="lib/commons-validator.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j.jar"/>
@@ -46,15 +46,6 @@
 	<classpathentry kind="lib" path="lib/firma/bcprov.jar"/>
 	<classpathentry kind="lib" path="lib/firma/bctsp.jar"/>
 	<classpathentry kind="lib" path="lib/firma/ideas36rc1_Java1.4.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/jaxb-api.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/jaxb-impl.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/jaxb-libs.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/jax-qname.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/namespace.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/relaxngDatatype.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/xercesImpl.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/xml-apis.jar"/>
-	<classpathentry kind="lib" path="lib/jaxb/xsdlib.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/jbossall-client.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/jboss-client.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/jboss-jaxrpc.jar"/>
@@ -75,5 +66,38 @@
 	<classpathentry kind="lib" path="lib/client/5-sistra-model.jar"/>
 	<classpathentry kind="lib" path="lib/client/5-sistra-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/regweblib/logic-1.0.5-client.jar"/>
+	<classpathentry kind="lib" path="lib/activation.jar"/>
+	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-discovery-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-io-1.4.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.4.jar"/>
+	<classpathentry kind="lib" path="lib/saaj-api.jar"/>
+	<classpathentry kind="lib" path="lib/saaj-impl.jar"/>
+	<classpathentry kind="lib" path="lib/wsdl4j-1.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/xpp3-1.1.3.4.M.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jaxb-api-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jaxb-impl-2.1.9.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jaxb-xjc-2.1.9.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jaxp-api-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jaxr-api.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/jaxrpc-api.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/stax-api-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb/xstream-1.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/cxf-2.2.7.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/FastInfoset-1.2.7.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/geronimo-annotation_1.0_spec-1.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/geronimo-jaxws_2.1_spec-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/geronimo-ws-metadata_2.0_spec-1.1.2.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/neethi-2.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/spring-beans-2.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/spring-context-2.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/spring-core-2.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/spring-web-2.5.6.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/velocity-1.6.2.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/wss4j-1.5.8.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/wstx-asl-3.2.9.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/XmlSchema-1.4.5.jar"/>
+	<classpathentry kind="lib" path="lib/cxf/xmlsec-1.4.3.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

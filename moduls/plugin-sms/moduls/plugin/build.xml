@@ -27,7 +27,7 @@
     	<fileset dir="${lib.dir}">
             <include name="provato.soap.client.jar"/>
             <include name="provato-api.jar"/>
-    		<include name="commons-logging.jar"/>
+    		<include name="commons-logging*.jar"/>
    		</fileset>	
     	<fileset dir="${lib.dir}/sistra">
     		<include name="sistra-plugins.jar"/>    		
