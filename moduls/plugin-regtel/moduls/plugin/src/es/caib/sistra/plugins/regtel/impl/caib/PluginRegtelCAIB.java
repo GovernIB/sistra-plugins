@@ -11,20 +11,10 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Vector;
 
-import javax.naming.Context;
-import javax.security.auth.login.LoginContext;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.redose.modelInterfaz.ReferenciaRDS;
-import es.caib.regweb.logic.helper.ParametrosRegistroEntrada;
-import es.caib.regweb.logic.helper.ParametrosRegistroSalida;
-import es.caib.regweb.logic.interfaces.RegistroEntradaFacade;
-import es.caib.regweb.logic.interfaces.RegistroEntradaFacadeHome;
-import es.caib.regweb.logic.interfaces.RegistroSalidaFacade;
-import es.caib.regweb.logic.interfaces.RegistroSalidaFacadeHome;
-import es.caib.regweb.logic.interfaces.ValoresFacadeHome;
 import es.caib.sistra.plugins.regtel.OficinaRegistro;
 import es.caib.sistra.plugins.regtel.PluginRegistroIntf;
 import es.caib.sistra.plugins.regtel.ResultadoRegistro;
@@ -37,7 +27,6 @@ import es.caib.sistra.plugins.regtel.impl.caib.cxf.model.ListaResultados;
 import es.caib.sistra.plugins.regtel.impl.caib.cxf.model.ParametrosRegistroEntradaWS;
 import es.caib.sistra.plugins.regtel.impl.caib.cxf.model.ParametrosRegistroSalidaWS;
 import es.caib.sistra.plugins.regtel.impl.caib.cxf.services.RegwebFacade;
-import es.caib.util.EjbUtil;
 import es.caib.util.StringUtil;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.DatosInteresado;
