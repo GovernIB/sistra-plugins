@@ -194,6 +194,7 @@ name="RegwebFacade">
 					<xsd:sequence>
 						<xsd:element name="usuario" type="xsd:string"/>
 						<xsd:element name="password" type="xsd:string"/>
+						<xsd:element name="usuarioRegistro" type="xsd:string"/>
 						<xsd:element name="tipo" type="xsd:string"/>
 					</xsd:sequence>
 				</xsd:complexType>

@@ -250,8 +250,10 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		try {
 			Vector v;
 			if (usuario == null){
+				// vector con cuadruplas: num oficina - num oficina física - desc oficina física - desc oficina
 				v = buscarOficinas();
 			}else{
+				// vector con tripleta:   num oficina - num oficina física - desc oficina física
 				v = buscarOficinasUsuario(usuario);
 			}
 			Iterator it = v.iterator();
@@ -263,9 +265,12 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 				}
 				String codiOficinaFisica = (String)it.next();
 				String nomOficinaFisica = (String)it.next();
-				String nomOficina = (String)it.next();
+				if (usuario == null){
+					String nomOficina = (String)it.next();
+					nomOficinaFisica = nomOficinaFisica + " (" + nomOficina + ")";
+				}
 				of.setCodigo(codiOficina + SEPARADOR_OFICINA_FISICA + codiOficinaFisica);
-				of.setDescripcion(of.getCodigo() + " - " + nomOficinaFisica + " (" + nomOficina + ")");
+				of.setDescripcion(of.getCodigo() + " - " + nomOficinaFisica);
 				lista.add(of);
 			}
 		} catch (Exception ex) {
@@ -612,7 +617,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	
 	private Vector buscarOficinasUsuario(String usuario) throws Exception {
 		RegwebFacade regweb = obtenerClienteWS();
-		ListaResultados resp = regweb.buscarOficinasFisicas(getUsuarioRegistro(), getPasswdRegistro(), "AE");
+		ListaResultados resp = regweb.buscarOficinasFisicas(getUsuarioRegistro(), getPasswdRegistro(), usuario, "AE");
 		Vector resposta = new Vector();
 		if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
 			for (int i = 0; i < resp.getResultado().size(); i++) {
