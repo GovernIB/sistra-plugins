@@ -57,7 +57,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	public final static String SEPARADOR_OFICINA_FISICA = ".";
 	public final static String REGEXP_SEPARADOR_OFICINA_FISICA = "\\."; // Exp regular para hacer split
 	
-	
+		
 	public ResultadoRegistro registroEntrada(
 			AsientoRegistral asiento,
 			ReferenciaRDS refAsiento,
@@ -115,7 +115,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			params.setoficina(codisOficina[0]);
 			params.setoficinafisica(codisOficina[1]);
 		} else {
-			throw new Exception("Codi d'oficina incorrecte");
+			throw new Exception("Codigo de oficina incorrecto");
 		}
 		if(codigoProvincia != null && CODIGO_PROVINCIA_CAIB.equals(codigoProvincia)){
 			params.setbalears(codigoMunicipio);
@@ -159,7 +159,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			}
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap tipus
-			logger.error("Error al obtenir els tipus de document", ex);
+			logger.error("Error al obtener los tipos de documentos", ex);
 		}
 		return lista;
 	}
@@ -183,7 +183,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			}
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap servei
-			logger.error("Error al obtenir els serveis destinataris", ex);
+			logger.error("Error al obtener los servicios destinatarios", ex);
 		}
 		return lista;
 		
@@ -320,24 +320,33 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		try {
 			Vector v;
 			if (usuario == null){
+				// vector con cuadruplas: num oficina - num oficina física - desc oficina física - desc oficina
 				v = buscarOficinas();
 			}else{
+				// vector con tripleta:   num oficina - num oficina física - desc oficina física
 				v = buscarOficinasUsuario(usuario);
 			}
 			Iterator it = v.iterator();
 			while (it.hasNext()) {
 				OficinaRegistro of = new OficinaRegistro();
 				String codiOficina = (String)it.next();
+				if (codiOficina == null || codiOficina.length() <= 0) {
+					return lista;
+				}
 				String codiOficinaFisica = (String)it.next();
 				String nomOficinaFisica = (String)it.next();
-				String nomOficina = (String)it.next();
+				if (usuario == null){
+					String nomOficina = (String)it.next();
+					nomOficinaFisica = nomOficinaFisica + " (" + nomOficina + ")";
+				}
 				of.setCodigo(codiOficina + SEPARADOR_OFICINA_FISICA + codiOficinaFisica);
-				of.setDescripcion(of.getCodigo() + " - " + nomOficinaFisica + " (" + nomOficina + ")");
+				of.setDescripcion(of.getCodigo() + " - " + nomOficinaFisica);
 				lista.add(of);
-			}
+			}			
+			
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap oficina
-			logger.error("Error al obtenir les oficines de registre", ex);
+			logger.error("Error al obtener las oficinas de registro", ex);
 		}
 		return lista;
 	}
@@ -463,14 +472,14 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 				
 				return res;
 			} else {
-				throw new Exception("La anotació de registre no s'ha guardat");
+				throw new Exception("La anotación de registro no se ha guardado");
 			}
 		} else {
 			Map<String, String> errors = respostaValidacio.getErrores();
 			StringBuilder sb = new StringBuilder();
 			for (String camp: errors.keySet())
 				sb.append("|[" + camp + "]:" + errors.get(camp));
-			throw new Exception("Errors de validació: " + sb.toString());
+			throw new Exception("Errores de validación: " + sb.toString());
 		}		
 	}
 
@@ -492,7 +501,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			params.setoficina(codisOficina[0]);
 			params.setoficinafisica(codisOficina[1]);
 		} else {
-			throw new Exception("Codi d'oficina incorrecte");
+			throw new Exception("Codigo de oficina incorrecto");
 		}
 		
 		params.settipo(asiento.getDatosAsunto().getTipoAsunto());
@@ -558,7 +567,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 				return res;
 			} else {
 				logger.debug("realizarRegistroEntrada: no se ha podido grabar");
-				throw new Exception("La anotació de registre no s'ha guardat");
+				throw new Exception("La anotación de registro no se ha guardado");
 			}
 		} else {
 			logger.debug("realizarRegistroEntrada: no pasa validación");
@@ -566,7 +575,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			StringBuilder sb = new StringBuilder();
 			for (String camp: errors.keySet())
 				sb.append("|[" + camp + "]:" + errors.get(camp));
-			throw new Exception("Errors de validació: " + sb.toString());
+			throw new Exception("Errores de validación: " + sb.toString());
 		}
 	}
 	
@@ -587,7 +596,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			params.setoficina(codisOficina[0]);
 			params.setoficinafisica(codisOficina[1]);
 		} else {
-			throw new Exception("Codi d'oficina incorrecte");
+			throw new Exception("Codigo de oficina incorrecto");
 		}
 		
 		params.settipo(asiento.getDatosAsunto().getTipoAsunto());
@@ -689,22 +698,36 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	}
 	
 	private Vector buscarOficinas() throws Exception {
+		
+		// Comprobamos si esta configurada una unica oficina de registro telematico configurada en properties
+		String oficina = getCodigoOficinaRegistroTelematica();
 		Vector resposta = null;
-		LoginContext lc = null;
-		try {
-			lc = doLogin();
-			Context ctx = getInitialContext();
-			Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
-			ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
-					objRef,
-					ValoresFacadeHome.class);
-			resposta = home.create().buscarOficinasFisicasDescripcion("tots", "totes");
-			ctx.close();
-		} finally {
-			if (lc != null)
-				lc.logout();
+		if (oficina != null) {
+			resposta = new Vector();
+			String[] cods = descomponerOficinaFisica(oficina);
+			String[] desc = descomponerOficinaFisica(getDescripcionOficinaRegistroTelematica());
+			resposta.add(cods[0]);
+			resposta.add(cods[1]);
+			resposta.add(desc[0]);
+			resposta.add(desc[1]);			
+		} else {
+			// Si no hay configurada una unica, devolvemos todas
+			LoginContext lc = null;
+			try {
+				lc = doLogin();
+				Context ctx = getInitialContext();
+				Object objRef = ctx.lookup("es.caib.regweb.logic.ValoresFacade");
+				ValoresFacadeHome home = (ValoresFacadeHome)javax.rmi.PortableRemoteObject.narrow(
+						objRef,
+						ValoresFacadeHome.class);
+				resposta = home.create().buscarOficinasFisicasDescripcion("tots", "totes");
+				ctx.close();
+			} finally {
+				if (lc != null)
+					lc.logout();
+			}
 		}
-		return resposta;
+		return resposta;	
 	}
 	
 	
@@ -844,5 +867,21 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	
 	private String[] descomponerOficinaFisica(String oficinaFisica) {
 		return oficinaFisica.split(REGEXP_SEPARADOR_OFICINA_FISICA);
+	}
+	
+	private String getCodigoOficinaRegistroTelematica() throws Exception {
+		String oficina = getConfig().getProperty("plugin.regweb.oficinaTelematicaUnica.codigo");
+		if (oficina != null) {
+			oficina = oficina.trim();
+		}
+		return oficina;		
+	}
+	
+	private String getDescripcionOficinaRegistroTelematica() throws Exception {
+		String oficina = getConfig().getProperty("plugin.regweb.oficinaTelematicaUnica.descripcion");
+		if (oficina != null) {
+			oficina = oficina.trim();
+		}
+		return oficina;		
 	}
 }
