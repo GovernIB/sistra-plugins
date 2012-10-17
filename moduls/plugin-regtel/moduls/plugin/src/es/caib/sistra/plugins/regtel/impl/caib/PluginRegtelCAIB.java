@@ -102,17 +102,11 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		if (isPrintPeticio())
 			logParametres(justificantePreregistro.getAsientoRegistral(), refAsiento, refAnexos);
 		
-		// Mapeamos datos asiento
+		// Mapeamos datos asiento cambiando la oficina de registro
+		justificantePreregistro.getAsientoRegistral().getDatosOrigen().setCodigoEntidadRegistralOrigen(oficina);
 		ParametrosRegistroEntradaWS params = mapeaAsientoParametrosRegistroEntrada(justificantePreregistro.getAsientoRegistral()); 
 		
 		// Particularizamos campos para preregistro
-		String[] codisOficina = descomponerOficinaFisica(oficina);
-		if (codisOficina.length == 2) {
-			params.setOficina(codisOficina[0]);
-			params.setOficinafisica(codisOficina[1]);
-		} else {
-			throw new Exception("Codigo de oficina incorrecto");
-		}
 		if(codigoProvincia != null && CODIGO_PROVINCIA_CAIB.equals(codigoProvincia)){
 			params.setBalears(codigoMunicipio);
 			params.setFora("");
@@ -418,12 +412,8 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		
 		String codiOficina = asiento.getDatosOrigen().getCodigoEntidadRegistralOrigen();
 		String[] codisOficina = descomponerOficinaFisica(codiOficina);
-		if (codisOficina.length == 2) {
-			params.setOficina(codisOficina[0]);
-			params.setOficinafisica(codisOficina[1]);
-		} else {
-			throw new Exception("Codigo de oficina incorrecto");
-		}
+		params.setOficina(codisOficina[0]);
+		params.setOficinafisica(codisOficina[1]);
 		
 		params.setTipo(asiento.getDatosAsunto().getTipoAsunto());
 		params.setIdioma(getIdiomaAsiento(asiento));
@@ -519,12 +509,8 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		
 		String codiOficina = asiento.getDatosOrigen().getCodigoEntidadRegistralOrigen();
 		String[] codisOficina = descomponerOficinaFisica(codiOficina);
-		if (codisOficina.length == 2) {
-			params.setOficina(codisOficina[0]);
-			params.setOficinafisica(codisOficina[1]);
-		} else {
-			throw new Exception("Codigo de oficina incorrecto");
-		}
+		params.setOficina(codisOficina[0]);
+		params.setOficinafisica(codisOficina[1]);
 		
 		params.setTipo(asiento.getDatosAsunto().getTipoAsunto());
 		params.setIdioma(getIdiomaAsiento(asiento));
@@ -690,8 +676,12 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	}
 
 	
-	private String[] descomponerOficinaFisica(String oficinaFisica) {
-		return oficinaFisica.split(REGEXP_SEPARADOR_OFICINA_FISICA);
+	private String[] descomponerOficinaFisica(String oficinaFisica) throws Exception {
+		String[] codisOficina = oficinaFisica.split(REGEXP_SEPARADOR_OFICINA_FISICA);
+		if (codisOficina.length != 2) {
+			throw new Exception("Codigo de oficina incorrecto: " + oficinaFisica);
+		}
+		return codisOficina;
 	}
 	
 	private String getCodigoOficinaRegistroTelematica() throws Exception {
