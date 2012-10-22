@@ -1,4 +1,4 @@
-package es.caib.sistra.plugins.regtel.impl.caib;
+package es.caib.regtel.plugincaib.persistence.ejb;
 
 import java.io.IOException;
 

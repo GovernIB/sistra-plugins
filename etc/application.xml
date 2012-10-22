@@ -25,6 +25,9 @@
         </web>
     </module>	
     
+     <!--  Registro -->
+    <module><ejb>regtelCAIB-persistence.jar</ejb></module>       
+    
    <!-- Iframe portal --> 
    <module>
         <web>

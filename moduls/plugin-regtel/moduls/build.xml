@@ -49,6 +49,7 @@
 	
 	<target name="distribute" description="Distribucion">
 		<copy file="${output.dir}/moduls/plugin-regtelCAIB.jar" todir="${distribucion.dir}"/>				
+		<copy file="${output.dir}/moduls/regtelCAIB-persistence.jar" todir="${distribucion.dir}"/>
 	</target>
 	
 	<target name="doc" depends="prepare" description="Genera la documentación">
@@ -58,6 +59,7 @@
 	</target>
 	
 	<target name="propagate">
+		<ant dir="persistence" target="${task}" inheritall="false"/>
 		<ant dir="plugin" target="${task}" inheritall="false"/>
 	</target>
 	

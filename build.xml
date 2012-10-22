@@ -69,14 +69,12 @@
 			<include name="plugin-regtelCAIB.jar"/>
 			<include name="plugin-smsCAIB.jar"/>
 			<include name="pagosCAIB-client.jar"/>
-			<include name="regtelCAIB-client.jar"/>
 			<include name="libreria-formateadoresCAIB.jar"/>			
 		</zipfileset>
 		<zipfileset dir="${output.dir}/moduls">
 			<include name="pagosCAIB-model.jar"/>
 			<include name="pagosCAIB-persistence.jar"/>
 			<include name="pagosCAIB-front.war"/>
-			<include name="regtelCAIB-model.jar"/>
 			<include name="regtelCAIB-persistence.jar"/>
 			<include name="sistra-portal.war"/>
 		</zipfileset>
