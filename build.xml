@@ -72,14 +72,13 @@
 			<include name="plugin-smsCAIB.jar"/>
 			<include name="plugin-emailCAIB.jar"/>
 			<include name="pagosCAIB-client.jar"/>
-			<include name="regtelCAIB-client.jar"/>
+			<include name="regtelCAIB-wsclient.jar"/>
 			<include name="libreria-formateadoresCAIB.jar"/>			
 		</zipfileset>
 		<zipfileset dir="${output.dir}/moduls">
 			<include name="pagosCAIB-model.jar"/>
 			<include name="pagosCAIB-persistence.jar"/>
 			<include name="pagosCAIB-front.war"/>
-			<include name="regtelCAIB-model.jar"/>
 			<include name="regtelCAIB-persistence.jar"/>
 			<include name="sistra-portal.war"/>
 			<include name="sistra-checkEmail.war"/>
