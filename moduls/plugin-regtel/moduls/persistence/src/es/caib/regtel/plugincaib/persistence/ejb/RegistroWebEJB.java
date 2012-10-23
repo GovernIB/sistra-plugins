@@ -155,8 +155,8 @@ public abstract class RegistroWebEJB implements SessionBean
 		ParametrosRegistroEntradaWS params = mapeaAsientoParametrosRegistroEntrada(justificantePreregistro.getAsientoRegistral()); 
 		
 		// Particularizamos campos para preregistro
-		params.setUsuario(context.getCallerPrincipal().getName()); // Usuario es el conectado a la aplicacion
-		params.setPassword(null);
+		params.setUsuarioRegistro(context.getCallerPrincipal().getName()); // Usuario es el conectado a la aplicacion
+		
 		if(codigoProvincia != null && CODIGO_PROVINCIA_CAIB.equals(codigoProvincia)){
 			params.setBalears(codigoMunicipio);
 			params.setFora("");
@@ -486,6 +486,7 @@ public abstract class RegistroWebEJB implements SessionBean
 		ParametrosRegistroSalidaWS params = new ParametrosRegistroSalidaWS();
 		params.setUsuario(getUsuarioRegistro());
 		params.setPassword(getPasswdRegistro());
+		params.setUsuarioRegistro(getUsuarioRegistro());
 		//params.setOrigenRegistro("SISTRA"); 
 		Date ara = new Date();
 		DateFormat dfData = new SimpleDateFormat("dd/MM/yyyy");
@@ -583,6 +584,7 @@ public abstract class RegistroWebEJB implements SessionBean
 		ParametrosRegistroEntradaWS params = new ParametrosRegistroEntradaWS();
 		params.setUsuario(getUsuarioRegistro());
 		params.setPassword(getPasswdRegistro());
+		params.setUsuarioRegistro(getUsuarioRegistro());
 		params.setOrigenRegistro("SISTRA"); 	
 		Date ara = new Date();
 		DateFormat dfData = new SimpleDateFormat("dd/MM/yyyy");

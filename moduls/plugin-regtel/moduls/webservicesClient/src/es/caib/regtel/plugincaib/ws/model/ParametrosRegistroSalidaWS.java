@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="usuario" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="usuarioRegistro" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="anoSalida" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="actualizacion" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="registroSalidaGrabado" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
@@ -77,6 +78,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ParametrosRegistroSalidaWS", namespace = "urn:es:caib:regweb:ws:v1:model:ParametrosRegistroSalidaWS", propOrder = {
     "usuario",
     "password",
+    "usuarioRegistro",
     "anoSalida",
     "actualizacion",
     "registroSalidaGrabado",
@@ -130,6 +132,8 @@ public class ParametrosRegistroSalidaWS {
     protected String usuario;
     @XmlElement(required = true)
     protected String password;
+    @XmlElement(required = true)
+    protected String usuarioRegistro;
     protected String anoSalida;
     protected Boolean actualizacion;
     protected Boolean registroSalidaGrabado;
@@ -223,6 +227,30 @@ public class ParametrosRegistroSalidaWS {
      */
     public void setPassword(String value) {
         this.password = value;
+    }
+
+    /**
+     * Gets the value of the usuarioRegistro property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUsuarioRegistro() {
+        return usuarioRegistro;
+    }
+
+    /**
+     * Sets the value of the usuarioRegistro property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUsuarioRegistro(String value) {
+        this.usuarioRegistro = value;
     }
 
     /**

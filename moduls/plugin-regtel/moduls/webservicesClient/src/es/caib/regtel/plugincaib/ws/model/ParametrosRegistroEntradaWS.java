@@ -19,6 +19,7 @@ import javax.xml.bind.annotation.XmlType;
  *       &lt;sequence>
  *         &lt;element name="usuario" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="usuarioRegistro" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="actualizacion" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="altres" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="altresNuevo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
@@ -82,6 +83,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ParametrosRegistroEntradaWS", namespace = "urn:es:caib:regweb:ws:v1:model:ParametrosRegistroEntradaWS", propOrder = {
     "usuario",
     "password",
+    "usuarioRegistro",
     "actualizacion",
     "altres",
     "altresNuevo",
@@ -140,6 +142,8 @@ public class ParametrosRegistroEntradaWS {
     protected String usuario;
     @XmlElement(required = true)
     protected String password;
+    @XmlElement(required = true)
+    protected String usuarioRegistro;
     protected Boolean actualizacion;
     protected String altres;
     protected String altresNuevo;
@@ -238,6 +242,30 @@ public class ParametrosRegistroEntradaWS {
      */
     public void setPassword(String value) {
         this.password = value;
+    }
+
+    /**
+     * Gets the value of the usuarioRegistro property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUsuarioRegistro() {
+        return usuarioRegistro;
+    }
+
+    /**
+     * Sets the value of the usuarioRegistro property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUsuarioRegistro(String value) {
+        this.usuarioRegistro = value;
     }
 
     /**
