@@ -51,7 +51,7 @@
     <module><java>lib/sistra-valcert-axis-1.6.6.jar</java></module>    
     
      <!-- REGWEB: NECESARIO PARA PLUGIN-REGTEL -->
-    <module><java>lib/logic-1.0.3-SNAPSHOT-client.jar</java></module>
+    <module><java>lib/logic-1.0.5-client.jar</java></module>
     
     
 </application>
