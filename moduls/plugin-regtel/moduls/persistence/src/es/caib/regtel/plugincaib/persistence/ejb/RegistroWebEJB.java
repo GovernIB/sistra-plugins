@@ -267,7 +267,6 @@ public abstract class RegistroWebEJB implements SessionBean
 		// Establecemos parametros
 		ParametrosRegistroEntradaWS registro = new ParametrosRegistroEntradaWS();
 		registro.setUsuario(getUsuarioRegistro());
-		registro.setPassword(getPasswdRegistro());
 		registro.setOrigenRegistro("SISTRA"); 
 		registro.setOficina(codiOficina);
 		registro.setNumeroEntrada(numero); 			
@@ -301,7 +300,6 @@ public abstract class RegistroWebEJB implements SessionBean
 		// Establecemos parametros
 		ParametrosRegistroSalidaWS registro = new ParametrosRegistroSalidaWS();
 		registro.setUsuario(getUsuarioRegistro());
-		registro.setPassword(getPasswdRegistro());
 		registro.setAnoSalida(ano); 
 		registro.setNumeroSalida(numero); 
 		registro.setOficina(codiOficina);
@@ -787,6 +785,6 @@ public abstract class RegistroWebEJB implements SessionBean
 	}
 	
 	private RegwebFacade obtenerClienteWS() throws Exception {
-		return ClienteWS.generarPort(getConfig().getProperty("plugin.regweb.url"), getUsuarioRegistro(), getPasswdRegistro());		
+		return ClienteWS.generarPort(getConfig().getProperty("plugin.regweb.url"), null, null);		
 	}
 }

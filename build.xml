@@ -51,6 +51,7 @@
 		    <attribute name="Specification-Version" value="${release.version} build${release.build} ${release.date}"/>
 		</manifest>
 		<metainf dir="${etc.dir}/jboss-${jboss.version}" includes="jboss-app.xml"/>
+		<metainf dir="${etc.dir}" includes="cxf/org.apache.cxf.Logger"/>
 		<zipfileset dir="${lib}" prefix="lib">
 			<include name="xpp3-1.1.3.4.M.jar" />
        		<include name="provato.soap.client.jar" />
@@ -59,10 +60,7 @@
 		</zipfileset>
 		<zipfileset dir="${lib}/firma" prefix="lib">
 			<include name="ideas36rc1_Java1.4.jar"/>
-		</zipfileset>
-		<zipfileset dir="${lib}/regweblib" prefix="lib">
-			<include name="logic-1.0.5-client.jar"/>
-		</zipfileset>
+		</zipfileset>		
 		<zipfileset dir="${output.dir}/moduls" prefix="lib">
 			<include name="plugin-custodiaCAIB.jar"/>
 			<include name="plugin-firmaCAIB.jar"/>

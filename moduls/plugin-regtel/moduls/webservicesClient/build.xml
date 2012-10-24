@@ -36,6 +36,9 @@
     	<fileset dir="${lib.dir}/cxf">
     		<include name="*.jar"/>    		 
    		</fileset>
+    	<fileset dir="${lib.dir}/sistra">
+    		<include name="sistra-utilWs.jar"/>    		 
+   		</fileset>
     </path>
 
     <target name="prepare">

@@ -100,5 +100,6 @@
 	<classpathentry kind="lib" path="lib/cxf/wstx-asl-3.2.9.jar"/>
 	<classpathentry kind="lib" path="lib/cxf/XmlSchema-1.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/cxf/xmlsec-1.4.3.jar"/>
+	<classpathentry kind="lib" path="lib/sistra/sistra-utilWs.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

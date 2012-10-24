@@ -1,9 +1,12 @@
 package es.caib.regtel.plugincaib.ws;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
+import es.caib.util.ws.client.WsClientSistraUtil;
 
 /**
  * Cliente de WS para interfaz version 1 de backoffices para Sistra
@@ -21,8 +24,8 @@ public class ClienteWS {
 		service.addPort(PORT_NAME,javax.xml.ws.soap.SOAPBinding.SOAP11HTTP_BINDING, url);
 		es.caib.regtel.plugincaib.ws.services.RegwebFacade port = service.getPort(PORT_NAME,es.caib.regtel.plugincaib.ws.services.RegwebFacade.class);
           
-		// Configura puerto para autenticacion y paso por proxy
-		// WsClientSistraUtil.configurePort((BindingProvider)port,url,user,pass);
+		// Configura puerto para log
+		WsClientSistraUtil.configurePort((BindingProvider)port,url,user,pass);
 		
         return port;
 	}	
