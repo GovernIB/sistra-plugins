@@ -58,7 +58,7 @@
 			    <attribute name="Specification-Title" value="${projectePagos} for ${release.env}"/>				
 			    <attribute name="Specification-Version" value="${release.cvs.tag} build${release.build} ${release.date}"/>
 			</manifest>
-			<metainf dir="${etc.jboss}" includes="jboss-app.xml"/>
+			<metainf dir="${etc.jboss}" includes="*.xml"/>
 			<fileset dir="${moduls.dir}">
                 <exclude name="${projectePagos}-back.war"/>
 				<exclude name="plugin-pagoCAIB.jar"/>
