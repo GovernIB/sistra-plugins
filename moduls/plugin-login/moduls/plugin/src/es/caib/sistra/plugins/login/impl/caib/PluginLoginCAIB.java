@@ -52,9 +52,11 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 		if (nombre != null) {
 			try  {
 				nombre = StringUtil.replace(nombre, "(AUTENTICACION)", "");
+				nombre = StringUtil.replace(nombre, "(AUTENTICACIÓN)", "");
+				nombre = StringUtil.replace(nombre, "(FIRMA)", "");
 				nombre = nombre.trim();
 			} catch (Exception ex) {
-				log.error("Error al intentar reemplazar literal (AUTENTICACION) en nombre del certificado");
+				log.error("Error al intentar reemplazar literal (AUTENTICACION) y (FIRMA) en nombre del certificado");
 			}
 		}
 		
