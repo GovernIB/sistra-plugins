@@ -8,6 +8,8 @@ import org.apache.commons.logging.LogFactory;
 import es.caib.loginModule.client.SeyconPrincipal;
 import es.caib.sistra.plugins.login.ConstantesLogin;
 import es.caib.sistra.plugins.login.PluginLoginIntf;
+import es.caib.util.NifCif;
+import es.caib.util.StringUtil;
 
 public class PluginLoginCAIB implements PluginLoginIntf {
 
@@ -36,7 +38,7 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 	 */
 	public String getNif(Principal principal) {
 		SeyconPrincipal sp = (SeyconPrincipal) principal;		
-		return (sp.getNif()!=null?sp.getNif().toUpperCase():null);		
+		return (sp.getNif()!=null?NifCif.normalizarDocumento(sp.getNif()):null);		
 	}
 
 	/**
@@ -44,7 +46,20 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 	 */
 	public String getNombreCompleto(Principal principal) {
 		SeyconPrincipal sp = (SeyconPrincipal) principal;		
-		return sp.getFullName();
+		String nombre = sp.getFullName();
+		
+		// Quitamos palabra (AUTENTICACION), parche para DNIe
+		if (nombre != null) {
+			try  {
+				nombre = StringUtil.replace(nombre, "(AUTENTICACION)", "");
+				nombre = nombre.trim();
+			} catch (Exception ex) {
+				log.error("Error al intentar reemplazar literal (AUTENTICACION) en nombre del certificado");
+			}
+		}
+		
+		return nombre;
+		
 	}
 	
 }

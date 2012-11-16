@@ -5,6 +5,7 @@ import org.apache.commons.logging.LogFactory;
 
 import es.caib.signatura.api.Signature;
 import es.caib.sistra.plugins.firma.FirmaIntf;
+import es.caib.util.NifCif;
 
 public class FirmaCAIB implements FirmaIntf{
 
@@ -20,7 +21,11 @@ public class FirmaCAIB implements FirmaIntf{
 	 */
 	public String getNif() {
 		try {
-			return UtilFirmaCAIB.getDNI(signature);
+			String nif = UtilFirmaCAIB.getDNI(signature);
+			if (nif != null) {
+				nif = NifCif.normalizarDocumento(nif);
+			}			
+			return nif;
 		} catch (Exception e) {
 			log.error("Error al obtener nif de la firma",e);
 			return null;
