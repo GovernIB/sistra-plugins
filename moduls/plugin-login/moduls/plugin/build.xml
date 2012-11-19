@@ -32,6 +32,7 @@
    		</fileset>	
     	<fileset dir="${lib.dir}/sistra">
 	    	<include name="sistra-plugins.jar"/>
+    		<include name="sistra-util.jar"/>
    		</fileset>
     	<fileset dir="${lib.dir}/client">
     		<include name="sistra-client.jar"/>
