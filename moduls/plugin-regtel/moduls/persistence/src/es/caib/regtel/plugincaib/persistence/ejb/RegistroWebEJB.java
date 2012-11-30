@@ -239,7 +239,12 @@ public abstract class RegistroWebEJB implements SessionBean
 				sd.setCodigo(codigo);
 				sd.setDescripcion(sd.getCodigo() + " - " + (String)it.next());
 				it.next(); // Desc larga, no la queremos
-				lista.add(sd);
+
+				// Nos quedamos solo con las consellerias
+				// Formato: nn00
+				if (codigo != null && codigo.length() == 4 && codigo.endsWith("00")) {					
+					lista.add(sd);
+				}
 			}
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap servei
