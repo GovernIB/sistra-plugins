@@ -31,7 +31,21 @@
 	<bean:message key="pago.modificarFormularios" />
 </p>
 <p>
-	<bean:message key="pago.formasDePago" />
+	<logic:equal name="telematicoPermitido" value="true">
+		<logic:equal name="presencialPermitido" value="true">
+			<bean:message key="pago.formasDePago.telematicaPresencial" />
+		</logic:equal>
+	</logic:equal>
+	<logic:equal name="telematicoPermitido" value="true">
+		<logic:equal name="presencialPermitido" value="false">
+			<bean:message key="pago.formasDePago.telematica" />
+		</logic:equal>
+	</logic:equal>
+	<logic:equal name="telematicoPermitido" value="false">
+		<logic:equal name="presencialPermitido" value="true">
+			<bean:message key="pago.formasDePago.presencial" />
+		</logic:equal>
+	</logic:equal>
 </p>
 <p>
 	<bean:message key="pago.abrirAyuda" />
