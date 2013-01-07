@@ -10,6 +10,7 @@ import es.caib.pagos.services.wsdl.Service_TasaSoap;
 import es.caib.pagos.services.wsdl.Service_TasaSoapStub;
 import es.caib.pagos.services.wsdl.UsuariosWebServices;
 import es.caib.pagos.util.Constants;
+import es.caib.pagos.util.UtilWs;
 
 public class InicioPagoService {
 	
@@ -24,7 +25,12 @@ public class InicioPagoService {
 		sl.setEndpointAddress(Constants.SERVICE_SOAP, url);
 		final Service_TasaSoap port = sl.getService_TasaSoap();
 		((Service_TasaSoapStub)port).setHeader(Constants.NAMESPACE_ATIB, Constants.PARTNAME_USUARIOS_WEBSERVICES, usuario);
+		
+		UtilWs.habilitarLog(sl);
+	     
 		return port.inserta046(value);
 	}
+
+	
 	
 }

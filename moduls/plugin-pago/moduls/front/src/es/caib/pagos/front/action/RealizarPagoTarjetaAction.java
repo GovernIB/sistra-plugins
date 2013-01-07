@@ -3,13 +3,11 @@ package es.caib.pagos.front.action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
-
 
 import es.caib.pagos.front.Constants;
 import es.caib.pagos.front.form.PagoTarjetaForm;
@@ -47,15 +45,25 @@ public class RealizarPagoTarjetaAction extends BaseAction
 			String mesCaducidad = pagoTarjetaForm.getMesCaducidadTarjeta();
 			String anyoCaducidad = pagoTarjetaForm.getAnyoCaducidadTarjeta().substring(2);
 			String caducidadTarjeta = mesCaducidad + anyoCaducidad; 
-			int resultado = dlg.realizarPagoTarjeta(pagoTarjetaForm.getNumeroTarjeta(), caducidadTarjeta,
+			
+			// Iniciamos sesion de pago dejando el pago como pendiente confirmar
+			String token = dlg.realizarPagoTarjetaIniciarSesion();
+			
+			// Realizamos proceso de pago con tarjeta
+			int resultado = dlg.realizarPagoTarjetaPagar(token, pagoTarjetaForm.getNumeroTarjeta(), caducidadTarjeta,
 					pagoTarjetaForm.getTitularTarjeta(), pagoTarjetaForm.getCodigoVerificacionTarjeta());
+			
 			request.setAttribute("resultadoPago", resultado);
 			return mapping.findForward("success");
 		} catch (DelegateException de){ 
 			String msg = de.getMessage();
 			int idx = msg.indexOf("ClienteException:");
 			if (idx == -1) {
-				request.setAttribute(Constants.MESSAGE_KEY, de.getMessage());
+				
+				// RAFA: FIJAMOS ERROR			
+				// request.setAttribute(Constants.MESSAGE_KEY, de.getMessage());
+				request.setAttribute(Constants.MESSAGE_KEY, "sesionPagos.errorGenericoComprobarPago");
+				
 				request.setAttribute("respuesta", "");
 			} else {
 				int length = "ClienteException:".length();

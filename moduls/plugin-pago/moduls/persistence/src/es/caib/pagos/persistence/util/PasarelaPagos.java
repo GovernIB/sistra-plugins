@@ -75,22 +75,18 @@ public class PasarelaPagos {
 	 * @throws ComprobarPagoException
 	 */	
 	public static Hashtable comprobarPago(String localizador) throws ComprobarPagoException{ 		
-		
-		Hashtable res = null;
 		try {
-			res = ClientePagos.getInstance().comprobarPago(localizador);			
+			Hashtable res = ClientePagos.getInstance().comprobarPago(localizador);
+			// Devolvemos resultado
+			log.debug("ComprobarPago para localizador = " + localizador + ". Resultado = " + res);
+			return res;
 		} catch (DelegateException de) { 
 			log.error(ERROR_GET_CLIENTE + de.getMessage());
 			throw new ComprobarPagoException(ERROR_GET_CLIENTE, de);
 		} catch(ClienteException ce){
 			log.error(ce.getMessage());
 			throw new ComprobarPagoException(String.valueOf(ce.getCode()), ce);
-		} 
-		
-		// Devolvemos resultado
-		log.debug("ComprobarPago para localizador = " + localizador + ". Resultado = " + res);
-		return res;
-		
+		} 					
 	}
 	
 	/**

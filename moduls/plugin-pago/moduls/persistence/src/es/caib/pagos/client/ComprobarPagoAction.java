@@ -2,6 +2,9 @@ package es.caib.pagos.client;
 
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
 
 import javax.xml.rpc.ServiceException;
@@ -105,6 +108,22 @@ public class ComprobarPagoAction implements WebServiceAction {
 	 */
 	private boolean comprobarFirma(final String justificante) throws ExcepcionMensaje, UnsupportedEncodingException
 	{
+		/*
+		// RAFA - SIMULACION
+		Date date = new Date();   // given date
+		Calendar calendar = GregorianCalendar.getInstance(); // creates a new calendar instance
+		calendar.setTime(date);   // assigns calendar to given date 
+		int minuto = calendar.get(Calendar.MINUTE);
+		if (minuto > 9) {
+			minuto = Integer.parseInt(Integer.toString(minuto).substring(1));
+		}
+		if (minuto >= 5) {
+			return false;
+		}
+		// RAFA - SIMULACION
+		*/
+		
+		
 		
 		int li_ini = justificante.indexOf("<DATOS_PAGO>");
 		int li_fin = justificante.indexOf("</DATOS_PAGO>");				

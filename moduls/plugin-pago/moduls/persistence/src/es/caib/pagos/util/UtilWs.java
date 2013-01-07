@@ -1,7 +1,16 @@
 package es.caib.pagos.util;
 
+import org.apache.axis.Handler;
+import org.apache.axis.SimpleChain;
+import org.apache.axis.SimpleTargetedChain;
+import org.apache.axis.client.AxisClient;
+import org.apache.axis.configuration.SimpleProvider;
+import org.apache.axis.transport.http.HTTPSender;
+import org.apache.axis.transport.http.HTTPTransport;
+
 import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.persistence.delegate.DelegateUtil;
+import es.caib.pagos.services.AxisLogHandler;
 import es.caib.pagos.services.wsdl.UsuariosWebServices;
 import gva.ideas.MensajeFirmado;
 
@@ -48,6 +57,27 @@ public class UtilWs {
 			e.printStackTrace();
 			return false;
 		}
+	}
+	
+	/**
+	 * Habilita log de llamadas.
+	 * @param sl
+	 */
+	public static void habilitarLog(final org.apache.axis.client.Service sl) {
+		// Log de llamadas 
+        SimpleProvider clientConfig = new SimpleProvider();
+        AxisLogHandler logHandler = new AxisLogHandler();
+        SimpleChain reqHandler = new SimpleChain();
+        SimpleChain respHandler = new SimpleChain();
+        reqHandler.addHandler(logHandler);
+        respHandler.addHandler(logHandler);
+        Handler pivot = new HTTPSender();
+        Handler transport = new SimpleTargetedChain(reqHandler, pivot,
+                respHandler);
+        clientConfig.deployTransport(HTTPTransport.DEFAULT_TRANSPORT_NAME,
+                transport);
+        sl.setEngineConfiguration(clientConfig);
+        sl.setEngine(new AxisClient(clientConfig));
 	}
 	
 }

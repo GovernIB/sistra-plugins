@@ -132,12 +132,22 @@ public class SesionPagoDelegate implements Delegate
 		}
 	}
 	
-	
-	public int realizarPagoTarjeta(final String numeroTarjeta, final String caducidadTarjeta, final String titularTarjeta, final String cvvTarjeta) throws DelegateException
+	public String realizarPagoTarjetaIniciarSesion()  throws DelegateException
 	{
 		try
 		{
-			return local.realizarPagoTarjeta(numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta);
+			return local.realizarPagoTarjetaIniciarSesion();
+		} catch (EJBException e)
+		{
+			throw new DelegateException(e);
+		} 	
+	}
+	
+	public int realizarPagoTarjetaPagar(final String token, final String numeroTarjeta, final String caducidadTarjeta, final String titularTarjeta, final String cvvTarjeta) throws DelegateException
+	{
+		try
+		{
+			return local.realizarPagoTarjetaPagar(token, numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta);
 		} catch (EJBException e)
 		{
 			throw new DelegateException(e);
