@@ -19,7 +19,7 @@ public class PluginSmsCAIB implements PluginSmsIntf{
 	
 	private Log log = LogFactory.getLog( PluginSmsCAIB.class);
 
-	public String enviarSMS(String cuentaSMS,String telefono,String mensaje,boolean inmediato) throws Exception{
+	public void enviarSMS(String idEnvio, String cuentaSMS,String telefono,String mensaje,boolean inmediato) throws Exception{
 		VivatoSoapCAIBClient vc = new VivatoSoapCAIBClient();
 		
 		vc.setApplicationName(cuentaSMS);
@@ -49,7 +49,6 @@ public class PluginSmsCAIB implements PluginSmsIntf{
 		
 		vc.close();
 		
-		return id;
 	}
 	
 	public EstadoEnvio consultarEstadoEnvio(String idEnvio) throws Exception{
