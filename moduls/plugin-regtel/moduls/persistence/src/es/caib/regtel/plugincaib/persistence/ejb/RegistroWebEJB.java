@@ -395,10 +395,17 @@ public abstract class RegistroWebEJB implements SessionBean
      * @ejb.permission role-name = "${role.auto}"
      */
 	public String obtenerDescripcionSelloOficina(String codigoOficina) throws Exception {
+		
+		String descSello = "";
+		
 		try {
+			
+			logger.debug("obtener descripcion sello para oficina: " + codigoOficina);
+			
 			// vector con cuadruplas: num oficina - num oficina física - desc oficina física - desc oficina
 			Vector v = buscarOficinas();
 			
+			boolean enc = false;
 			Iterator it = v.iterator();
 			while (it.hasNext()) {
 				String codiOficina = (String)it.next();
@@ -412,15 +419,24 @@ public abstract class RegistroWebEJB implements SessionBean
 				String codOf = codiOficina + SEPARADOR_OFICINA_FISICA + codiOficinaFisica;
 				
 				if (codigoOficina.equals(codOf)) {
-					return nomOficina;
-				}							
-				
+					enc = true;
+					descSello = nomOficina;
+				}																		
 			}			
+			
+			if (!enc) {
+				logger.debug("No se ha encontrado oficina: " + codigoOficina + ". Se devuelve descripcion para sello vacía.");
+			}
+			
+			return descSello;
+			
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap oficina
 			logger.error("Error al obtener las oficinas de registro", ex);
+			throw new Exception("Error al obtener las oficinas de registro", ex);
 		}
-		return null;
+		
+		
 	}
 	
 	// -------------------------------------------------------------------------------------------------------------------------------
