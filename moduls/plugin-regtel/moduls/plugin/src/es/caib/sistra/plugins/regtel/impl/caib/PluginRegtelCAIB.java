@@ -96,4 +96,13 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		DelegateRegistroWebUtil.getRegistroWebDelegate().anularRegistroSalida(numeroRegistro, fechaRegistro);
 	}
 
+
+	public String obtenerDescripcionSelloOficina(String codigoOficina) {
+		try {
+			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerDescripcionSelloOficina(codigoOficina);
+		} catch (DelegateException e) {
+			logger.error("Error obtenerDescripcionSelloOficina: " + e.getMessage(), e);
+			return null;
+		}
+	}
 }

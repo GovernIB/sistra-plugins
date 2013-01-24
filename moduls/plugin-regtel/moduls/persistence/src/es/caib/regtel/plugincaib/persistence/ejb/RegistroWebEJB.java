@@ -237,19 +237,17 @@ public abstract class RegistroWebEJB implements SessionBean
 				String codigo = (String)it.next();
 				if ("&nbsp;".equals(codigo))
 					break;
-				
 				ServicioDestinatario sd = new ServicioDestinatario();
 				sd.setCodigo(codigo);
 				sd.setDescripcion(sd.getCodigo() + " - " + (String)it.next());
-
 				it.next(); // Desc larga, no la queremos
-				
 				
 				// Nos quedamos solo con las consellerias
 				// Formato: nn00
 				if (codigo != null && codigo.length() == 4 && codigo.endsWith("00")) {					
 					lista.add(sd);
 				}
+				
 			}
 		} catch (Exception ex) {
 			// Si hi ha algun error no tornam cap servei
@@ -257,6 +255,38 @@ public abstract class RegistroWebEJB implements SessionBean
 		}
 		return lista;
 		
+		/*
+		List lista = new ArrayList();
+		try {
+			Map<String, ServicioDestinatario> servicios = new HashMap<String, ServicioDestinatario>();
+			List<OficinaRegistro> oficines = obtenerOficinasRegistro();
+			for (OficinaRegistro oficina: oficines) {
+				String codiOficina = oficina.getCodigo();
+				String[] codisOficina = codiOficina.split("-");
+				if (codisOficina.length == 2) {
+					Vector v = buscarDestinatarios(codisOficina[0]);
+					Iterator it = v.iterator();
+					while (it.hasNext()) {
+						String codigo = (String)it.next();
+						if ("&nbsp;".equals(codigo))
+							break;
+						ServicioDestinatario of = new ServicioDestinatario();
+						of.setCodigo(codigo);
+						of.setDescripcion((String)it.next());
+						it.next();
+						servicios.put(of.getCodigo(), of);
+					}
+				}
+			}
+			for (String codi: servicios.keySet()) {
+				lista.add(servicios.get(codi));
+			}
+		} catch (Exception ex) {
+			// Si hi ha algun error no tornam cap servei
+			logger.error("Error al obtenir els serveis destinataris", ex);
+		}
+		return lista;
+		*/
 	}
 	
 	/**
@@ -355,10 +385,44 @@ public abstract class RegistroWebEJB implements SessionBean
 			if (lc != null)
 				lc.logout();
 		}										
-
 		
 	}
 
+
+    /**
+     * @ejb.interface-method
+     * @ejb.permission role-name = "${role.todos}"
+     * @ejb.permission role-name = "${role.auto}"
+     */
+	public String obtenerDescripcionSelloOficina(String codigoOficina) throws Exception {
+		try {
+			// vector con cuadruplas: num oficina - num oficina física - desc oficina física - desc oficina
+			Vector v = buscarOficinas();
+			
+			Iterator it = v.iterator();
+			while (it.hasNext()) {
+				String codiOficina = (String)it.next();
+				if (codiOficina == null || codiOficina.length() <= 0) {
+					return null;
+				}
+				String codiOficinaFisica = (String)it.next();
+				String nomOficinaFisica = (String)it.next();
+				String nomOficina = (String)it.next();
+				
+				String codOf = codiOficina + SEPARADOR_OFICINA_FISICA + codiOficinaFisica;
+				
+				if (codigoOficina.equals(codOf)) {
+					return nomOficina;
+				}							
+				
+			}			
+		} catch (Exception ex) {
+			// Si hi ha algun error no tornam cap oficina
+			logger.error("Error al obtener las oficinas de registro", ex);
+		}
+		return null;
+	}
+	
 	// -------------------------------------------------------------------------------------------------------------------------------
 	//		FUNCIONES UTILIDAD
 	// -------------------------------------------------------------------------------------------------------------------------------
