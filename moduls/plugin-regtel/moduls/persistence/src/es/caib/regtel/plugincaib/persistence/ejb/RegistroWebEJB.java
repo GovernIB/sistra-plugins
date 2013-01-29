@@ -239,7 +239,7 @@ public abstract class RegistroWebEJB implements SessionBean
 				sd.setCodigo(codigo);
 				sd.setDescripcion(sd.getCodigo() + " - " + (String)it.next());
 				it.next(); // Desc larga, no la queremos
-
+				
 				// Nos quedamos solo con las consellerias
 				// Formato: nn00
 				if (codigo != null && codigo.length() == 4 && codigo.endsWith("00")) {					
@@ -317,6 +317,55 @@ public abstract class RegistroWebEJB implements SessionBean
 			throw new Exception("No se ha podido anular el registro");
 		}	
 	}
+	
+
+    /**
+     * @ejb.interface-method
+     * @ejb.permission role-name = "${role.todos}"
+     * @ejb.permission role-name = "${role.auto}"
+     */
+	public String obtenerDescripcionSelloOficina(String codigoOficina) throws Exception {
+		
+		String descSello = "";
+		
+		try {
+			
+			logger.debug("obtener descripcion sello para oficina: " + codigoOficina);
+			// vector con cuadruplas: num oficina - num oficina física - desc oficina física - desc oficina
+			Vector v = buscarOficinas(false);
+			
+			boolean enc = false;
+			Iterator it = v.iterator();
+			while (it.hasNext()) {
+				String codiOficina = (String)it.next();
+				if (codiOficina == null || codiOficina.length() <= 0) {
+					return null;
+				}
+				String codiOficinaFisica = (String)it.next();
+				String nomOficinaFisica = (String)it.next();
+				String nomOficina = (String)it.next();
+				
+				String codOf = codiOficina + SEPARADOR_OFICINA_FISICA + codiOficinaFisica;
+				
+				if (codigoOficina.equals(codOf)) {
+					enc = true;
+					descSello = nomOficina;
+				}																		
+			}			
+			
+			if (!enc) {
+				logger.debug("No se ha encontrado oficina: " + codigoOficina + ". Se devuelve descripcion para sello vacía.");
+			}
+			
+			return descSello;		
+		} catch (Exception ex) {
+			// Si hi ha algun error no tornam cap oficina
+			logger.error("Error al obtener las oficinas de registro", ex);
+			throw new Exception("Error al obtener las oficinas de registro", ex);
+		}		
+	}
+	
+	
 
 	// -------------------------------------------------------------------------------------------------------------------------------
 	//		FUNCIONES UTILIDAD
@@ -328,7 +377,7 @@ public abstract class RegistroWebEJB implements SessionBean
 			Vector v;
 			if (usuario == null){
 				// vector con cuadruplas: num oficina - num oficina física - desc oficina física - desc oficina
-				v = buscarOficinas();
+				v = buscarOficinas(true);
 			}else{
 				// vector con tripleta:   num oficina - num oficina física - desc oficina física
 				v = buscarOficinasUsuario(usuario);
@@ -662,12 +711,12 @@ public abstract class RegistroWebEJB implements SessionBean
 		return resposta;		
 	}
 	
-	private Vector buscarOficinas() throws Exception {
+	private Vector buscarOficinas(boolean filtroOficinaTelematicaUnica) throws Exception {
 		
 		// Comprobamos si esta configurada una unica oficina de registro telematico configurada en properties
 		String oficina = getCodigoOficinaRegistroTelematica();
 		Vector resposta = null;
-		if (oficina != null) {
+		if (oficina != null && filtroOficinaTelematicaUnica) {
 			resposta = new Vector();
 			String[] cods = descomponerOficinaFisica(oficina);
 			String[] desc = descomponerOficinaFisica(getDescripcionOficinaRegistroTelematica());

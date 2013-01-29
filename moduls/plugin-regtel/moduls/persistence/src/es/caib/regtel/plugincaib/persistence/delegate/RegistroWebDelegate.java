@@ -110,6 +110,16 @@ public class RegistroWebDelegate implements StatelessDelegate {
     	}
 	}	
 	
+
+	public String obtenerDescripcionSelloOficina(String codigoOficina) throws DelegateException
+	{
+		try {
+        	return getFacade().obtenerDescripcionSelloOficina(codigoOficina);
+		} catch (Exception e) {
+        	throw new DelegateException(e);
+    	}
+	}	
+	
     /* ========================================================= */
     /* ======================== REFERENCIA AL FACADE  ========== */
     /* ========================================================= */
@@ -119,6 +129,7 @@ public class RegistroWebDelegate implements StatelessDelegate {
 
     protected RegistroWebDelegate() throws DelegateException {       
     }
+
 
 	               
 }
