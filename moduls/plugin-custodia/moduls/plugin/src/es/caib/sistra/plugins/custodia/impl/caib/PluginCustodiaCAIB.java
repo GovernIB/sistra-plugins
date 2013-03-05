@@ -137,6 +137,13 @@ public class PluginCustodiaCAIB implements PluginCustodiaIntf{
 		}
 	}
 	
+
+	public String obtenerUrlDocumento(String codigoDocCustodia) throws Exception {
+		Configuracion conf = Configuracion.getInstance();
+		String urlCustodia = conf.getProperty("urlConsultaCustodia") + codigoDocCustodia; 
+		return urlCustodia;
+	}
+	
 	private static String generarCodigoCustodia(long codigo) throws Exception{
 		try{
 			SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmssS");
@@ -198,5 +205,6 @@ public class PluginCustodiaCAIB implements PluginCustodiaIntf{
 			(stackTrace!=null?"\nStackTrace: " + stackTrace:"") ;
 		return mens;
 	}
+
 	
 }
