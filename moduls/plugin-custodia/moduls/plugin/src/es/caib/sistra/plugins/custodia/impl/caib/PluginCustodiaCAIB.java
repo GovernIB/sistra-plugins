@@ -69,7 +69,7 @@ public class PluginCustodiaCAIB implements PluginCustodiaIntf{
 				// Invocamos a custodia para custodiar el SMIME
 				log.debug("Custodiamos documento");
 				xmlResponse = clienteCustodia.custodiarSMIME(new ByteArrayInputStream(baos.toByteArray()),
-							documento.getNombreFichero(), idReserva, tipoDocumento);
+							documento.getNombreFichero() + ".slc", idReserva, tipoDocumento);
 				
 				//  Interpretamos respuesta reservar documento
 				CustodiarDocumentoResponseParser parserCDR = new CustodiarDocumentoResponseParser(xmlResponse);
