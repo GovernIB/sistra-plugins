@@ -210,7 +210,10 @@ public class PagosFacadeEJB extends HibernateEJB  {
 				
 				// PATCH: NO SE ESTABA CONVIRTIENDO A B64
 				//estado.setReciboB64PagoTelematico(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico());
-				String reciboB64 = new String(Base64.encodeBase64(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico().getBytes(ConstantesXML.ENCODING)),ConstantesXML.ENCODING);
+				String reciboB64 = null;
+				if (sesionCAIB.getEstadoPago().getReciboB64PagoTelematico() != null) {
+					reciboB64 = new String(Base64.encodeBase64(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico().getBytes(ConstantesXML.ENCODING)),ConstantesXML.ENCODING);
+				}
 				estado.setReciboB64PagoTelematico(reciboB64);
 			}
 			
