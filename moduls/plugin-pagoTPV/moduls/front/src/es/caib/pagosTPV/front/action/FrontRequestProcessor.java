@@ -1,4 +1,4 @@
-package es.caib.pagos.front.action;
+package es.caib.pagosTPV.front.action;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ import org.apache.struts.action.ActionServlet;
 import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.tiles.TilesRequestProcessor;
 
-import es.caib.pagos.front.Constants;
-import es.caib.pagos.persistence.delegate.DelegateUtil;
+import es.caib.pagosTPV.front.Constants;
+import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
 
 /**
  * RequestProcessor con funcionalidad añadida de selección automàtica
@@ -38,6 +38,8 @@ public class FrontRequestProcessor extends TilesRequestProcessor {
   public void init(ActionServlet actionServlet,ModuleConfig moduleConfig) throws ServletException{
     	
     	super.init(actionServlet,moduleConfig);
+    	
+    	System.out.println("NO CACHE: " + moduleConfig.getControllerConfig().getNocache());
     	
  		// Inicializamos informacion organismo (almacenamos en contexto)
         try{
@@ -144,10 +146,13 @@ public class FrontRequestProcessor extends TilesRequestProcessor {
     public void process(HttpServletRequest request,
                         HttpServletResponse response)
             throws IOException, ServletException {
-        if (request.getCharacterEncoding() == null) {
+        
+    	if (request.getCharacterEncoding() == null) {
             request.setCharacterEncoding("ISO-8859-15");
         }
-        super.process(request, response);
+        
+        super.process(request, response);              
+        
     }
 
     protected void processPopulate(HttpServletRequest request,
@@ -155,8 +160,11 @@ public class FrontRequestProcessor extends TilesRequestProcessor {
                                    ActionForm form,
                                    ActionMapping mapping)
             throws ServletException {
+    	
         super.processPopulate(request, response, form, mapping);
+                
     }
+    
     
     @Override
     protected void processNoCache(HttpServletRequest request, HttpServletResponse response)

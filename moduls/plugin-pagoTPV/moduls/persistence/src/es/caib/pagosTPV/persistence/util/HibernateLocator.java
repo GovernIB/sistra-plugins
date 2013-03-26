@@ -1,4 +1,4 @@
-package es.caib.pagos.persistence.util;
+package es.caib.pagosTPV.persistence.util;
 
 import java.net.URL;
 
@@ -52,7 +52,7 @@ public class HibernateLocator {
         }
         try {
             ClassLoader cl = Thread.currentThread().getContextClassLoader();
-            URL url = cl.getResource("pagoCAIB-hibernate.cfg.xml");
+            URL url = cl.getResource("pagoTPV-hibernate.cfg.xml");
             Configuration cfg = new Configuration().configure(url);
             return cfg.buildSessionFactory();
         } catch (HibernateException e) {

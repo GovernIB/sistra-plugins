@@ -13,7 +13,8 @@
     <module><java>lib/plugin-emailCAIB.jar</java></module>
    	<module><java>lib/plugin-loginCAIB.jar</java></module>
 	<module><java>lib/plugin-firmaCAIB.jar</java></module>
-	<module><java>lib/plugin-pagosCAIB.jar</java></module>   	
+	<module><java>lib/plugin-pagosCAIB.jar</java></module>
+	<module><java>lib/plugin-pagosTPV.jar</java></module>      	
 	<module><java>lib/plugin-custodiaCAIB.jar</java></module>
     
     <!--  Asistente pagos -->
@@ -26,6 +27,24 @@
         </web>
     </module>
     
+    <!--  Asistente pagos TPV -->
+    <module><java>pagosTPV-model.jar</java></module>    
+    <module><ejb>pagosTPV-persistence.jar</ejb></module>    
+    <module>
+        <web>
+            <web-uri>pagosTPV-front.war</web-uri>
+            <context-root>pagosTPVFront</context-root>
+        </web>
+    </module>
+    <!-- 
+    <module>
+        <web>
+            <web-uri>pagosTPV-back.war</web-uri>
+            <context-root>pagosTPVBack</context-root>
+        </web>
+    </module>
+     -->
+     
     <!--  Registro -->
     <module><ejb>regtelCAIB-persistence.jar</ejb></module>    
     

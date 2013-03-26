@@ -1,4 +1,4 @@
-package es.caib.pagos.persistence.ejb;
+package es.caib.pagosTPV.persistence.ejb;
 
 import java.rmi.RemoteException;
 import java.util.Date;
@@ -9,37 +9,33 @@ import javax.ejb.EJBException;
 import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 
-import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import es.caib.pagos.model.ModeloPagos;
-import es.caib.pagos.model.SesionPagoCAIB;
-import es.caib.pagos.model.TokenAccesoCAIB;
-import es.caib.pagos.persistence.util.GeneradorId;
-import es.caib.pagos.persistence.util.PasarelaPagos;
+import es.caib.pagosTPV.model.ModeloPagosTPV;
+import es.caib.pagosTPV.model.SesionPagoCAIB;
+import es.caib.pagosTPV.model.TokenAccesoCAIB;
+import es.caib.pagosTPV.persistence.util.Configuracion;
+import es.caib.pagosTPV.persistence.util.GeneradorId;
 import es.caib.sistra.plugins.pagos.ConstantesPago;
 import es.caib.sistra.plugins.pagos.DatosPago;
 import es.caib.sistra.plugins.pagos.EstadoSesionPago;
 import es.caib.sistra.plugins.pagos.SesionPago;
 import es.caib.sistra.plugins.pagos.SesionSistra;
-import es.caib.xml.ConstantesXML;
 
 /**
  * SessionBean que implementa la interfaz del asistente
  * de pagos
  *
  * @ejb.bean
- *  name="pagos/persistence/PagosFacade"
- *  jndi-name="es.caib.pagos.persistence.PagosFacade"
+ *  name="pagos/persistence/PagosTPVFacade"
+ *  jndi-name="es.caib.pagosTPV.persistence.PagosFacade"
  *  type="Stateless"
  *  view-type="remote" 
  *  transaction-type="Container"
  *
  * @ejb.transaction type="Required"
  * 
- * 
- *
  */
 public class PagosFacadeEJB extends HibernateEJB  {
  
@@ -53,6 +49,11 @@ public class PagosFacadeEJB extends HibernateEJB  {
 		super.ejbCreate();
 	}
 	
+	public void ejbActivate() throws EJBException, RemoteException {
+	}
+
+	public void ejbPassivate() throws EJBException, RemoteException {
+	}
 	/**
 	 * Inicia sesion de pago
 	 * 
@@ -86,15 +87,14 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			tokenCAIB.setToken(token);
 			
 			// Almacenamos sesion
-			ModeloPagos mp = new ModeloPagos(sesionCAIB,tokenCAIB);
+			ModeloPagosTPV mp = new ModeloPagosTPV(sesionCAIB,tokenCAIB);
 			mp.setPagoFinalizado('N');
 	        session.save(mp);
 				        
 			// Devolvemos sesion de pago creada
 			SesionPago sesionPago = new SesionPago();
 			sesionPago.setLocalizador(loca);
-			// TODO Parametrizar context path
-			sesionPago.setUrlSesionPago("/pagosCAIBFront/init.do?token="+token);
+			sesionPago.setUrlSesionPago(Configuracion.getInstance().getUrlAsistenteInicio() + token);
 			log.debug("Iniciada sesion pago: localizador " + loca + " / token acceso: " + token);
 			return sesionPago;
 		}catch (Exception ex){
@@ -117,11 +117,11 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			log.debug("Reanudar sesion pago: localizador " + localizador);
 			
 			// Obtenemos sesion de pago
-			Query query = session.createQuery("FROM ModeloPagos AS mp WHERE mp.localizador = '"+localizador+"'");
+			Query query = session.createQuery("FROM ModeloPagosTPV AS mp WHERE mp.localizador = '"+localizador+"'");
         	if (query.list().isEmpty()){
         		return null;        		
 	        }
-        	ModeloPagos mp = (ModeloPagos) query.uniqueResult();
+        	ModeloPagosTPV mp = (ModeloPagosTPV) query.uniqueResult();
         	
         	// Comprobamos que no haya sido confirmado
         	if (mp.getEstado() == ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO){
@@ -152,7 +152,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			sesionPago.setLocalizador(token);
 			
 			// Devolvemos url reanudacion de pago
-			sesionPago.setUrlSesionPago("/pagosCAIBFront/init.do?token="+token);
+			sesionPago.setUrlSesionPago(Configuracion.getInstance().getUrlAsistenteInicio() + token);
 			log.debug("Reanudada sesion pago: localizador " + localizador + " / token acceso: " + token);
 			return sesionPago;
 			
@@ -177,7 +177,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			EstadoSesionPago estado = new EstadoSesionPago();
 			
 			// Obtenemos sesion de pago			
-			Query query = session.createQuery("FROM ModeloPagos AS mp WHERE mp.localizador = '"+localizador+"'");
+			Query query = session.createQuery("FROM ModeloPagosTPV AS mp WHERE mp.localizador = '"+localizador+"'");
 			
 			// No existe sesion
         	if (query.list().isEmpty()){	        	
@@ -186,7 +186,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 	        }	        
 
         	// Devolvemos estado sesion
-        	ModeloPagos mp = (ModeloPagos) query.uniqueResult();
+        	ModeloPagosTPV mp = (ModeloPagosTPV) query.uniqueResult();
 			SesionPagoCAIB sesionCAIB = mp.getSessionPagoCAIB();
 			if (sesionCAIB == null) {
 				estado.setEstado(ConstantesPago.SESIONPAGO_NO_EXISTE_SESION);
@@ -197,7 +197,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			estado.setEstado(sesionCAIB.getEstadoPago().getEstado());
 			
 			if (sesionCAIB.getEstadoPago().getEstado() == ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR) {
-//				SI EL ESTADO ES "PENDIENTE DE CONFIRMAR" SE ESTABLECE MENSAJE DEBUG				
+				// SI EL ESTADO ES "PENDIENTE DE CONFIRMAR" SE ESTABLECE MENSAJE DEBUG				
 				estado.setTipo(sesionCAIB.getEstadoPago().getTipo());
 				if(sesionCAIB.getEstadoPago().getIdentificadorPago() != null){
 					estado.setDescripcionEstado("Pago iniciado en la pasarela de pago con localizador "+sesionCAIB.getEstadoPago().getIdentificadorPago());					  	
@@ -207,11 +207,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 				estado.setTipo(sesionCAIB.getEstadoPago().getTipo());
 				estado.setIdentificadorPago(sesionCAIB.getEstadoPago().getIdentificadorPago());
 				estado.setFechaPago(sesionCAIB.getEstadoPago().getFechaPago());
-				
-				// PATCH: NO SE ESTABA CONVIRTIENDO A B64
-				//estado.setReciboB64PagoTelematico(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico());
-				String reciboB64 = new String(Base64.encodeBase64(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico().getBytes(ConstantesXML.ENCODING)),ConstantesXML.ENCODING);
-				estado.setReciboB64PagoTelematico(reciboB64);
+				estado.setReciboB64PagoTelematico(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico());
 			}
 			
 			return estado;
@@ -234,14 +230,14 @@ public class PagosFacadeEJB extends HibernateEJB  {
 		Session session = getSession();
 		try{
 			log.debug("Finalizar sesion pago");			
-			Query query = session.createQuery("FROM ModeloPagos AS mp WHERE mp.localizador = '"+localizador+"'");
+			Query query = session.createQuery("FROM ModeloPagosTPV AS mp WHERE mp.localizador = '"+localizador+"'");
 			
 			if (query.list().isEmpty()){
 				log.debug("No existe sesion");
 				return;
 			}
 			        	
-    		ModeloPagos mp = (ModeloPagos) query.uniqueResult();       
+    		ModeloPagosTPV mp = (ModeloPagosTPV) query.uniqueResult();       
     		
     		// No se permite finalizar una sesion de pago pendiente de confirmacion
     		if (mp.getEstado() == ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR){
@@ -270,20 +266,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 	 * @return Importe en cents de la tasa. Devuelve -1 si error
 	 */
 	public long consultarImporteTasa(String idTasa) {
-		try{
-			log.debug("consultarImporteTasa");
-			long imp = PasarelaPagos.consultarImporteTasa(idTasa);
-			return imp;			
-        }catch (Exception ex){
-        	log.error("Error consultando importe tasa para idTasa "  + idTasa);
-			throw new EJBException("Error consultando importe tasa para idTasa "  + idTasa, ex);
-        }
+		throw new EJBException("Metodo no implementado en este plugin");		
 	}
 
-
-	public void ejbActivate() throws EJBException, RemoteException {
-	}
-
-	public void ejbPassivate() throws EJBException, RemoteException {
-	}
 }
