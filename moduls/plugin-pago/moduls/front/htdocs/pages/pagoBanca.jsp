@@ -44,12 +44,13 @@
 				<bean:message key="pago.banca.seleccion" />
 			</p>
 			<html:errors />
-			<html:hidden property="banco" styleId="banco"/>	
-			<bean:message key="pago.banca.march" />
+			<html:hidden property="banco" styleId="banco"/>
+			
+			<a href="BM" onclick="accediendoEnviando(mensajeEnviando + 'Banca March');"><img src="imgs/pagos/bancamarch.png" alt="Banca March"/></a>
 			&nbsp;
-			<bean:message key="pago.banca.lacaixa" />
+			<a href="LC" onclick="accediendoEnviando(mensajeEnviando + 'La Caixa');"><img src="imgs/pagos/lacaixa.png" alt="La Caixa"/></a>
 			&nbsp;
-			<bean:message key="pago.banca.sanostra" />
+			<a href="SN" onclick="accediendoEnviando(mensajeEnviando + 'Sa Nostra');"><img src="imgs/pagos/sanostra.png" alt="Sa Nostra"/></a>
 		</html:form>
 	</div>
 </div>

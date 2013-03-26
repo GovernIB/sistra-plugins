@@ -142,10 +142,10 @@
         </ejbdoclet>
 
     	<!-- PARA HIBERNATE -->
-        <copy file="${ejb.etc}/hibernate.cfg.xml" todir="${ejb.gen.etc}" overwrite="true"/>
-    	<copy file="${ejb.etc}/hibernate.properties" todir="${ejb.gen.etc}" overwrite="true"/>
+        <copy file="${ejb.etc}/pagoCAIB-hibernate.cfg.xml" todir="${ejb.gen.etc}" overwrite="true"/>
+    	<copy file="${ejb.etc}/pagoCAIB-hibernate.properties" todir="${ejb.gen.etc}" overwrite="true"/>
 
-        <replace file="${ejb.gen.etc}/hibernate.cfg.xml">
+        <replace file="${ejb.gen.etc}/pagoCAIB-hibernate.cfg.xml">
             <replacefilter token="@datasource.jndi@" value="${datasource.jndi}"/>
             <replacefilter token="@hibernate.dialect@" value="${hibernate.dialect}"/>
         	<replacefilter token="@hibernate.show_sql@" value="${hibernate.show_sql}"/>
@@ -176,9 +176,9 @@
             <manifest>
                 <attribute name="Created-By" value="${indra}"/>
             </manifest>
-            <metainf dir="${ejb.gen.etc}" includes="*.xml" excludes="hibernate.cfg.xml"/>
-            <fileset dir="${ejb.gen.etc}" includes="hibernate.cfg.xml"/>
-        	<fileset dir="${ejb.gen.etc}" includes="hibernate.properties"/>
+            <metainf dir="${ejb.gen.etc}" includes="*.xml" excludes="pagoCAIB-hibernate.cfg.xml"/>
+            <fileset dir="${ejb.gen.etc}" includes="pagoCAIB-hibernate.cfg.xml"/>
+        	<fileset dir="${ejb.gen.etc}" includes="pagoCAIB-hibernate.properties"/>
             <fileset dir="${ejb.etc}" includes="ehcache.xml"/>  	
         	<fileset dir="${ejb.src}/" includes="**/*.JPG"/>    
         	<fileset dir="${ejb.src}/" includes="**/*.properties"/>        	
