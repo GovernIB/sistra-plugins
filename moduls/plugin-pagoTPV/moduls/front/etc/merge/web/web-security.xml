@@ -1,0 +1,16 @@
+<security-constraint>
+    <web-resource-collection>
+        <web-resource-name>pagosCaibFront</web-resource-name>
+        <url-pattern>*.do</url-pattern>
+        <url-pattern>*.jsp</url-pattern>
+    </web-resource-collection>
+    <auth-constraint>
+        <role-name>@role.todos@</role-name>
+    </auth-constraint>
+</security-constraint>
+
+<login-config><auth-method>FORM</auth-method><realm-name><![CDATA[Autenticacion]]></realm-name></login-config>
+
+<security-role>
+    <role-name>@role.todos@</role-name>
+</security-role>
