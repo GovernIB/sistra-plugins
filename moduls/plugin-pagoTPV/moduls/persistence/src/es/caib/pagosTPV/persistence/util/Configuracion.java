@@ -3,6 +3,7 @@ package es.caib.pagosTPV.persistence.util;
 import java.io.FileInputStream;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -124,6 +125,11 @@ public class Configuracion {
 	public String getDocumentoPagoPresencialEntidad3Cuenta(String comercio) {
 		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad3.cuenta");
 	}
+	
+	public String getPrefijoOrden() {
+		return StringUtils.defaultString(getProperty("tpv.orderPrefix"));
+	}
+	
 	
 		
 }

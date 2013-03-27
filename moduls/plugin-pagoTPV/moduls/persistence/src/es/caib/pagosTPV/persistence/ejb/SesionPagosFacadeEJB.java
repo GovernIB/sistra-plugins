@@ -639,6 +639,9 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	private String generarNumeroPedido() throws Exception {
 		Session session = getSession();
 		PreparedStatement pst=null;
+		
+		String prefijoOrden = Configuracion.getInstance().getPrefijoOrden(); 
+		
 		try{
 			String sql = ((SessionFactoryImpl)session.getSessionFactory()).getDialect().getSequenceNextValString("ZPE_SEQTPV");
 	        pst = session.connection().prepareStatement(sql);
@@ -646,7 +649,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	    	ResultSet rs = pst.getResultSet();
 	    	rs.next();
 	    	int num = rs.getInt(1);	
-	    	return StringUtils.leftPad(""+num, 12, '0');
+	    	return prefijoOrden + StringUtils.leftPad("" + num, (12 - prefijoOrden.length()), '0');
 		}catch(Exception ex){
 			throw new Exception("Excepcion generando numero de pedido",ex);
 		}finally{
