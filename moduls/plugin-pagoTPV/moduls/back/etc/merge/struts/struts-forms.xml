@@ -1,0 +1,3 @@
+<form-bean
+    name="sesionTPVForm"
+    type="es.caib.pagosTPV.back.form.SesionTPVForm" />    
