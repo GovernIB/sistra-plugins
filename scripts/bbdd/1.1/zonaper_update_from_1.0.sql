@@ -122,13 +122,7 @@ create unique index ZPE_TPVORD_IDX on ZPE_RPGTPV (
    TPV_IDENTP ASC
 );
 
-
-
-
-alter table ZPE_RPGTPV
-   add constraint ZPE_TPV_PK primary key (TPV_LOCALI);
-
-   create table ZPE_TPVNOT  (
+create table ZPE_TPVNOT  (
    TPN_ORDER            VARCHAR2(15)                    not null,
    TPN_LOCALI           VARCHAR2(100)                   not null,
    TPN_RESULT           VARCHAR2(10)                    not null,

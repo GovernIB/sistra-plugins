@@ -13,17 +13,19 @@
       </id>
                                    
 	<property name="identificadorTramite"  column="TPV_IDETRA"/>
-	<property name="tipoPago"  column="TPV_TIPO" not-null="false" length="1"/>
-	<property name="modeloTramite"  column="TPV_MODTRA"/>
-	<property name="versionTramite"  column="TPV_VERTRA"/>                                   
+	<property name="tipoPago"  column="TPV_TIPO" not-null="true" length="1"/>
+	<property name="modeloTramite"  column="TPV_MODTRA"  not-null="true"/>
+	<property name="versionTramite"  column="TPV_VERTRA"  not-null="true"/>                                   
     <property name="nombreTramite"  column="TPV_NOMTRA"  not-null="true" length="200"/>
-    <property name="modelo"  column="TPV_MODELO"  not-null="false" length="100"/>
-    <property name="idTasa"  column="TPV_IDTASA"  not-null="false" length="100"/>
-    <property name="concepto"  column="TPV_CONCEP"  not-null="false" length="200"/>
-    <property name="fechaDevengo"  column="TPV_DATADV"  not-null="false"/>
-    <property name="importe"  column="TPV_IMPORT"  not-null="false" length="100"/>
-    <property name="nifDeclarante"  column="TPV_NIFDEC"  not-null="false" length="12"/>
-    <property name="nombreDeclarante"  column="TPV_NOMDEC"  not-null="false" length="200"/>
+    <property name="idioma"  column="TPV_IDIOMA" not-null="true"/>
+    <property name="identificadorOrganismo"  column="TPV_IDEORG"  not-null="true"/>
+    <property name="modelo"  column="TPV_MODELO"  not-null="true" length="100"/>
+    <property name="idTasa"  column="TPV_IDTASA"  not-null="true" length="100"/>
+    <property name="concepto"  column="TPV_CONCEP"  not-null="true" length="200"/>
+    <property name="fechaDevengo"  column="TPV_DATADV"  not-null="true"/>
+    <property name="importe"  column="TPV_IMPORT"  not-null="true" length="100"/>
+    <property name="nifDeclarante"  column="TPV_NIFDEC"  not-null="true" length="12"/>
+    <property name="nombreDeclarante"  column="TPV_NOMDEC"  not-null="true" length="200"/>
     <property name="estado"  column="TPV_ESTADO"  not-null="false"/>
     <property name="tipoPagoSeleccionado"  column="TPV_TIPOPG" not-null="false" length="1"/>
     <property name="identificadorPago"  column="TPV_IDENTP" not-null="false" length="200"/>
@@ -34,10 +36,8 @@
 	<property name="token"  column="TPV_TOKEN" not-null="false" length="100"/>    
     <property name="tiempoLimite"  column="TPV_DATALI" not-null="false"/>     
     <property name="nombreUsuario"  column="TPV_NOMUSU" not-null="false" length="200"/>        		   
-    <property name="idioma"  column="TPV_IDIOMA" not-null="false" length="100"/>     
-	<property name="pagoFinalizado"  column="TPV_FINAL" not-null="false" length="1"/>    
-    <property name="identificadorOrganismo"  column="TPV_IDEORG"  not-null="false" length="1"/>
-    <property name="historicoPedidosKO"  column="TPV_HISPED"  not-null="false" length="1"/>
+    <property name="pagoFinalizado"  column="TPV_FINAL" not-null="false" length="1"/>    
+    <property name="historicoPedidosKO"  column="TPV_HISPED"  not-null="false"/>
 	
 </class>
 </hibernate-mapping>
