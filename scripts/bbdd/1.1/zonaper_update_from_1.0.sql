@@ -17,6 +17,7 @@ create table ZPE_RPGTPV  (
    TPV_IMPORT           VARCHAR2(100),
    TPV_NIFDEC           VARCHAR2(10),
    TPV_NOMDEC           VARCHAR2(200),
+   TPV_TELDEC           VARCHAR2(10),
    TPV_ESTADO           NUMBER(1),
    TPV_TIPOPG           VARCHAR2(1),
    TPV_IDENTP           VARCHAR2(200),

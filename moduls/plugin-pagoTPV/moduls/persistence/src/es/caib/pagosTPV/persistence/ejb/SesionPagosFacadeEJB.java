@@ -474,6 +474,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		xmlPago.setVersionRDSPago(version);
 		xmlPago.setNif(this.sesionPago.getDatosPago().getNifDeclarante());
 		xmlPago.setNombre(this.sesionPago.getDatosPago().getNombreDeclarante());
+		xmlPago.setTelefono(this.sesionPago.getDatosPago().getTelefonoDeclarante());
 		xmlPago.setOrganoEmisor(this.sesionPago.getDatosPago().getIdentificadorOrganismo());
 		xmlPago.setModelo(this.sesionPago.getDatosPago().getModelo());
 		xmlPago.setConcepto(this.sesionPago.getDatosPago().getConcepto());

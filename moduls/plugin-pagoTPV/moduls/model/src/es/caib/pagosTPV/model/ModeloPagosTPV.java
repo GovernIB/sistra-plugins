@@ -26,6 +26,7 @@ public class ModeloPagosTPV implements Serializable
 	private String importe;
 	private String nifDeclarante;
 	private String nombreDeclarante;
+	private String telefonoDeclarante;
 	private int estado;
 	private String tipoPagoSeleccionado;
 	private String identificadorPago;
@@ -72,6 +73,7 @@ public class ModeloPagosTPV implements Serializable
 		this.importe = sesionCAIB.getDatosPago().getImporte();
 		this.nifDeclarante = sesionCAIB.getDatosPago().getNifDeclarante();
 		this.nombreDeclarante = sesionCAIB.getDatosPago().getNombreDeclarante();
+		this.telefonoDeclarante = sesionCAIB.getDatosPago().getTelefonoDeclarante();
 		this.estado = sesionCAIB.getEstadoPago().getEstado();		
 		this.tipoPagoSeleccionado = Character.toString(sesionCAIB.getEstadoPago().getTipo());
 		this.identificadorPago = sesionCAIB.getEstadoPago().getIdentificadorPago();
@@ -100,6 +102,7 @@ public class ModeloPagosTPV implements Serializable
 		sesionCAIB.getDatosPago().setImporte(importe);
 		sesionCAIB.getDatosPago().setNifDeclarante(nifDeclarante);
 		sesionCAIB.getDatosPago().setNombreDeclarante(nombreDeclarante);
+		sesionCAIB.getDatosPago().setTelefonoDeclarante(telefonoDeclarante);
 		sesionCAIB.getDatosPago().setNombreUsuario(nombreUsuario);
 		sesionCAIB.getDatosPago().setIdioma(idioma);
 		sesionCAIB.setEstadoPago(new EstadoSesionPago());
@@ -333,6 +336,16 @@ public class ModeloPagosTPV implements Serializable
 
 	public void setTipoPagoSeleccionado(String tipoPagoSeleccionado) {
 		this.tipoPagoSeleccionado = tipoPagoSeleccionado;
+	}
+
+
+	public String getTelefonoDeclarante() {
+		return telefonoDeclarante;
+	}
+
+
+	public void setTelefonoDeclarante(String telefonoDeclarante) {
+		this.telefonoDeclarante = telefonoDeclarante;
 	}
 
 }
