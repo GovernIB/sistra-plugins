@@ -36,14 +36,12 @@
             <context-root>pagosTPVFront</context-root>
         </web>
     </module>
-    <!-- 
     <module>
         <web>
             <web-uri>pagosTPV-back.war</web-uri>
             <context-root>pagosTPVBack</context-root>
         </web>
     </module>
-     -->
      
     <!--  Registro -->
     <module><ejb>regtelCAIB-persistence.jar</ejb></module>    

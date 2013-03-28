@@ -77,10 +77,12 @@
 			<include name="plugin-firmaCAIB.jar"/>
 			<include name="plugin-loginCAIB.jar"/>
 			<include name="plugin-pagosCAIB.jar"/>
+			<include name="plugin-pagosTPV.jar"/>
 			<include name="plugin-regtelCAIB.jar"/>
 			<include name="plugin-smsCAIB.jar"/>
 			<include name="plugin-emailCAIB.jar"/>
 			<include name="pagosCAIB-client.jar"/>
+			<include name="pagosTPV-client.jar"/>
 			<include name="regtelCAIB-wsclient.jar"/>
 			<include name="libreria-formateadoresCAIB.jar"/>			
 		</zipfileset>
@@ -88,6 +90,10 @@
 			<include name="pagosCAIB-model.jar"/>
 			<include name="pagosCAIB-persistence.jar"/>
 			<include name="pagosCAIB-front.war"/>
+			<include name="pagosTPV-model.jar"/>
+			<include name="pagosTPV-persistence.jar"/>
+			<include name="pagosTPV-front.war"/>
+			<include name="pagosTPV-back.war"/>
 			<include name="regtelCAIB-persistence.jar"/>
 			<include name="sistra-portal.war"/>
 			<include name="sistra-checkEmail.war"/>

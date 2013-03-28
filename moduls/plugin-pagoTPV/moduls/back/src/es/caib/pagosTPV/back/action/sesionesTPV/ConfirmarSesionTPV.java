@@ -35,7 +35,6 @@ public class ConfirmarSesionTPV extends BaseAction
 				break;
 		}
 		
-		
 		request.setAttribute("mensaje", mensaje);
 		return mapping.findForward( "mensaje" );
 		

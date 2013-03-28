@@ -61,7 +61,7 @@
 			</manifest>
 			<metainf dir="${etc.jboss}" includes="*.xml"/>
 			<fileset dir="${moduls.dir}">
-                <exclude name="${projectePagos}-back.war"/>
+                <exclude name="pagosTPV-back.war"/>
 				<exclude name="plugin-pagoCAIB.jar"/>
             </fileset>
 			<archives dir="${lib}" prefix="lib">
@@ -80,9 +80,7 @@
 	</target>
 	<target name="distribute" description="Distribucion">
 		<copy file="${output.dir}/moduls/pagosTPV-client.jar" todir="${distribucion.dir}"/>	
-		<!--
-			 <copy file="${output.dir}/moduls/pagosTPV-back.war" todir="${distribucion.dir}"/> 
-		-->	
+		<copy file="${output.dir}/moduls/pagosTPV-back.war" todir="${distribucion.dir}"/> 		
 		<copy file="${output.dir}/moduls/pagosTPV-front.war" todir="${distribucion.dir}"/>		
 		<copy file="${output.dir}/moduls/pagosTPV-model.jar" todir="${distribucion.dir}"/>		
 		<copy file="${output.dir}/moduls/pagosTPV-persistence.jar" todir="${distribucion.dir}"/>		
@@ -97,9 +95,7 @@
 	<target name="propagate">
 		<ant dir="model" target="${task}" inheritall="false"/>
 		<ant dir="persistence" target="${task}" inheritall="false"/>
-		<!-- 
-			<ant dir="back" target="${task}" inheritall="false"/>
-		-->
+		<ant dir="back" target="${task}" inheritall="false"/>		
 		<ant dir="front" target="${task}" inheritall="false"/>
 		<ant dir="plugin" target="${task}" inheritall="false"/>
 	</target>

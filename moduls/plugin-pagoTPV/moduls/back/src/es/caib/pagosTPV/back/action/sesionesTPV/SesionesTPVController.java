@@ -47,6 +47,7 @@ public class SesionesTPVController implements Controller{
         	}
         	request.getSession().setAttribute(Constants.NIF_KEY, strNif);
         	
+        	
         	BackPagosTPVDelegate delegate = DelegateUtil.getBackPagosTPVDelegate();
         	request.setAttribute( "page", delegate.busquedaPaginadaSesionesTPV(pagina, LONGITUD_PAGINA, strNif ) );
 
