@@ -7,6 +7,7 @@ import javax.ejb.EJBException;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.caib.pagosTPV.model.OrganismoInfo;
 import es.caib.pagosTPV.persistence.util.Configuracion;
 
 /**
@@ -45,5 +46,21 @@ public abstract class ConfiguracionFacadeEJB extends HibernateEJB  {
     	}         
     }
  	
+    /**
+	 * 
+	 * Obtiene las propiedades de configuracion referentes al organismo y las empaqueta en 
+	 * una clase de modelo
+	 * 
+     * @ejb.interface-method
+     * @ejb.permission unchecked = "true"
+     */
+    public OrganismoInfo obtenerOrganismoInfo() {
+    	try{
+    		OrganismoInfo oi = Configuracion.getInstance().obtenerOrganismoInfo();
+    		return oi;
+    	}catch(Exception ex){
+    		throw new EJBException(ex);
+    	}         
+    }
 
 }

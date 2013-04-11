@@ -45,34 +45,11 @@ public class Constants implements Serializable
 	public static String PAYMENT_URL = "urlAcceso";
 	
 	/**
-	 * Atributo de request donde se guarda la url de soporte
-	 */
-	public static String URL_SOPORTE_INCIDENCIAS = "urlSoporteIncidencias";
-	/**
-	 * Atributo de request donde se guarda el telefono de soporte
-	 */
-	public static String TELEFONO_INCIDENCIAS = "telefonoIncidencias";
-	
-	/**
-	 * Atributo de request donde se guarda la informacion del Organismo
-	 */
-	public static String ORGANISMO_INFO_KEY = "informacionOrganismo";
-	
-	/**
-	 * Atributo de request donde se guarda el nombre del Organismo
-	 */
-	public static String ORGANISMO_NAME = "nombreOrganismo";
-	
-	/**
-	 * Atributo de request donde se guarda la url del logo del Organismo
-	 */
-	public static String ORGANISMO_LOGO = "logoOrganismo";
-
-	/**
-	 * Atributo de request donde se guarda la url del Organismo
-	 */
-	public static String ORGANISMO_URL = "urlOrganismo";
-	
+     * Atributo de contexto donde se guarda la info del organismo
+     */
+    public static final String ORGANISMO_INFO_KEY 	= "es.caib.pagosTPV.front.infoOrganismo";
+  
+	/** Atributos para download fichero */	
 	public static String NOMBREFICHERO_KEY = "nombrefichero";
 	public static String DATOSFICHERO_KEY = "datosfichero";
 	

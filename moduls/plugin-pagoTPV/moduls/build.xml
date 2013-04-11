@@ -79,7 +79,6 @@
 		<antcall target="distribute"/>
 	</target>
 	<target name="distribute" description="Distribucion">
-		<copy file="${output.dir}/moduls/pagosTPV-client.jar" todir="${distribucion.dir}"/>	
 		<copy file="${output.dir}/moduls/pagosTPV-back.war" todir="${distribucion.dir}"/> 		
 		<copy file="${output.dir}/moduls/pagosTPV-front.war" todir="${distribucion.dir}"/>		
 		<copy file="${output.dir}/moduls/pagosTPV-model.jar" todir="${distribucion.dir}"/>		

@@ -21,6 +21,7 @@ import org.apache.struts.config.ModuleConfig;
 import org.apache.struts.tiles.TilesRequestProcessor;
 
 import es.caib.pagosTPV.front.Constants;
+import es.caib.pagosTPV.model.OrganismoInfo;
 import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
 
 /**
@@ -39,10 +40,16 @@ public class FrontRequestProcessor extends TilesRequestProcessor {
     	
     	super.init(actionServlet,moduleConfig);
     	
-    	System.out.println("NO CACHE: " + moduleConfig.getControllerConfig().getNocache());
-    	
- 		// Inicializamos informacion organismo (almacenamos en contexto)
+    	// Inicializamos informacion organismo (almacenamos en contexto)
         try{
+        	
+    		if (getServletContext().getAttribute(Constants.ORGANISMO_INFO_KEY) == null){
+	 			OrganismoInfo oi = DelegateUtil.getConfiguracionDelegate().obtenerOrganismoInfo();
+	 			getServletContext().setAttribute(Constants.ORGANISMO_INFO_KEY,oi);
+	 		}
+            
+        	
+        	/*
 	 		if (getServletContext().getAttribute(Constants.URL_SOPORTE_INCIDENCIAS) == null){
 	 			getServletContext().setAttribute(Constants.URL_SOPORTE_INCIDENCIAS,DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("organismo.soporteTecnico.url"));
 	 		}
@@ -61,6 +68,7 @@ public class FrontRequestProcessor extends TilesRequestProcessor {
 	 	    if (getServletContext().getAttribute(Constants.ORGANISMO_URL) == null){
 	 		  	getServletContext().setAttribute(Constants.ORGANISMO_URL,DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("organismo.portal.url"));
 	 		}
+	 		*/
         }catch (Exception ex){
         	log.error("Error obteniendo informacion organismo",ex);
         	throw new ServletException(ex);

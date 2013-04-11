@@ -12,6 +12,9 @@
 	<!-- css -->
 	<link href="css/estils.css" rel="stylesheet" type="text/css" media="screen" />
 	<link href="css/estils_print.css" rel="stylesheet" type="text/css" media="print" />
+	<logic:notEmpty name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="urlCssCustom">
+		<link href="<bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="urlCssCustom" />" rel="stylesheet" type="text/css" />
+	</logic:notEmpty>
 	<!-- /css -->
 	
 	

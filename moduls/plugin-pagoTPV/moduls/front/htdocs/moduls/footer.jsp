@@ -8,13 +8,13 @@
 	
 	<!-- para coger la url y el telefono de soporte -->
 	<bean:define id="urlSoporte">
-		<bean:write name="<%=es.caib.pagosTPV.front.Constants.URL_SOPORTE_INCIDENCIAS%>"/>
+		<bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="urlSoporteIncidencias"/>
 	</bean:define>
 	<bean:define id="telefonoSoporte" type="String">
-		<logic:notEmpty name="<%=es.caib.pagosTPV.front.Constants.TELEFONO_INCIDENCIAS%>">
-			<bean:write name="<%=es.caib.pagosTPV.front.Constants.TELEFONO_INCIDENCIAS%>"/>
+		<logic:notEmpty name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="telefonoIncidencias">
+			<bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="telefonoIncidencias"/>
 		</logic:notEmpty>
-		<logic:empty  name="<%=es.caib.pagosTPV.front.Constants.TELEFONO_INCIDENCIAS%>">
+		<logic:empty  name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="telefonoIncidencias">
 			&nbsp;
 		</logic:empty>
 	</bean:define>
@@ -27,11 +27,11 @@
 	<!-- peu -->
 		<div id="peu">
 			
-			<div class="esquerra">&copy; <bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_NAME%>"/></div>
+			<div class="esquerra">&copy; <bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="nombre"/></div>
 			
 			<!-- contacte -->
 			<div class="centre">
-				<bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" filter="false"/>
+				<bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="pieContactoHTML" filter="false"/>
 			</div>
 			<!-- /contacte -->
 			

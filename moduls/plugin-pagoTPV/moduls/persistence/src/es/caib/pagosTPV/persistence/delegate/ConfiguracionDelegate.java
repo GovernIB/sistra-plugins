@@ -5,6 +5,7 @@ import java.rmi.RemoteException;
 import javax.ejb.CreateException;
 import javax.naming.NamingException;
 
+import es.caib.pagosTPV.model.OrganismoInfo;
 import es.caib.pagosTPV.persistence.intf.ConfiguracionTPVFacadeLocal;
 import es.caib.pagosTPV.persistence.util.ConfiguracionTPVFacadeUtil;
 
@@ -23,6 +24,16 @@ public class ConfiguracionDelegate implements StatelessDelegate {
 	    }	 	 
 	 }
 	
+	public OrganismoInfo obtenerOrganismoInfo() throws DelegateException
+	{
+		try
+		{			
+			return getFacade().obtenerOrganismoInfo();				
+		} catch (Exception e) {
+	        throw new DelegateException(e);
+	    }	 	 
+	 }
+	
     /* ========================================================= */
     /* ======================== REFERENCIA AL FACADE  ========== */
     /* ========================================================= */
@@ -31,6 +42,8 @@ public class ConfiguracionDelegate implements StatelessDelegate {
     }
 
     protected ConfiguracionDelegate() throws DelegateException {        
-    }                  
+    }
+
+	                
 }
 

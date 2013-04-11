@@ -250,7 +250,7 @@ div#listadoTasas ul li div.detalle input { overflow:visible; padding:0 .5em; fon
 #datosPago h3 { text-align:center; text-transform:uppercase; margin-bottom:1em; }
 #datosPago ul { list-style:none; }
 #datosPago ul li { font-size:1.2em; }
-#datosPago span.label { display:block; float:left; width:8em; font-size:.7em; text-align:right; margin-right:.8em; }
+#datosPago span.label { display:block; float:left; width:9em; font-size:.7em; text-align:right; margin-right:.8em; }
 
 #realizarPago { width:50em; padding:1em; margin:2em auto; border:1px solid #ccc; }
 #realizarPago span.label { display:block; float:left; width:17em; font-size:.7em; text-align:right; margin-right:.8em; }
