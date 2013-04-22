@@ -402,6 +402,12 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		log.debug("Realizar pago presencial");
 		
 		try{
+			// Verificamos que el pago este en un estado que permita iniciar pago con tarjeta
+			if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_EN_CURSO) {
+				throw new Exception("El pago esta confirmado o pendiente de confirmar");
+			}
+			
+			
 			// Iniciar sesion de pago con la pasarela
 			ResultadoInicioPago resPagos = PasarelaPagos.iniciarSesionPagos(sesionPago.getDatosPago(), 
 					String.valueOf(ConstantesPago.TIPOPAGO_PRESENCIAL));
@@ -415,11 +421,8 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			actualizaModeloPagos();
 	    
 	        return datosFichero;
-		} catch (InicioPagoException ex) {
-			//log.error("Error al iniciar la sesion de pagos.");
-			throw new EJBException("sesionPagos.errorComprobarPago");
-		} catch (GetPdf046Exception ce) {
-			//log.error("Error al obtener la carta de pago.");
+		} catch (Exception ex) {
+			log.error("Error al iniciar pago presencial", ex);
 			throw new EJBException("sesionPagos.errorGenericoComprobarPago");
 		}
 
@@ -455,7 +458,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			return resPagos.getToken();
 			
 		} catch (Exception ex) {
-			//log.error("Error al iniciar la sesion de pagos.");
+			log.error("Error al iniciar sesion para pago con tarjeta", ex);
 			throw new EJBException("sesionPagos.errorComprobarPago", ex);
 		} 	
 		
@@ -506,7 +509,9 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			}
 						
 		} catch (Exception pe) {
-			//log.error("Error en el pago con tarjeta.");
+			
+			log.error("Error al realizar pago con tarjeta", pe);
+			
 			//en caso que el error sea de los controlados lanzamos excepción
 			if (pe.getCause() != null && pe.getCause() instanceof ClienteException) {
 				ClienteException ce = (ClienteException)pe.getCause();
@@ -561,6 +566,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			return resultado;
 			
 		} catch (Exception ex) {
+			log.error("Error al realizar pago por banca", ex);
 			throw new EJBException("sesionPagos.errorGenericoComprobarPago", ex);
 		}
 
@@ -580,7 +586,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			return PasarelaPagos.getPdf046(sesionPago.getEstadoPago().getIdentificadorPago(), sesionPago.getDatosPago().getImporte(), 
 		    		sesionPago.getDatosPago().getNifDeclarante(), sesionPago.getDatosPago().getFechaDevengo());
 		} catch (GetPdf046Exception ce) {
-			log.error("Error al obtener el justificante de pago.");
+			log.error("Error al obtener el justificante de pago.", ce);
 			throw new EJBException("sesionPagos.errorGenericoComprobarPago");
 		}
     
