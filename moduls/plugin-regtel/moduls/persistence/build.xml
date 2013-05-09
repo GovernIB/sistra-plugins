@@ -52,6 +52,9 @@
     	<fileset dir="${lib.dir}/cxf">
     		<include name="*.jar"/>    		 
    		</fileset>
+	 	<fileset dir="${lib.dir}/regweblib">
+    		<include name="logic-1.0.5-client.jar"/>    		 
+   		</fileset>
 	 	<fileset dir="${ejb.product}">
 	        <include name="regtelCAIB-wsclient.jar"/>
 	    </fileset> 

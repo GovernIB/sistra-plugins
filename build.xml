@@ -72,6 +72,9 @@
 		<zipfileset dir="${lib}/firma" prefix="lib">
 			<include name="ideas36rc1_Java1.4.jar"/>
 		</zipfileset>		
+		<zipfileset dir="${lib}/regweblib" prefix="lib">
+			<include name="logic-1.0.5-client.jar"/>
+		</zipfileset>
 		<zipfileset dir="${output.dir}/moduls" prefix="lib">
 			<include name="plugin-custodiaCAIB.jar"/>
 			<include name="plugin-firmaCAIB.jar"/>

@@ -79,4 +79,7 @@
      <!-- REGWEB WS: NECESARIO PARA PLUGIN-REGTEL -->
     <module><java>lib/regtelCAIB-wsclient.jar</java></module>
     
+     <!-- REGWEB EJB: NECESARIO PARA PLUGIN-REGTEL -->
+    <module><java>lib/logic-1.0.5-client.jar</java></module>
+    
 </application>
