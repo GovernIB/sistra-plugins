@@ -107,28 +107,12 @@ public class Configuracion {
 		return getProperty("tpv." + comercio + ".documentoPagoPresencial.instrucciones." + idioma);
 	}
 	
-	public String getDocumentoPagoPresencialEntidad1Nombre(String comercio) {
-		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad1.nombre");
+	public String getDocumentoPagoPresencialEntidadNombre(String comercio, int numEntidad) {
+		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad" + numEntidad +".nombre");
 	}
 	
-	public String getDocumentoPagoPresencialEntidad1Cuenta(String comercio) {
-		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad1.cuenta");
-	}
-	
-	public String getDocumentoPagoPresencialEntidad2Nombre(String comercio) {
-		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad2.nombre");
-	}
-	
-	public String getDocumentoPagoPresencialEntidad2Cuenta(String comercio) {
-		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad2.cuenta");
-	}
-	
-	public String getDocumentoPagoPresencialEntidad3Nombre(String comercio) {
-		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad3.nombre");
-	}
-	
-	public String getDocumentoPagoPresencialEntidad3Cuenta(String comercio) {
-		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad3.cuenta");
+	public String getDocumentoPagoPresencialEntidadCuenta(String comercio, int numEntidad) {
+		return getProperty("tpv." + comercio + ".documentoPagoPresencial.entidad" + numEntidad + ".cuenta");
 	}
 	
 	public String getPrefijoOrden() {

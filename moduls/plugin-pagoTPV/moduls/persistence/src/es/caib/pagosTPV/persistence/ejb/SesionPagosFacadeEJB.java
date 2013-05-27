@@ -487,12 +487,27 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		xmlPago.setFechaPago(this.sesionPago.getEstadoPago().getFechaPago());
 		xmlPago.setImporte(this.sesionPago.getDatosPago().getImporte());
 		xmlPago.setInstruccionesPresencialTexto(Configuracion.getInstance().getDocumentoPagoPresencialInstrucciones(this.sesionPago.getDatosPago().getIdentificadorOrganismo(), this.sesionPago.getDatosPago().getIdioma()));
-		xmlPago.setInstruccionesPresencialEntidad1Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidad1Nombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo()));
-		xmlPago.setInstruccionesPresencialEntidad1Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidad1Cuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo()));
-		xmlPago.setInstruccionesPresencialEntidad2Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidad2Nombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo()));
-		xmlPago.setInstruccionesPresencialEntidad2Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidad2Cuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo()));
-		xmlPago.setInstruccionesPresencialEntidad3Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidad3Nombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo()));
-		xmlPago.setInstruccionesPresencialEntidad3Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidad3Cuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo()));
+		
+		xmlPago.setInstruccionesPresencialEntidad1Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(), 1));
+		xmlPago.setInstruccionesPresencialEntidad1Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),1));
+		xmlPago.setInstruccionesPresencialEntidad2Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),2));
+		xmlPago.setInstruccionesPresencialEntidad2Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),2));
+		xmlPago.setInstruccionesPresencialEntidad3Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),3));
+		xmlPago.setInstruccionesPresencialEntidad3Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),3));
+		xmlPago.setInstruccionesPresencialEntidad4Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),4));
+		xmlPago.setInstruccionesPresencialEntidad4Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),4));
+		xmlPago.setInstruccionesPresencialEntidad5Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),5));
+		xmlPago.setInstruccionesPresencialEntidad5Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),5));
+		xmlPago.setInstruccionesPresencialEntidad6Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),6));
+		xmlPago.setInstruccionesPresencialEntidad6Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),6));
+		xmlPago.setInstruccionesPresencialEntidad7Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),7));
+		xmlPago.setInstruccionesPresencialEntidad7Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),7));
+		xmlPago.setInstruccionesPresencialEntidad8Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),8));
+		xmlPago.setInstruccionesPresencialEntidad8Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),8));
+		xmlPago.setInstruccionesPresencialEntidad9Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),9));
+		xmlPago.setInstruccionesPresencialEntidad9Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),9));
+		xmlPago.setInstruccionesPresencialEntidad10Nombre(Configuracion.getInstance().getDocumentoPagoPresencialEntidadNombre(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),10));
+		xmlPago.setInstruccionesPresencialEntidad10Cuenta(Configuracion.getInstance().getDocumentoPagoPresencialEntidadCuenta(this.sesionPago.getDatosPago().getIdentificadorOrganismo(),10));
 		byte[] xmlContent = xmlPago.getBytes();
 				
 		//String strXml = xmlPago.getString();
