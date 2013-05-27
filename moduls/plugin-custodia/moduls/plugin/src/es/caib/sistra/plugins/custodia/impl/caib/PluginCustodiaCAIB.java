@@ -69,7 +69,7 @@ public class PluginCustodiaCAIB implements PluginCustodiaIntf{
 				// Invocamos a custodia para custodiar el SMIME
 				log.debug("Custodiamos documento");
 				xmlResponse = clienteCustodia.custodiarSMIME(new ByteArrayInputStream(baos.toByteArray()),
-							documento.getNombreFichero(), idReserva, tipoDocumento);
+							documento.getNombreFichero() + ".slc", idReserva, tipoDocumento);
 				
 				//  Interpretamos respuesta reservar documento
 				CustodiarDocumentoResponseParser parserCDR = new CustodiarDocumentoResponseParser(xmlResponse);
@@ -137,6 +137,13 @@ public class PluginCustodiaCAIB implements PluginCustodiaIntf{
 		}
 	}
 	
+
+	public String obtenerUrlDocumento(String codigoDocCustodia) throws Exception {
+		Configuracion conf = Configuracion.getInstance();
+		String urlCustodia = conf.getProperty("urlConsultaCustodia") + codigoDocCustodia; 
+		return urlCustodia;
+	}
+	
 	private static String generarCodigoCustodia(long codigo) throws Exception{
 		try{
 			SimpleDateFormat sdf = new SimpleDateFormat("ddMMyyyyHHmmssS");
@@ -198,5 +205,6 @@ public class PluginCustodiaCAIB implements PluginCustodiaIntf{
 			(stackTrace!=null?"\nStackTrace: " + stackTrace:"") ;
 		return mens;
 	}
+
 	
 }

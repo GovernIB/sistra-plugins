@@ -1,6 +1,10 @@
-SET PATH= PATH$;"C:\Archivos de programa\Java\jdk1.5.0_11\bin"
-cd C:\Rafa\Indra\EclipseWorkspaceLiberarSistra\plugin-firmaCAIB
-del moduls\plugins\signApplet\appletFirma.jar
-jarsigner -keystore moduls\plugins\signApplet\ejemplo.ks -storepass ejemplo -keypass ejemplo -signedjar moduls\plugins\signApplet\appletFirma.jar output\product\appletFirma.jar ejemplo
+SET PATH= PATH$;"C:\java\32b\jdk1.5.0_22\bin"
+cd C:\rafa\Indra\EclipseWorkspaceSistraSF-new\plugins-caib\moduls\plugin-firma
+del moduls\plugin\signApplet\appletFirma.jar
+
+REM jarsigner -keystore moduls\plugin\signApplet\ejemplo.ks -storepass ejemplo -keypass ejemplo -signedjar moduls\plugin\signApplet\appletFirma.jar output\product\appletFirma.jar ejemplo
+
+jarsigner -keystore moduls\plugin\signApplet\ejemplo.ks -storepass ejemplo -keypass ejemplo -signedjar moduls\plugin\signApplet\AppletFirma.jar moduls\plugin\signApplet\AppletFirma-unsigned.jar ejemplo
+
 
 pause

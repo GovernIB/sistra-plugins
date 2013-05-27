@@ -1,7 +1,5 @@
 package es.caib.sistra.plugins.login.impl.caib;
 
-import org.apache.commons.lang.StringUtils;
-
 import es.caib.sistra.plugins.login.AutenticacionExplicitaInfo;
 import es.caib.sistra.plugins.login.ConstantesLogin;
 import es.caib.sistra.plugins.login.PluginAutenticacionExplicitaIntf;
@@ -31,23 +29,42 @@ public class PluginAutenticacionExplicitaCAIB implements PluginAutenticacionExpl
 			String passwdDefault = ConfigurationUtil.getInstance().obtenerPropiedades().getProperty("auto.pass");
 			
 			// Prefijo
-			String prefijo = "TRAMITE.";
+			String prefijo = null;
 			if (ConstantesLogin.TIPO_DOMINIO == tipoElemento) {
 				prefijo = "DOMINIO.";
+			} else if (ConstantesLogin.TIPO_PROCEDIMIENTO == tipoElemento) {
+				prefijo = "PROCEDIMIENTO.";
+			} else {
+				throw new Exception("Tipo de elemento no válido: " + tipoElemento);
 			}
 			
-			// Buscamos si existe configuracion para el elemento
+			// Establecemos autenticacion por defecto
+			ae.setUser(userDefault);
+			ae.setPassword(passwdDefault);
+			
+			// Buscamos si existe configuracion explicita para el elemento
+			//	 - Autenticacion indicando usr/pass
 			String userElemento = ConfigurationUtil.getInstance().obtenerPropiedades().getProperty(prefijo + idElemento + ".user");
 			String passElemento = ConfigurationUtil.getInstance().obtenerPropiedades().getProperty(prefijo + idElemento + ".pass");
 			if (userElemento != null && userElemento.length() > 0) {
 				// Si existe ponemos usuario elemento
 				ae.setUser(userElemento);
 				ae.setPassword(passElemento);
-			} else {
-				// Si no existe ponemos usuario por defecto
-				ae.setUser(userDefault);
-				ae.setPassword(passwdDefault);
+			} else {				
+				// - Autenticacion indicando login
+				userElemento = ConfigurationUtil.getInstance().obtenerPropiedades().getProperty(prefijo + idElemento + ".login");
+				if (userElemento != null && userElemento.length() > 0) {
+					String userLogin = ConfigurationUtil.getInstance().obtenerPropiedades().getProperty("LOGIN." + userElemento + ".user");
+					String pwdLogin = ConfigurationUtil.getInstance().obtenerPropiedades().getProperty("LOGIN." + userElemento + ".pass");
+					if (userLogin != null && userLogin.length() > 0) {
+						ae.setUser(userLogin);
+						ae.setPassword(pwdLogin);
+					}
+				}
 			}
+			
+			
+			
 			
 			return ae;		
 		}catch(Exception ex){

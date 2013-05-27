@@ -28,7 +28,7 @@
     <path id="jar.class.path">
     	<fileset dir="${lib.dir}/sistra">
 	    	<include name="sistra-plugins.jar"/>      		
-   		</fileset>	
+   		</fileset>	    	
     </path>
 	
 	

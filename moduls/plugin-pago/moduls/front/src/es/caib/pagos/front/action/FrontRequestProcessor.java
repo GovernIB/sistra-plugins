@@ -22,7 +22,6 @@ import org.apache.struts.tiles.TilesRequestProcessor;
 
 import es.caib.pagos.front.Constants;
 import es.caib.pagos.persistence.delegate.DelegateUtil;
-import es.caib.pagos.persistence.util.Configuracion;
 
 /**
  * RequestProcessor con funcionalidad añadida de selección automàtica
@@ -157,6 +156,19 @@ public class FrontRequestProcessor extends TilesRequestProcessor {
                                    ActionMapping mapping)
             throws ServletException {
         super.processPopulate(request, response, form, mapping);
+    }
+    
+    @Override
+    protected void processNoCache(HttpServletRequest request, HttpServletResponse response)
+    {
+    	// PATCH PARA MEJORAR CONTROL CACHE
+        if(moduleConfig.getControllerConfig().getNocache())
+        {
+        	 response.setHeader("Pragma", "No-cache");
+        	 response.setHeader("Cache-Control", "no-cache,no-store,max-age=0");
+        	 response.setDateHeader("Expires", 1);
+
+        }
     }
 
 }

@@ -9,6 +9,7 @@ import javax.ejb.EJBException;
 import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -22,6 +23,7 @@ import es.caib.sistra.plugins.pagos.DatosPago;
 import es.caib.sistra.plugins.pagos.EstadoSesionPago;
 import es.caib.sistra.plugins.pagos.SesionPago;
 import es.caib.sistra.plugins.pagos.SesionSistra;
+import es.caib.xml.ConstantesXML;
 
 /**
  * SessionBean que implementa la interfaz del asistente
@@ -205,7 +207,14 @@ public class PagosFacadeEJB extends HibernateEJB  {
 				estado.setTipo(sesionCAIB.getEstadoPago().getTipo());
 				estado.setIdentificadorPago(sesionCAIB.getEstadoPago().getIdentificadorPago());
 				estado.setFechaPago(sesionCAIB.getEstadoPago().getFechaPago());
-				estado.setReciboB64PagoTelematico(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico());
+				
+				// PATCH: NO SE ESTABA CONVIRTIENDO A B64
+				//estado.setReciboB64PagoTelematico(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico());
+				String reciboB64 = null;
+				if (sesionCAIB.getEstadoPago().getReciboB64PagoTelematico() != null) {
+					reciboB64 = new String(Base64.encodeBase64(sesionCAIB.getEstadoPago().getReciboB64PagoTelematico().getBytes(ConstantesXML.ENCODING)),ConstantesXML.ENCODING);
+				}
+				estado.setReciboB64PagoTelematico(reciboB64);
 			}
 			
 			return estado;

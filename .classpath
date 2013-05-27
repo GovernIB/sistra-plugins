@@ -2,6 +2,13 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="src" path="moduls/plugin-custodia/moduls/plugin/src"/>
+	<classpathentry kind="src" path="moduls/formateadores/moduls/formateadores/src"/>
+	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/back/src"/>
+	<classpathentry kind="src" path="moduls/plugin-pagoTPV/output/persistence/gen-src"/>
+	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/front/src"/>
+	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/persistence/src"/>
+	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/plugin/src"/>
+	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/model/src"/>
 	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/webservicesClient/src"/>
 	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/persistence/src"/>
 	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/model/src"/>

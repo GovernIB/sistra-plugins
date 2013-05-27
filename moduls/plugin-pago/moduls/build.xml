@@ -78,7 +78,6 @@
 		<antcall target="distribute"/>
 	</target>
 	<target name="distribute" description="Distribucion">
-		<copy file="${output.dir}/moduls/pagosCAIB-client.jar" todir="${distribucion.dir}"/>		
 		<copy file="${output.dir}/moduls/pagosCAIB-front.war" todir="${distribucion.dir}"/>		
 		<copy file="${output.dir}/moduls/pagosCAIB-model.jar" todir="${distribucion.dir}"/>		
 		<copy file="${output.dir}/moduls/pagosCAIB-persistence.jar" todir="${distribucion.dir}"/>		
