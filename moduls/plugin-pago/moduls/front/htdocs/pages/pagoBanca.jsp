@@ -55,7 +55,10 @@
 			&nbsp;
 			<a href="LC" onclick="accediendoEnviando(mensajeEnviando + 'La Caixa');"><img src="imgs/pagos/lacaixa.png" alt="La Caixa"/></a>
 			&nbsp;
-			<a href="SN" onclick="accediendoEnviando(mensajeEnviando + 'Sa Nostra');"><img src="imgs/pagos/sanostra.png" alt="Sa Nostra"/></a>			
+			<!-- 
+			<a href="SN" onclick="accediendoEnviando(mensajeEnviando + 'Sa Nostra');"><img src="imgs/pagos/sanostra.png" alt="Sa Nostra"/></a>
+			 -->			
+			 <a href="SN"><img src="imgs/pagos/sanostra.png" alt="Sa Nostra"/></a>
 		</html:form>
 	</div>
 </div>
