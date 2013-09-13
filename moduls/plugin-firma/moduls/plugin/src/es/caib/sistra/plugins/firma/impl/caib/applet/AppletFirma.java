@@ -23,7 +23,8 @@ public class AppletFirma  extends Applet {
     protected Exception exceptionError=null;
     private SignaturaClientProperties signaturaProperties;
   
-  
+    private StringBuffer ficheroB64Split;
+    
     public AppletFirma()
     {
     	super();    
@@ -368,6 +369,32 @@ public class AppletFirma  extends Applet {
     		ex.printStackTrace();
     		return null;
     	}
+    }
+    
+    /**
+     * Indica que se va a pasar un fichero en b64 troceado.
+     * 
+     */
+    public void splitFicheroB64(int fileSize){
+    	ficheroB64Split = new StringBuffer(fileSize);
+    }
+    
+    /**
+     * Añade split
+     * @param split
+     */
+    public void addSplitFicheroB64(String split){
+    	ficheroB64Split.append(split);
+    }
+    
+   
+    /**
+     * Realiza firma de fichero en b64 troceado
+     * @param cadena
+     * @return
+     */	
+	 public String firmarFicheroB64Split(final String contentType ){	   
+		 return firmarFicheroB64Impl(ficheroB64Split.toString(), contentType );
     }
     
 

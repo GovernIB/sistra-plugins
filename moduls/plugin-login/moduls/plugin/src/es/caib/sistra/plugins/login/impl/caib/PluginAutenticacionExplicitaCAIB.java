@@ -15,8 +15,8 @@ public class PluginAutenticacionExplicitaCAIB implements PluginAutenticacionExpl
 
 	/**
 	 * Obtiene información de autenticación a utilizar cuando se utilice autenticación explícita por usuario y password
-	 * @param tipoElemento Id elemento que se esta accediendo (T: tramite / D: dominio)
-	 * @param idElemento Id elemento que se esta accediendo (idtramite / iddominio)
+	 * @param tipoElemento Id elemento que se esta accediendo (P: procedimiento / D: dominio)
+	 * @param idElemento Id elemento que se esta accediendo (procedimiento / iddominio)
 	 * @return Información de autenticación (usuario y password)
 	 */
 	public AutenticacionExplicitaInfo getAutenticacionInfo(char tipoElemento,
