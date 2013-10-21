@@ -25,9 +25,6 @@ import es.caib.pagos.client.WebServiceError;
 import es.caib.pagos.exceptions.ClienteException;
 import es.caib.pagos.exceptions.ComprobarPagoException;
 import es.caib.pagos.exceptions.GetPdf046Exception;
-import es.caib.pagos.exceptions.GetUrlPagoException;
-import es.caib.pagos.exceptions.InicioPagoException;
-import es.caib.pagos.exceptions.PagarConTarjetaException;
 import es.caib.pagos.model.ModeloPagos;
 import es.caib.pagos.model.SesionPagoCAIB;
 import es.caib.pagos.model.TokenAccesoCAIB;
@@ -383,7 +380,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			}						
 
 			// Auditamos evento			
-			DelegateAUDUtil.getAuditaDelegate().logEvento(evento);			
+			DelegateAUDUtil.getAuditaDelegate().logEvento(evento, false);			
 			
 		}catch(Exception ex){
 			log.error("Excepción registrando evento en auditoria: " + ex.getMessage(),ex);

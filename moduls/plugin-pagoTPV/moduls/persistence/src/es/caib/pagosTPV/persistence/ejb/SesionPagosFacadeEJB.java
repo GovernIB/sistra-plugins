@@ -330,7 +330,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			}						
 
 			// Auditamos evento			
-			DelegateAUDUtil.getAuditaDelegate().logEvento(evento);			
+			DelegateAUDUtil.getAuditaDelegate().logEvento(evento, false);			
 			
 		}catch(Exception ex){
 			log.error("Excepción registrando evento en auditoria: " + ex.getMessage(),ex);
