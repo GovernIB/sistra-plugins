@@ -54,6 +54,12 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 				nombre = StringUtil.replace(nombre, "(AUTENTICACION)", "");
 				nombre = StringUtil.replace(nombre, "(AUTENTICACIÓN)", "");
 				nombre = StringUtil.replace(nombre, "(FIRMA)", "");
+				nombre = StringUtil.replace(nombre, "(autenticacion)", "");
+				nombre = StringUtil.replace(nombre, "(autenticación)", "");
+				nombre = StringUtil.replace(nombre, "(firma)", "");
+				nombre = StringUtil.replace(nombre, "(Autenticacion)", "");
+				nombre = StringUtil.replace(nombre, "(Autenticación)", "");
+				nombre = StringUtil.replace(nombre, "(Firma)", "");
 				nombre = StringUtil.replace(nombre, ",", "");
 				nombre = nombre.trim();
 			} catch (Exception ex) {
