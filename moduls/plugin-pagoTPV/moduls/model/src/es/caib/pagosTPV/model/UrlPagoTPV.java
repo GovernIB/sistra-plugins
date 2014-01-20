@@ -11,6 +11,16 @@ import org.apache.commons.lang.builder.ToStringStyle;
 public class UrlPagoTPV {
 	
 	/**
+	 * Si se excedido el tiempo de pago.
+	 */
+	private boolean tiempoExcedido;
+	
+	/**
+	 * Mensaje a mostrar si se ha excedido el tiempo de pago.
+	 */
+	private String mensajeTiempoExcedido;
+	
+	/**
 	 * Url incio pago TPV.
 	 */
 	private String urlPagoTPV;
@@ -174,5 +184,17 @@ public class UrlPagoTPV {
 	}
 	public void setMerchantData(String merchantData) {
 		this.merchantData = merchantData;
+	}
+	public boolean isTiempoExcedido() {
+		return tiempoExcedido;
+	}
+	public void setTiempoExcedido(boolean tiempoExcedido) {
+		this.tiempoExcedido = tiempoExcedido;
+	}
+	public String getMensajeTiempoExcedido() {
+		return mensajeTiempoExcedido;
+	}
+	public void setMensajeTiempoExcedido(String mensajeTiempoExcedido) {
+		this.mensajeTiempoExcedido = mensajeTiempoExcedido;
 	}
 }

@@ -1,6 +1,7 @@
 package es.caib.pagos.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import es.caib.sistra.plugins.pagos.DatosPago;
 import es.caib.sistra.plugins.pagos.EstadoSesionPago;
@@ -10,6 +11,7 @@ import es.caib.sistra.plugins.pagos.SesionSistra;
  * Simula datos sesion de pago
  */
 public class SesionPagoCAIB implements Serializable{
+	private Date fechaInicioSesion;
 	private String localizador;
 	private DatosPago datosPago;
 	private EstadoSesionPago estadoPago;
@@ -38,6 +40,12 @@ public class SesionPagoCAIB implements Serializable{
 	}
 	public void setSesionSistra(SesionSistra sesionSistra) {
 		this.sesionSistra = sesionSistra;
+	}
+	public Date getFechaInicioSesion() {
+		return fechaInicioSesion;
+	}
+	public void setFechaInicioSesion(Date fechaInicioSesion) {
+		this.fechaInicioSesion = fechaInicioSesion;
 	}
 
 }

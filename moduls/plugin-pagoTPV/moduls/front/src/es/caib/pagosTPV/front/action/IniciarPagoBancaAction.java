@@ -27,6 +27,9 @@ import es.caib.sistra.plugins.pagos.EstadoSesionPago;
  * 
  *@struts.action-forward
  *  name="fail" path=".error"
+ *  
+ * @struts.action-forward
+ * 	name="pagoTiempoExcedido" path=".pagoTiempoExcedido"
  * 
  */
 public class IniciarPagoBancaAction extends BaseAction
@@ -47,8 +50,15 @@ public class IniciarPagoBancaAction extends BaseAction
 			
 			// Iniciamos sesion de pago
 			UrlPagoTPV urlPago = dlg.realizarPagoBanca();
-			request.setAttribute("urlPago", urlPago);			
-			return mapping.findForward("success");			
+			
+			if (!urlPago.isTiempoExcedido()) { 
+				request.setAttribute("urlPago", urlPago);			
+				return mapping.findForward("success");
+			} else {
+				request.setAttribute(Constants.MESSAGE_KEY, urlPago.getMensajeTiempoExcedido());
+				return mapping.findForward("pagoTiempoExcedido");
+			}
+						
 		}catch (DelegateException de){
 			request.setAttribute(Constants.MESSAGE_KEY, "sesionPagos.errorPagar");
 			return mapping.findForward("fail");

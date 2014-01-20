@@ -9,6 +9,7 @@ import org.apache.struts.action.ActionMapping;
 
 import es.caib.pagos.front.Constants;
 import es.caib.pagos.front.form.PagoBancaForm;
+import es.caib.pagos.model.ResultadoIniciarPago;
 import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.persistence.delegate.DelegateUtil;
 import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
@@ -24,6 +25,9 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
  *  
  * @struts.action-forward
  * 	name="fail" path=".error"
+ * 
+ * @struts.action-forward
+ * 	name="pagoTiempoExcedido" path=".pagoTiempoExcedido"
  *  
  * 
  *  
@@ -46,9 +50,18 @@ public class RealizarPagoBancaAction extends BaseAction
 			urlVuelta.append(urlSistra);
 			urlVuelta.append(contextPath);
 			urlVuelta.append(servlet);
-			final String urlPago = dlg.realizarPagoBanca(pagoBancaForm.getBanco(), urlVuelta.toString());
-			response.sendRedirect(urlPago);
-			return null;
+			
+			
+			ResultadoIniciarPago res = dlg.realizarPagoBanca(pagoBancaForm.getBanco(), urlVuelta.toString());
+			
+			if (!res.isTiempoExcedido()) { 
+				final String urlPago = res.getResultado();
+				response.sendRedirect(urlPago);
+				return null;
+			} else {
+				request.setAttribute(Constants.MESSAGE_KEY, res.getMensajeTiempoExcedido());
+				return mapping.findForward("pagoTiempoExcedido");
+			}
 			
 		}catch (DelegateException de){
 			request.setAttribute(Constants.MESSAGE_KEY, de.getMessage());

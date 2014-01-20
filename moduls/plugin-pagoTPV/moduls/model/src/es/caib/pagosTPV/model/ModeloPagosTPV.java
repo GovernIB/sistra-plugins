@@ -35,10 +35,14 @@ public class ModeloPagosTPV implements Serializable
 	private String urlRetornoSistra;
 	private String urlMantenimientoSesionSistra;
 	private String token;
-	private Date tiempoLimite;
+	private Date tiempoLimiteToken;
 	private char pagoFinalizado;
 	private String identificadorOrganismo;
 	private String historicoPedidosKO;
+	
+	private Date fechaInicioSesion;
+	private Date fechaMaximaPago;  
+	private String mensajeTiempoMaximoPago;
 	
 	
 	public ModeloPagosTPV() {}
@@ -52,7 +56,7 @@ public class ModeloPagosTPV implements Serializable
 		sesionCaibToModeloPagosTPV(sesionCAIB);
 		
 		this.token = tokenCAIB.getToken();
-		this.tiempoLimite = tokenCAIB.getTiempoLimite();
+		this.tiempoLimiteToken = tokenCAIB.getTiempoLimite();
 		
 	}
 	
@@ -82,6 +86,10 @@ public class ModeloPagosTPV implements Serializable
 		this.urlRetornoSistra = sesionCAIB.getSesionSistra().getUrlRetornoSistra();
 		this.urlMantenimientoSesionSistra = sesionCAIB.getSesionSistra().getUrlMantenimientoSesionSistra();
 		this.historicoPedidosKO = sesionCAIB.getHistoricoPedidosKO();
+		this.fechaInicioSesion = sesionCAIB.getFechaInicioSesion();
+		this.fechaMaximaPago = sesionCAIB.getDatosPago().getFechaMaximaPago();
+		this.mensajeTiempoMaximoPago = sesionCAIB.getDatosPago().getMensajeTiempoMaximoPago();
+		
 	}
 	
 	public SesionPagoCAIB getSessionPagoCAIB() {
@@ -115,7 +123,10 @@ public class ModeloPagosTPV implements Serializable
 		sesionCAIB.getEstadoPago().setReciboB64PagoTelematico(reciboB64PagoTelematico);
 		sesionCAIB.setSesionSistra(new SesionSistra());
 		sesionCAIB.getSesionSistra().setUrlRetornoSistra(urlRetornoSistra);
-		sesionCAIB.getSesionSistra().setUrlMantenimientoSesionSistra(urlMantenimientoSesionSistra);		
+		sesionCAIB.getSesionSistra().setUrlMantenimientoSesionSistra(urlMantenimientoSesionSistra);	
+		sesionCAIB.setFechaInicioSesion(fechaInicioSesion);
+		sesionCAIB.getDatosPago().setFechaMaximaPago(fechaMaximaPago);
+		sesionCAIB.getDatosPago().setMensajeTiempoMaximoPago(mensajeTiempoMaximoPago);
 		return sesionCAIB;
 	}
 	
@@ -124,7 +135,7 @@ public class ModeloPagosTPV implements Serializable
 	public TokenAccesoCAIB getTokenAccesoCAIB(){
 		TokenAccesoCAIB tokenCAIB = new TokenAccesoCAIB();
 		tokenCAIB.setLocalizador(localizador);
-		tokenCAIB.setTiempoLimite(tiempoLimite);
+		tokenCAIB.setTiempoLimite(tiempoLimiteToken);
 		tokenCAIB.setToken(token);
 		return tokenCAIB;
 	}
@@ -220,13 +231,13 @@ public class ModeloPagosTPV implements Serializable
 		this.urlRetornoSistra = urlRetornoSistra;
 	}
 	
-	public Date getTiempoLimite() {
-		return tiempoLimite;
+	public Date getTiempoLimiteToken() {
+		return tiempoLimiteToken;
 	}
 
 
-	public void setTiempoLimite(Date tiempoLimite) {
-		this.tiempoLimite = tiempoLimite;
+	public void setTiempoLimiteToken(Date tiempoLimite) {
+		this.tiempoLimiteToken = tiempoLimite;
 	}
 
 
@@ -346,6 +357,36 @@ public class ModeloPagosTPV implements Serializable
 
 	public void setTelefonoDeclarante(String telefonoDeclarante) {
 		this.telefonoDeclarante = telefonoDeclarante;
+	}
+
+
+	public Date getFechaInicioSesion() {
+		return fechaInicioSesion;
+	}
+
+
+	public void setFechaInicioSesion(Date fechaInicioSesion) {
+		this.fechaInicioSesion = fechaInicioSesion;
+	}
+
+
+	public Date getFechaMaximaPago() {
+		return fechaMaximaPago;
+	}
+
+
+	public void setFechaMaximaPago(Date fechaMaximaPago) {
+		this.fechaMaximaPago = fechaMaximaPago;
+	}
+
+
+	public String getMensajeTiempoMaximoPago() {
+		return mensajeTiempoMaximoPago;
+	}
+
+
+	public void setMensajeTiempoMaximoPago(String mensajeTiempoMaximoPago) {
+		this.mensajeTiempoMaximoPago = mensajeTiempoMaximoPago;
 	}
 
 }

@@ -3,8 +3,11 @@ package es.caib.pagos.persistence.ejb;
 import java.rmi.RemoteException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Hashtable;
+import java.util.Locale;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -26,6 +29,7 @@ import es.caib.pagos.exceptions.ClienteException;
 import es.caib.pagos.exceptions.ComprobarPagoException;
 import es.caib.pagos.exceptions.GetPdf046Exception;
 import es.caib.pagos.model.ModeloPagos;
+import es.caib.pagos.model.ResultadoIniciarPago;
 import es.caib.pagos.model.SesionPagoCAIB;
 import es.caib.pagos.model.TokenAccesoCAIB;
 import es.caib.pagos.persistence.util.Configuracion;
@@ -429,18 +433,32 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	/**
 	 * Inicia sesion pago contra la pasarela para pago con tarjeta bancaria.
 	 * Marca sesion como pendiente confirmar.
-	 * @return devuelve token acceso sesion	
+	 * @return devuelve token acceso sesion. 
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      */
-	public String realizarPagoTarjetaIniciarSesion() {
+	public ResultadoIniciarPago realizarPagoTarjetaIniciarSesion() {
 		
 		log.debug("Realizar pago con tarjeta - iniciar sesion pago");
 
+		ResultadoIniciarPago res = null;
+		
 		try{
 			// Verificamos que el pago este en un estado que permita iniciar pago con tarjeta
 			if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_EN_CURSO) {
 				throw new Exception("El pago esta confirmado o pendiente de confirmar");
+			}
+			
+			// Verificamos si se ha excedido del tiempo maximo para pagar
+			if (sesionPago.getDatosPago().getFechaMaximaPago() != null && sesionPago.getDatosPago().getFechaMaximaPago().before(new Date())) {
+				// Si se ha sobrepasado fecha limite ponemos en estado excedido tiempo pago
+				sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_EXCEDIDO_TIEMPO_PAGO);
+				actualizaModeloPagos();	
+				
+				res = new ResultadoIniciarPago();
+				res.setTiempoExcedido(true);
+				res.setMensajeTiempoExcedido(sesionPago.getDatosPago().getMensajeTiempoMaximoPago());
+				return res;				
 			}
 			
 			// Iniciar sesion de pago con la pasarela
@@ -452,7 +470,9 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			
 			logAuditoria(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_INICIADO,"S","",this.sesionPago.getEstadoPago().getIdentificadorPago());
 			
-			return resPagos.getToken();
+			res = new ResultadoIniciarPago();
+			res.setResultado(resPagos.getToken());
+			return res;
 			
 		} catch (Exception ex) {
 			log.error("Error al iniciar sesion para pago con tarjeta", ex);
@@ -538,14 +558,30 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	 * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
 	 */
-	public String realizarPagoBanca(String codigoEntidad, String urlVuelta) {
+	public ResultadoIniciarPago realizarPagoBanca(String codigoEntidad, String urlVuelta) {
 		log.debug("Realizar pago banca ");
-
+		
+		ResultadoIniciarPago res = null;
+		
 		try{
+			
 			// Verificamos que el pago este en un estado que permita iniciar pago con tarjeta
 			if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_EN_CURSO) {
 				throw new Exception("El pago esta confirmado o pendiente de confirmar");
 			}
+			
+			// Verificamos si se ha excedido del tiempo maximo para pagar
+			if (sesionPago.getDatosPago().getFechaMaximaPago() != null && sesionPago.getDatosPago().getFechaMaximaPago().before(new Date())) {
+				// Si se ha sobrepasado fecha limite ponemos en estado excedido tiempo pago
+				sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_EXCEDIDO_TIEMPO_PAGO);
+				actualizaModeloPagos();	
+				
+				res = new ResultadoIniciarPago();
+				res.setTiempoExcedido(true);
+				res.setMensajeTiempoExcedido(sesionPago.getDatosPago().getMensajeTiempoMaximoPago());
+				return res;				
+			}
+			
 			
 			// Iniciar sesion de pago con la pasarela
 			ResultadoInicioPago resPagos = PasarelaPagos.iniciarSesionPagos(sesionPago.getDatosPago(), String.valueOf(ConstantesPago.TIPOPAGO_TELEMATICO));
@@ -560,7 +596,10 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			String resultado = PasarelaPagos.getUrlPago(refsModelos, codigoEntidad, urlVuelta);
 			
 			logAuditoria(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_INICIADO,"S","",this.sesionPago.getEstadoPago().getIdentificadorPago());
-			return resultado;
+			
+			res = new ResultadoIniciarPago();
+			res.setResultado(resultado);
+			return res;
 			
 		} catch (Exception ex) {
 			log.error("Error al realizar pago por banca", ex);
@@ -645,4 +684,5 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		return sb.toString();
 	}
 
+	
 }

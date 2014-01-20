@@ -5,6 +5,7 @@ import javax.ejb.EJBException;
 import javax.ejb.RemoveException;
 import javax.naming.NamingException;
 
+import es.caib.pagos.model.ResultadoIniciarPago;
 import es.caib.pagos.persistence.intf.SesionPagosFacadeLocal;
 import es.caib.pagos.persistence.util.SesionPagosFacadeUtil;
 import es.caib.sistra.plugins.pagos.DatosPago;
@@ -132,7 +133,7 @@ public class SesionPagoDelegate implements Delegate
 		}
 	}
 	
-	public String realizarPagoTarjetaIniciarSesion()  throws DelegateException
+	public ResultadoIniciarPago realizarPagoTarjetaIniciarSesion()  throws DelegateException
 	{
 		try
 		{
@@ -154,7 +155,7 @@ public class SesionPagoDelegate implements Delegate
 		} 
 	}
 	
-	public String realizarPagoBanca(final String codigoEntidad, final String urlVuelta) throws DelegateException
+	public ResultadoIniciarPago realizarPagoBanca(final String codigoEntidad, final String urlVuelta) throws DelegateException
 	{
 		try
 		{

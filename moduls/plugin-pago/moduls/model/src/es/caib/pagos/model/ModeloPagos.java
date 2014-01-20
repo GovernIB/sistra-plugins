@@ -32,13 +32,17 @@ public class ModeloPagos implements Serializable
 	private String urlRetornoSistra;
 	private String urlMantenimientoSesionSistra;
 	private String token;
-	private Date tiempoLimite;
+	private Date tiempoLimiteToken;
 	private char pagoFinalizado;
+	
+	private Date fechaInicioSesion;
+	private Date fechaMaximaPago;  
+	private String mensajeTiempoMaximoPago;
 	
 	public ModeloPagos() {}
 	
-	
-	public ModeloPagos(String localizador, String nombreTramite, String nombreUsuario, char tipoPago, String idioma, String modelo, String idTasa, String concepto, Date fechaDevengo, String importe, String nifDeclarante, String nombreDeclarante, int estado, char tipo, String identificadorPago, Date fechaPago, String reciboB64PagoTelematico, String urlRetornoSistra, String urlMantenimientoSesionSistra, String token, Date tiempoLimite, char pagoFinalizado) {
+	/*
+	public ModeloPagos(String localizador, String nombreTramite, String nombreUsuario, char tipoPago, String idioma, String modelo, String idTasa, String concepto, Date fechaDevengo, String importe, String nifDeclarante, String nombreDeclarante, int estado, char tipo, String identificadorPago, Date fechaPago, String reciboB64PagoTelematico, String urlRetornoSistra, String urlMantenimientoSesionSistra, String token, Date tiempoLimite, char pagoFinalizado, Date fechaInicioSesion, int tiempoMaximo) {
 		this.localizador = localizador;
 		this.nombreTramite = nombreTramite;
 		this.nombreUsuario = nombreUsuario;
@@ -59,59 +63,12 @@ public class ModeloPagos implements Serializable
 		this.urlRetornoSistra = urlRetornoSistra;
 		this.urlMantenimientoSesionSistra = urlMantenimientoSesionSistra;
 		this.token = token;
-		this.tiempoLimite = tiempoLimite;
+		this.tiempoLimiteToken = tiempoLimite;
 		this.pagoFinalizado = pagoFinalizado;
+		this.fechaInicioSesion = fechaInicioSesion;
+		this.tiempoMaximoPago = tiempoMaximo;
 	}
-
-
-	public ModeloPagos(String localizador, String nombreTramite, String nombreUsuario, char tipoPago, String idioma, String modelo, String idTasa, String concepto, Date fechaDevengo, String importe, String nifDeclarante, String nombreDeclarante, int estado, char tipo, String identificadorPago, Date fechaPago, String reciboB64PagoTelematico, String urlRetornoSistra, String urlMantenimientoSesionSistra) {
-		this.localizador = localizador;
-		this.nombreTramite = nombreTramite;
-		this.nombreUsuario = nombreUsuario;
-		this.tipoPago = tipoPago;
-		this.idioma = idioma;
-		this.modelo = modelo;
-		this.idTasa = idTasa;
-		this.concepto = concepto;
-		this.fechaDevengo = fechaDevengo;
-		this.importe = importe;
-		this.nifDeclarante = nifDeclarante;
-		this.nombreDeclarante = nombreDeclarante;
-		this.estado = estado;
-		this.tipo = tipo;
-		this.identificadorPago = identificadorPago;
-		this.fechaPago = fechaPago;
-		this.reciboB64PagoTelematico = reciboB64PagoTelematico;
-		this.urlRetornoSistra = urlRetornoSistra;
-		this.urlMantenimientoSesionSistra = urlMantenimientoSesionSistra;
-	}
-
-
-
-
-
-
-	public ModeloPagos(String localizador, String nombreTramite, String modelo, String idTasa, String concepto, Date fechaDevengo, String importe, String nifDeclarante, String nombreDeclarante, int estado, char tipo, String identificadorPago, Date fechaPago, String reciboB64PagoTelematico, String urlRetornoSistra, String urlMantenimientoSesionSistra, String token, Date tiempoLimite) {
-		this.localizador = localizador;
-		this.nombreTramite = nombreTramite;
-		this.modelo = modelo;
-		this.idTasa = idTasa;
-		this.concepto = concepto;
-		this.fechaDevengo = fechaDevengo;
-		this.importe = importe;
-		this.nifDeclarante = nifDeclarante;
-		this.nombreDeclarante = nombreDeclarante;
-		this.estado = estado;
-		this.tipo = tipo;
-		this.identificadorPago = identificadorPago;
-		this.fechaPago = fechaPago;
-		this.reciboB64PagoTelematico = reciboB64PagoTelematico;
-		this.urlRetornoSistra = urlRetornoSistra;
-		this.urlMantenimientoSesionSistra = urlMantenimientoSesionSistra;
-		this.token = token;
-		this.tiempoLimite = tiempoLimite;
-	}
-
+	*/
 
 	public ModeloPagos(SesionPagoCAIB sesionCAIB) {
 		this.localizador = sesionCAIB.getLocalizador();
@@ -136,6 +93,9 @@ public class ModeloPagos implements Serializable
 		this.reciboB64PagoTelematico = sesionCAIB.getEstadoPago().getReciboB64PagoTelematico();
 		this.urlRetornoSistra = sesionCAIB.getSesionSistra().getUrlRetornoSistra();
 		this.urlMantenimientoSesionSistra = sesionCAIB.getSesionSistra().getUrlMantenimientoSesionSistra();
+		this.fechaInicioSesion = sesionCAIB.getFechaInicioSesion();
+		this.fechaMaximaPago = sesionCAIB.getDatosPago().getFechaMaximaPago();
+		this.mensajeTiempoMaximoPago = sesionCAIB.getDatosPago().getMensajeTiempoMaximoPago();
 	}
 
 	public ModeloPagos(SesionPagoCAIB sesionCAIB, TokenAccesoCAIB tokenCAIB) {
@@ -162,7 +122,10 @@ public class ModeloPagos implements Serializable
 		this.urlRetornoSistra = sesionCAIB.getSesionSistra().getUrlRetornoSistra();
 		this.urlMantenimientoSesionSistra = sesionCAIB.getSesionSistra().getUrlMantenimientoSesionSistra();
 		this.token = tokenCAIB.getToken();
-		this.tiempoLimite = tokenCAIB.getTiempoLimite();
+		this.tiempoLimiteToken = tokenCAIB.getTiempoLimite();
+		this.fechaInicioSesion = sesionCAIB.getFechaInicioSesion();
+		this.fechaMaximaPago = sesionCAIB.getDatosPago().getFechaMaximaPago();
+		this.mensajeTiempoMaximoPago = sesionCAIB.getDatosPago().getMensajeTiempoMaximoPago();
 		
 	}
 	
@@ -193,13 +156,16 @@ public class ModeloPagos implements Serializable
 		sesionCAIB.setSesionSistra(new SesionSistra());
 		sesionCAIB.getSesionSistra().setUrlRetornoSistra(urlRetornoSistra);
 		sesionCAIB.getSesionSistra().setUrlMantenimientoSesionSistra(urlMantenimientoSesionSistra);
+		sesionCAIB.setFechaInicioSesion(fechaInicioSesion);
+		sesionCAIB.getDatosPago().setFechaMaximaPago(fechaMaximaPago);
+		sesionCAIB.getDatosPago().setMensajeTiempoMaximoPago(mensajeTiempoMaximoPago);
 		return sesionCAIB;
 	}
 	
 	public TokenAccesoCAIB getTokenAccesoCAIB(){
 		TokenAccesoCAIB tokenCAIB = new TokenAccesoCAIB();
 		tokenCAIB.setLocalizador(localizador);
-		tokenCAIB.setTiempoLimite(tiempoLimite);
+		tokenCAIB.setTiempoLimite(tiempoLimiteToken);
 		tokenCAIB.setToken(token);
 		return tokenCAIB;
 	}
@@ -301,13 +267,13 @@ public class ModeloPagos implements Serializable
 		this.urlRetornoSistra = urlRetornoSistra;
 	}
 	
-	public Date getTiempoLimite() {
-		return tiempoLimite;
+	public Date getTiempoLimiteToken() {
+		return tiempoLimiteToken;
 	}
 
 
-	public void setTiempoLimite(Date tiempoLimite) {
-		this.tiempoLimite = tiempoLimite;
+	public void setTiempoLimiteToken(Date tiempoLimite) {
+		this.tiempoLimiteToken = tiempoLimite;
 	}
 
 
@@ -388,6 +354,34 @@ public class ModeloPagos implements Serializable
 
 	public void setVersionTramite(int versionTramite) {
 		this.versionTramite = versionTramite;
+	}
+
+
+	public Date getFechaInicioSesion() {
+		return fechaInicioSesion;
+	}
+
+
+	public void setFechaInicioSesion(Date fechaInicioSesion) {
+		this.fechaInicioSesion = fechaInicioSesion;
+	}
+
+
+	public Date getFechaMaximaPago() {
+		return fechaMaximaPago;
+	}
+
+
+	public void setFechaMaximaPago(Date tiempoMaximo) {
+		this.fechaMaximaPago = tiempoMaximo;
+	}
+
+	public String getMensajeTiempoMaximoPago() {
+		return mensajeTiempoMaximoPago;
+	}
+
+	public void setMensajeTiempoMaximoPago(String mensajeTiempoMaximoPago) {
+		this.mensajeTiempoMaximoPago = mensajeTiempoMaximoPago;
 	}
 	
 	

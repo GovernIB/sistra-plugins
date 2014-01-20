@@ -56,8 +56,8 @@ public class ConfirmarPagoAction extends BaseAction
 					request.setAttribute(Constants.MESSAGE_KEY,"sesionPagos.errorConfirmarPago.noPagado");
 					return mapping.findForward("fail");
 				case -1: // ESTADO DIFERENTE PENDIENTE DE PAGO
-					// PUEDE SER CONFIRMADO O QUE TODAVIA ESTA EN EL ESTADO INICIAL
-					if (ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO == estado.getEstado()) {
+					// PUEDE SER CONFIRMADO, EXCEDIDO TIEMPO PAGO O QUE TODAVIA ESTA EN EL ESTADO INICIAL
+					if (ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO == estado.getEstado() || ConstantesPago.SESIONPAGO_PAGO_EXCEDIDO_TIEMPO_PAGO == estado.getEstado()) {
 						String urlRetornoSistra = dlg.obtenerUrlRetornoSistra();
 						response.sendRedirect(urlRetornoSistra);
 						return null;

@@ -61,6 +61,16 @@
     	controller="es.caib.pagosTPV.front.controller.DatosPagoController">
     	<put name="main" value="/pages/pagoBancaSinNotificacion.jsp" />
     </definition>
+    
+         <!-- Pantalla de pago tiempo excedido-->
+    <definition
+    	name=".pagoTiempoExcedido"	
+    	extends=".mainLayout"
+    	controller="es.caib.pagosTPV.front.controller.DatosPagoController">
+    	<put name="main" value="/pages/pagoTiempoExcedido.jsp" />
+    </definition>
+    
+    
 
 
 	<!--  configuraciones de mensajes y errores -->    	 

@@ -11,6 +11,7 @@ import org.apache.struts.action.ActionMapping;
 
 import es.caib.pagos.front.Constants;
 import es.caib.pagos.front.form.PagoTarjetaForm;
+import es.caib.pagos.model.ResultadoIniciarPago;
 import es.caib.pagos.persistence.delegate.DelegateException;
 import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
 
@@ -27,6 +28,11 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
  *  
  * @struts.action-forward
  * 	name="success" path=".pagoFinalizado"
+ * 
+ * @struts.action-forward
+ * 	name="pagoTiempoExcedido" path=".pagoTiempoExcedido"
+ *  
+ * 
  *  
  */
 public class RealizarPagoTarjetaAction extends BaseAction
@@ -47,14 +53,23 @@ public class RealizarPagoTarjetaAction extends BaseAction
 			String caducidadTarjeta = mesCaducidad + anyoCaducidad; 
 			
 			// Iniciamos sesion de pago dejando el pago como pendiente confirmar
-			String token = dlg.realizarPagoTarjetaIniciarSesion();
+			ResultadoIniciarPago res = dlg.realizarPagoTarjetaIniciarSesion();
 			
-			// Realizamos proceso de pago con tarjeta
-			int resultado = dlg.realizarPagoTarjetaPagar(token, pagoTarjetaForm.getNumeroTarjeta(), caducidadTarjeta,
-					pagoTarjetaForm.getTitularTarjeta(), pagoTarjetaForm.getCodigoVerificacionTarjeta());
+			if (!res.isTiempoExcedido()) { 
+				// Realizamos proceso de pago con tarjeta
+				String token = res.getResultado();
+				int resultado = dlg.realizarPagoTarjetaPagar(token, pagoTarjetaForm.getNumeroTarjeta(), caducidadTarjeta,
+						pagoTarjetaForm.getTitularTarjeta(), pagoTarjetaForm.getCodigoVerificacionTarjeta());
+				
+				request.setAttribute("resultadoPago", resultado);
+				return mapping.findForward("success");
+			} else {
+				request.setAttribute(Constants.MESSAGE_KEY, res.getMensajeTiempoExcedido());
+				return mapping.findForward("pagoTiempoExcedido");
+			}
 			
-			request.setAttribute("resultadoPago", resultado);
-			return mapping.findForward("success");
+			
+			
 		} catch (DelegateException de){ 
 			String msg = de.getMessage();
 			int idx = msg.indexOf("ClienteException:");

@@ -353,6 +353,18 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				throw new Exception("El pago no esta en estado para iniciar");
 			}
 			
+			// Verificamos si se ha excedido del tiempo maximo para pagar
+			if (sesionPago.getDatosPago().getFechaMaximaPago() != null && sesionPago.getDatosPago().getFechaMaximaPago().before(new Date())) {
+				// Si se ha sobrepasado fecha limite ponemos en estado excedido tiempo pago
+				sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_EXCEDIDO_TIEMPO_PAGO);
+				actualizaModeloPagos();	
+				
+				UrlPagoTPV res = new UrlPagoTPV();
+				res.setTiempoExcedido(true);
+				res.setMensajeTiempoExcedido(sesionPago.getDatosPago().getMensajeTiempoMaximoPago());
+				return res;				
+			}
+			
 			// Iniciar sesion de pago con la pasarela
 			UrlPagoTPV pagoTPV = generarUrlPagoTPV();
 			

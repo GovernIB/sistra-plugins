@@ -29,7 +29,7 @@
 		<li><span class="label"><bean:message key="pago.importe" />:</span> <span><bean:write name="importe" /> &euro;</span></li>
 	</ul>
 </div>
-<bean:define id="urlRetornoSistra" value="<%=((java.lang.String) session.getAttribute(es.caib.pagos.front.Constants.URL_RETORNO_SISTRA_KEY))%>" type="java.lang.String"/>
+
 <div> 
 	<logic:equal name="resultadoPago" value="1">
 	<p>

@@ -23,6 +23,7 @@ import es.caib.sistra.plugins.pagos.DatosPago;
 import es.caib.sistra.plugins.pagos.EstadoSesionPago;
 import es.caib.sistra.plugins.pagos.SesionPago;
 import es.caib.sistra.plugins.pagos.SesionSistra;
+import es.caib.util.StringUtil;
 import es.caib.xml.ConstantesXML;
 
 /**
@@ -66,11 +67,16 @@ public class PagosFacadeEJB extends HibernateEJB  {
 		try{
 			log.debug("Iniciar sesion pago");
 			
+			// ÑAPA TEMPORAL PARA SUSTITUIR EL & EN EL NOMBRE DEL PAGADOR YA QUE LA ATIB NO SE LO TRAGA
+			datosPago.setNombreDeclarante(StringUtil.replace(datosPago.getNombreDeclarante(), "&", " AND "));
+			datosPago.setNombreUsuario(StringUtil.replace(datosPago.getNombreUsuario(), "&", " AND "));
+			
 			// Genera localizador
 			String loca = GeneradorId.generarId();
 					
 			// Guarda datos
 			SesionPagoCAIB sesionCAIB = new SesionPagoCAIB();
+			sesionCAIB.setFechaInicioSesion(new Date());
 			sesionCAIB.setLocalizador(loca);
 			sesionCAIB.setDatosPago(datosPago);
 			sesionCAIB.setSesionSistra(sesionSistra);		
@@ -143,7 +149,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			mp.setUrlRetornoSistra(sesionSistra.getUrlRetornoSistra());
 			mp.setUrlMantenimientoSesionSistra(sesionSistra.getUrlMantenimientoSesionSistra());
 			mp.setToken(tokenCAIB.getToken());
-			mp.setTiempoLimite(tokenCAIB.getTiempoLimite());
+			mp.setTiempoLimiteToken(tokenCAIB.getTiempoLimite());
 			session.update(mp);
 			
 	        // Devolvemos sesion de pago creada
