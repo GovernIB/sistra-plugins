@@ -49,6 +49,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 	/**
      * @ejb.create-method
      * @ejb.permission role-name = "${role.todos}"
+     * @ejb.permission role-name = "${role.auto}"
      */
 	public void ejbCreate() throws CreateException {	
 		super.ejbCreate();
@@ -116,6 +117,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 	 * 
 	 * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
+     * 
 	 */
 	public SesionPago reanudarSesionPago(String localizador, SesionSistra sesionSistra) {
 		Session session = getSession();
@@ -175,6 +177,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 	 * 
 	 * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
+     * @ejb.permission role-name = "${role.auto}"
 	 */
 	public EstadoSesionPago comprobarEstadoSesionPago(String localizador) {
 		Session session = getSession();
