@@ -32,7 +32,11 @@ public class LoginPageZonaper implements LoginPage{
 		 String lang="es";		 
 		 if (request.getParameter("lang") != null) lang = request.getParameter("lang");
 		 if (request.getParameter("language") != null ) lang = request.getParameter("language");
-		 		 		 		 		
+		 		 	
+		 if (!"es".equals(lang) && !"ca".equals(lang) && !"en".equals(lang)  ) {
+			 lang = "es";
+		 }
+		 
 		 return new Locale(lang);		 
 	 }
      
