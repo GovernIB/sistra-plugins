@@ -10,6 +10,12 @@
 
 <h2>	<bean:message key="pago.resultado" /></h2>
 
+<logic:equal name="resultadoPago" value="1">	
+	<p class="alerta">
+		<bean:message key="pago.tarjeta.debeContinuarTramitacion" />
+	</p>
+</logic:equal>
+
 <!-- 
 <p id="pagamentTitol">
 	<bean:message key="pago.titulo" />
@@ -34,8 +40,6 @@
 	<logic:equal name="resultadoPago" value="1">
 	<p>
 		<bean:message key="pago.tarjeta.resultadoOK" />
-	</p>
-	<p>
 		<bean:message key="pago.tarjeta.descargaJustificante" />
 	</p>
 	<p class="centro">	<a class="veure" href="<%=urlAbrirDocumento%>">
@@ -47,7 +51,7 @@
 	<logic:equal name="resultadoPago" value="0">
 	<p>
 		<bean:message key="pago.tarjeta.resultadoNK" />
-	</p>
+	</p>	
 	</logic:equal>
 	<logic:equal name="resultadoPago" value="-1">
 	<p>
@@ -56,7 +60,7 @@
 	</p>
 	</logic:equal>
 </div>
-
+<br/><br/>
 <html:form action="/confirmarPago">		
 	<html:hidden property="modoPago" value="T"/>
 	<div class="botonera">
