@@ -8,6 +8,19 @@
 	<html:rewrite page="/obtenerJustificantePago.do"/>
 </bean:define>
 
+<script type="text/javascript">
+<!--
+	var pinchadoEnlaceAbrirJustificante = false;
+	function abrirJustificantePago() {
+		if (!pinchadoEnlaceAbrirJustificante) {
+			pinchadoEnlaceAbrirJustificante = true;
+			document.location = "<%=urlAbrirDocumento%>";
+		}
+	}
+	
+//-->
+</script>
+
 <h2>	<bean:message key="pago.resultado" /></h2>
 
 <logic:equal name="resultadoPago" value="1">	
@@ -42,7 +55,8 @@
 		<bean:message key="pago.tarjeta.resultadoOK" />
 		<bean:message key="pago.tarjeta.descargaJustificante" />
 	</p>
-	<p class="centro">	<a class="veure" href="<%=urlAbrirDocumento%>">
+	<p class="centro">	
+		<a class="veure" href="#" onclick="abrirJustificantePago()">
 			<img src="./imgs/icona/mode_presencial.gif" alt="" /> 
 			<bean:message key="pago.tarjeta.justificante" />
 		</a>
