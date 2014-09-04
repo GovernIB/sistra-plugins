@@ -33,7 +33,7 @@ public class RealizarPagoPresencialAction extends BaseAction
 
 	Log logger = LogFactory.getLog( RealizarPagoPresencialAction.class );
 	
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	public ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception
     {
 		

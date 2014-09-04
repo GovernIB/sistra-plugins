@@ -38,7 +38,7 @@ public class ConfirmarPagoAction extends BaseAction
 
 	Log logger = LogFactory.getLog( ConfirmarPagoAction.class );
 	
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	public ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
 		// Realizamos la confirmacion del pago

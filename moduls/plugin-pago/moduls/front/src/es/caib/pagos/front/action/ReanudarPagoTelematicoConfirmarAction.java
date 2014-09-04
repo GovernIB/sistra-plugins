@@ -30,7 +30,7 @@ public class ReanudarPagoTelematicoConfirmarAction extends BaseAction
 
 	Log logger = LogFactory.getLog( ReanudarPagoTelematicoConfirmarAction.class );
 	
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	public ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
 		//TODO --> aquí llamar a la comprobación del pago y redireccionar a la pantalla que toque pagoFinalizado o error

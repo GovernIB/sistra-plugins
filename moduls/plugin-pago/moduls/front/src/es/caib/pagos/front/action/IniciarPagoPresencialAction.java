@@ -27,7 +27,7 @@ import es.caib.sistra.plugins.pagos.EstadoSesionPago;
 public class IniciarPagoPresencialAction extends BaseAction
 {
 	
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	public ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
 		SesionPagoDelegate dlg = getSesionPago(request);

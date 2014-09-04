@@ -35,7 +35,7 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
 public class RealizarPagoBancaAction extends BaseAction
 {
 	
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	public ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
 		final PagoBancaForm pagoBancaForm = (PagoBancaForm) form;

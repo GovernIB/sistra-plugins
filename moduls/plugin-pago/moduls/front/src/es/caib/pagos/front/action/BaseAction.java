@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.struts.action.Action;
 import org.apache.struts.action.ActionForm;
@@ -36,10 +37,6 @@ public abstract class BaseAction extends Action {
     	PagosFrontRequestHelper.setSesionPago(request,sesionPago);
     }
 
-	public abstract ActionForward execute(ActionMapping mapping,
-			ActionForm form, HttpServletRequest request,
-			HttpServletResponse response) throws Exception;
-
 	protected ActionForm obtenerActionForm(ActionMapping mapping, HttpServletRequest request, String path) {
         ModuleConfig config = mapping.getModuleConfig();
         ActionMapping newMapping = (ActionMapping) config.findActionConfig(path);
@@ -70,5 +67,32 @@ public abstract class BaseAction extends Action {
     public void setUrlMantenimientoSesionSistra(HttpServletRequest request, String url){
     	PagosFrontRequestHelper.setUrlMantenimientoSesionSistra(request, url);
     }
+    
+    
+    // CAMBIO PARA SINCRONIZAR LAS PETICIONES POR SESION
+    /*
+    public abstract ActionForward execute(ActionMapping mapping,
+			ActionForm form, HttpServletRequest request,
+			HttpServletResponse response) throws Exception;
+    */
+    
+    public final ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception 
+    {
+    	HttpSession session = request.getSession( true );
+    	ActionForward result = null;
+    	
+    	// Ejecutamos tarea
+    	synchronized( session )
+    	{
+    			result = executeTask( mapping, form, request, response );    		    
+    	}
+    	
+    	return result;
+
+    }
+    
+    public abstract ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+            HttpServletResponse response) throws Exception;
 
 }

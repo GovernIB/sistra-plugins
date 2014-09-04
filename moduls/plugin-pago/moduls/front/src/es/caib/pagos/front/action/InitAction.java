@@ -34,7 +34,7 @@ public class InitAction extends BaseAction
 
 	Log logger = LogFactory.getLog( InitAction.class );
 	
-	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
+	public ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
 		// Forzamos a reiniciar sesion
