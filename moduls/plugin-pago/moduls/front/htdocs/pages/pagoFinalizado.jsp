@@ -10,64 +10,89 @@
 
 <h2><bean:message key="pago.resultado"/></h2>
 
-<logic:equal name="resultadoPago" value="1">	
-	<p class="alerta">
-		<bean:message key="pago.tarjeta.debeContinuarTramitacion" />
-	</p>
-</logic:equal>
-
-<!-- 
-<p id="pagamentTitol">
-	<bean:message key="pago.titulo" />
-</p>
- -->
-
-<p>
-	<bean:message key="pago.mostrar.datospago" />
-</p>
-
-<!-- datos pago -->
-<div id="datosPago">
-	<ul>
-		<li><span class="label"><bean:message key="pago.modelo" />:</span> <span><bean:write name="modelo" /></span></li>
-		<li><span class="label"><bean:message key="pago.concepto" />:</span> <span><bean:write name="concepto" /></span></li>
-		<li><span class="label"><bean:message key="pago.fechaDevengo" />:</span> <span><bean:write name="fechaDevengo" /></span></li>
-		<li><span class="label"><bean:message key="pago.importe" />:</span> <span><bean:write name="importe" /> &euro;</span></li>
-	</ul>
-</div>
-
-<div> 
-	<logic:equal name="resultadoPago" value="1">
+<!--  Pago no realizado -->
+<logic:notEqual name="resultadoPago" value="1">	
 	<p>
-		<bean:message key="pago.tarjeta.resultadoOK" />
-		<bean:message key="pago.tarjeta.descargaJustificante" />
+		<bean:message key="pago.mostrar.datospago" />
 	</p>
-	<p class="centro">	
-		<a class="veure" href="<%=urlAbrirDocumento%>">
-			<img src="./imgs/icona/mode_presencial.gif" alt="" /> 
-			<bean:message key="pago.tarjeta.justificante" />
-		</a>
-	</p>
-	</logic:equal>
-	<logic:equal name="resultadoPago" value="0">
-	<p>
-		<bean:message key="pago.tarjeta.resultadoNK" />
-	</p>	
-	</logic:equal>
-	<logic:equal name="resultadoPago" value="-1">
-	<p>
-		<bean:message key="pago.tarjeta.errorComunicacion" />
-		<bean:message key="pago.tarjeta.continuarTramitacion6" />
-	</p>
-	</logic:equal>
-</div>
-<br/><br/>
-<html:form action="/confirmarPago">		
-	<html:hidden property="modoPago" value="T"/>
-	<div class="botonera">
-		<html:submit>
-			<bean:message key="pago.continuarTramitacion"/>
-		</html:submit>
+	
+	<!-- datos pago -->
+	<div id="datosPago">
+		<ul>
+			<li><span class="label"><bean:message key="pago.modelo" />:</span> <span><bean:write name="modelo" /></span></li>
+			<li><span class="label"><bean:message key="pago.concepto" />:</span> <span><bean:write name="concepto" /></span></li>
+			<li><span class="label"><bean:message key="pago.fechaDevengo" />:</span> <span><bean:write name="fechaDevengo" /></span></li>
+			<li><span class="label"><bean:message key="pago.importe" />:</span> <span><bean:write name="importe" /> &euro;</span></li>
+		</ul>
 	</div>
-</html:form>
+	
+	<div> 
+		
+		<logic:equal name="resultadoPago" value="0">
+			<p>
+				<bean:message key="pago.tarjeta.resultadoNK" />
+			</p>	
+		</logic:equal>
+		
+		<logic:equal name="resultadoPago" value="-1">
+			<p>
+				<bean:message key="pago.tarjeta.errorComunicacion" />
+				<bean:message key="pago.tarjeta.continuarTramitacion6" />
+			</p>
+		</logic:equal>
+		
+	</div>
+	<br/><br/>
+	<html:form action="/confirmarPago">		
+		<html:hidden property="modoPago" value="T"/>
+		<div class="botonera">
+			<html:submit>
+				<bean:message key="pago.continuarTramitacion"/>
+			</html:submit>
+		</div>
+	</html:form>
+</logic:notEqual>
 
+<!--  Pago realizado -->
+<logic:equal name="resultadoPago" value="1">			
+	<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+	<!-- capa mensaje continuar tramitacion -->
+	<div id="capaInfoFondo"></div>
+	<div id="capaFinPago">
+	
+			<p class="apartado">
+				<strong><bean:message key="pago.tarjeta.resultadoOK" /></strong>
+				<br>
+				<br>
+				<bean:message key="pago.tarjeta.debeDescargarJustificante" />
+				<img alt="" src="./imgs/icona/mode_presencial.gif">
+				<a class="veure" href="<%=urlAbrirDocumento%>">
+					<bean:message key="pago.tarjeta.justificante" />
+				</a>
+				<br>
+				<br>
+				<bean:message key="pago.tarjeta.debeContinuarTramitacion" />
+				<br>
+			</p>	
+			
+			<html:form action="/confirmarPago">		
+				<html:hidden property="modoPago" value="T"/>
+				<div class="botonera">
+					<html:submit>
+						<bean:message key="pago.registrarTramite"/>
+					</html:submit>
+				</div>
+			</html:form>	
+							
+	</div>
+	
+	<script type="text/javascript">
+		<!--
+		$( document ).ready(function() {
+			mostrandoCapa('capaFinPago');
+		});			
+		//-->
+	</script>
+	
+	
+</logic:equal>

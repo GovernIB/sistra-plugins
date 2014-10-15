@@ -291,6 +291,7 @@ div#capaInfo.error { background-image:url(../imgs/capainfo/error.gif); border-co
 div#capaInfo.ok { background-image:url(../imgs/capainfo/ok.gif); border-color:#bfcabe; }
 
 div#capaInfoForms { position:absolute; display:none; top:0; left:0; width:45em; text-align:center; background:url(../imgs/enviando.gif) no-repeat center 1em #fff; border:1em solid #85bbe4; padding:5em 1em 2em 1em; z-index:12; }
-
+div#capaFinPago   { position:absolute; display:none; top:0; left:0; width:45em; color:#000; padding:0 1em 0 2em; background:url(../imgs/icones/atencio.gif) no-repeat .8em .8em #ffffe8; border:1em solid #fff; z-index:12; }
+p.apartado{ margin-left:2em; }
 
 #iframeDownload{visibility:hidden; display:none; position: absolute;  top:-30em; left:-30em; frameborder:0; width:0; height:0; scrolling:no; allowtransparency:true;}

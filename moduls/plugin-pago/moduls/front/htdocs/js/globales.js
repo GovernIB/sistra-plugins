@@ -161,11 +161,20 @@ function mostrarFondo() {
 			}
 
 // Version 2
-function accediendoEnviando(mensaje) {
-	
+			
+			
+			
+function accediendoEnviando(mensaje) {	
 	contenido = mensaje;
-	var capaIF = document.getElementById('capaInfoFondo');
 	var capaI = document.getElementById('capaInfoForms');
+	capaI.innerHTML = contenido;
+	mostrandoCapa('capaInfoForms');
+}
+	
+
+function mostrandoCapa(pCapa) { 
+	var capaIF = document.getElementById('capaInfoFondo');
+	var capaI = document.getElementById(pCapa);
 	// tama?os de la ventana y la p?gina
 	var scroller = document.documentElement.scrollTop;
 	var ventanaX = document.documentElement.clientWidth;
@@ -179,10 +188,8 @@ function accediendoEnviando(mensaje) {
 		else style.opacity = 0.4;
 		if(document.all) style.width = ventanaX + 'px';
 		style.display = 'block';
-	}
-	// colocamos el texto adecuado
-	capaI.innerHTML = contenido;
-	
+	}	
+		
 	// mostramos, miramos su tama?o y centramos la capaInfo con respecto a la ventana
 	capaI.style.display = 'block';
 	capaInfoX = capaI.offsetWidth;
@@ -196,30 +203,28 @@ function accediendoEnviando(mensaje) {
 		else style.opacity = 0;
 	}
 	// y mostramos la capa ayuda
-	mostrarCapa();
+	mostrarCapa(pCapa);
 }
 
-function reposicionaCapa(){
+function reposicionaCapa(pCapa){
 	var scroller = (document.body.scrollTop) ? document.body.scrollTop : document.documentElement.scrollTop;
 	var ventanaY = document.documentElement.clientHeight;
-	if(document.getElementById('capaInfoForms') != 'undefined') var capaI = document.getElementById('capaInfoForms');
+	if(document.getElementById(pCapa) != 'undefined') var capaI = document.getElementById(pCapa);
 	capaInfoY = capaI.offsetHeight;
 	capaI.style.top = parseInt(scroller+(ventanaY-capaInfoY)/2) + 'px';
 }
 
 opacidad = 0;
-function mostrarCapa() {
-	
+function mostrarCapa(pCapa) {
 	if(opacidad < 100) {
 		opacidad += 20;
-		if(document.all) document.getElementById('capaInfoForms').filters.alpha.opacity = opacidad;
-		else document.getElementById('capaInfoForms').style.opacity = opacidad/100;
-		tiempo = setTimeout('mostrarCapa()', 50);
+		if(document.all) document.getElementById(pCapa).filters.alpha.opacity = opacidad;
+		else document.getElementById(pCapa).style.opacity = opacidad/100;
+		tiempo = setTimeout("mostrarCapa('" + pCapa +"')", 50);
 	} else {
 		clearTimeout(tiempo);
 		opacidad = 0;
-	}
-	
+	}	
 }
 
 function cerrarCapaDescarga() {
