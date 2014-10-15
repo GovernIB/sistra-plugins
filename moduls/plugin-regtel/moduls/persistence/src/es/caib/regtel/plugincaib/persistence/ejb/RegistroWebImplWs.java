@@ -15,6 +15,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.redose.modelInterfaz.ReferenciaRDS;
+import es.caib.regtel.plugincaib.model.LogUsuariosRegistro;
+import es.caib.regtel.plugincaib.model.LogUsuariosRegistroId;
+import es.caib.regtel.plugincaib.persistence.delegate.DelegateRegistroWebUtil;
 import es.caib.regtel.plugincaib.ws.ClienteWS;
 import es.caib.regtel.plugincaib.ws.model.ErrorEntrada;
 import es.caib.regtel.plugincaib.ws.model.ErrorSalida;
@@ -191,7 +194,11 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
     public void anularRegistroEntrada(String numeroRegistro, Date fechaRegistro) throws Exception {
 		
-		logger.debug("accediendo a anular registro entrada: " + numeroRegistro);
+    	String usuarioConexion = getUsuarioConexionRegistro();
+    	String passwdConexion = getPasswdUsuarioConexionRegistro();
+    	String usuarioRegistro = obtenerUsuarioRegistro("E", numeroRegistro);    	
+    	
+		logger.debug("accediendo a anular registro entrada: " + numeroRegistro + " - usuario conexion: " + usuarioConexion + " - usuario registro: " + usuarioRegistro);
 						
 		// Extraemos info del num de registro
 		String [] tokens = numeroRegistro.split("/");			
@@ -200,8 +207,10 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 		String ano = tokens[2];
 	
 		// Establecemos parametros
-		ParametrosRegistroEntradaWS registro = new ParametrosRegistroEntradaWS();
-		registro.setUsuario(getUsuarioRegistro());
+		ParametrosRegistroEntradaWS registro = new ParametrosRegistroEntradaWS();		
+		registro.setUsuarioConexion(usuarioConexion);
+		registro.setPassword(passwdConexion);
+		registro.setUsuarioRegistro(usuarioRegistro);
 		registro.setOrigenRegistro("SISTRA"); 
 		registro.setOficina(codiOficina);
 		registro.setNumeroEntrada(numero); 			
@@ -221,6 +230,10 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	public void anularRegistroSalida(String numeroRegistro, Date fechaRegistro) throws Exception {
 		logger.debug("accediendo a anular registro salida: " + numeroRegistro);
 	
+		String usuarioConexion = getUsuarioConexionRegistro();
+		String passwdConexion = getPasswdUsuarioConexionRegistro();
+    	String usuarioRegistro = obtenerUsuarioRegistro("E", numeroRegistro);    
+		
 		// Extraemos info del num de registro
 		String [] tokens = numeroRegistro.split("/");
 		String codiOficina = tokens[0];
@@ -229,7 +242,9 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
 		// Establecemos parametros
 		ParametrosRegistroSalidaWS registro = new ParametrosRegistroSalidaWS();
-		registro.setUsuario(getUsuarioRegistro());
+		registro.setUsuarioConexion(usuarioConexion);
+		registro.setPassword(passwdConexion);
+		registro.setUsuarioRegistro(usuarioRegistro);
 		registro.setAnoSalida(ano); 
 		registro.setNumeroSalida(numero); 
 		registro.setOficina(codiOficina);
@@ -424,7 +439,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
 	private ResultadoRegistro realizarRegistroSalida (
 			ParametrosRegistroSalidaWS params) throws Exception {
-		logger.debug("realizarRegistroSalida: inicio (usuario: " + params.getUsuario()  + ")");
+		logger.debug("realizarRegistroSalida: inicio (usuario conexion: " + params.getUsuarioConexion() + " - usuario registro: " + params.getUsuarioRegistro() + ")");
 		
 		ParametrosRegistroSalidaWS respostaValidacio = validarRegistroSalida(params);
 		if (respostaValidacio.isValidado().booleanValue()) {
@@ -458,9 +473,9 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	private ParametrosRegistroSalidaWS mapearAsientoParametrosRegistroSalida(
 			AsientoRegistral asiento) throws Exception {
 		ParametrosRegistroSalidaWS params = new ParametrosRegistroSalidaWS();
-		params.setUsuario(getUsuarioRegistro());
-		params.setPassword(getPasswdRegistro());
-		params.setUsuarioRegistro(getUsuarioRegistro());
+		params.setUsuarioConexion(getUsuarioConexionRegistro());
+		params.setPassword(getPasswdUsuarioConexionRegistro());
+		params.setUsuarioRegistro(getUsuarioConexionRegistro());
 		//params.setOrigenRegistro("SISTRA"); 
 		Date ara = new Date();
 		DateFormat dfData = new SimpleDateFormat("dd/MM/yyyy");
@@ -519,7 +534,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	}
 	
 	private ResultadoRegistro realizarRegistroEntrada(ParametrosRegistroEntradaWS params) throws Exception{	
-		logger.debug("realizarRegistroEntrada: inicio (usuario: " + params.getUsuario()  + ")");
+		logger.debug("realizarRegistroEntrada: inicio (usuario conexion: " + params.getUsuarioConexion()  + " - usuario registro: " + params.getUsuarioRegistro() + ")");
 		ParametrosRegistroEntradaWS respostaValidacio = validarRegistroEntrada(params);
 		if (respostaValidacio.isValidado().booleanValue()) {
 			logger.debug("realizarRegistroEntrada: pasa validación, pasamos a grabar");
@@ -556,9 +571,9 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
 	private ParametrosRegistroEntradaWS mapeaAsientoParametrosRegistroEntrada(AsientoRegistral asiento) throws Exception{
 		ParametrosRegistroEntradaWS params = new ParametrosRegistroEntradaWS();
-		params.setUsuario(getUsuarioRegistro());
-		params.setPassword(getPasswdRegistro());
-		params.setUsuarioRegistro(getUsuarioRegistro());
+		params.setUsuarioConexion(getUsuarioConexionRegistro());
+		params.setPassword(getPasswdUsuarioConexionRegistro());
+		params.setUsuarioRegistro(getUsuarioConexionRegistro());
 		params.setOrigenRegistro("SISTRA"); 	
 		Date ara = new Date();
 		DateFormat dfData = new SimpleDateFormat("dd/MM/yyyy");
@@ -649,7 +664,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 		} else {
 			// Si no hay configurada una unica, devolvemos todas
 			RegwebFacade regweb = obtenerClienteWS();
-			ListaResultados resp = regweb.buscarOficinasFisicasDescripcion(getUsuarioRegistro(), getPasswdRegistro(), "tots", "totes");
+			ListaResultados resp = regweb.buscarOficinasFisicasDescripcion(getUsuarioConexionRegistro(), getPasswdUsuarioConexionRegistro(), "tots", "totes");
 			resposta = new Vector();
 			if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
 				for (int i = 0; i < resp.getResultado().size(); i++) {
@@ -663,7 +678,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
 	private Vector buscarOficinasUsuario(String usuario) throws Exception {
 		RegwebFacade regweb = obtenerClienteWS();
-		ListaResultados resp = regweb.buscarOficinasFisicas(getUsuarioRegistro(), getPasswdRegistro(), usuario, "AE");
+		ListaResultados resp = regweb.buscarOficinasFisicas(getUsuarioConexionRegistro(), getPasswdUsuarioConexionRegistro(), usuario, "AE");
 		Vector resposta = new Vector();
 		if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
 			for (int i = 0; i < resp.getResultado().size(); i++) {
@@ -675,7 +690,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
 	private Vector buscarDocumentos() throws Exception {
 		RegwebFacade regweb = obtenerClienteWS();
-		ListaResultados resp = regweb.buscarDocumentos(getUsuarioRegistro(), getPasswdRegistro());
+		ListaResultados resp = regweb.buscarDocumentos(getUsuarioConexionRegistro(), getPasswdUsuarioConexionRegistro());
 		Vector resposta = new Vector();
 		if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
 			for (int i = 0; i < resp.getResultado().size(); i++) {
@@ -687,7 +702,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
 	private Vector buscarDestinatarios() throws Exception {
 		RegwebFacade regweb = obtenerClienteWS();
-		ListaResultados resp = regweb.buscarTodosDestinatarios(getUsuarioRegistro(), getPasswdRegistro());
+		ListaResultados resp = regweb.buscarTodosDestinatarios(getUsuarioConexionRegistro(), getPasswdUsuarioConexionRegistro());
 		Vector resposta = new Vector();
 		if (resp.getResultado() != null && resp.getResultado().size() > 0) { 
 			for (int i = 0; i < resp.getResultado().size(); i++) {
@@ -713,7 +728,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 		return config; 
 	}
 	
-	private String getUsuarioRegistro() throws Exception {
+	private String getUsuarioConexionRegistro() throws Exception {
 		String auto = getConfig().getProperty("plugin.regweb.auth.auto");
 		String userName = null;
 		if ("true".equals(auto)) {
@@ -724,7 +739,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 		return userName;
 	}
 	
-	private String getPasswdRegistro() throws Exception {
+	private String getPasswdUsuarioConexionRegistro() throws Exception {
 		String auto = getConfig().getProperty("plugin.regweb.auth.auto");
 		String userName = null;
 		if ("true".equals(auto)) {
@@ -762,5 +777,18 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
 	private RegwebFacade obtenerClienteWS() throws Exception {
 		return ClienteWS.generarPort(getConfig().getProperty("plugin.regweb.url"), null, null);		
+	}
+	
+	public String obtenerUsuarioRegistro(String tipoRegistro, String numeroRegistro) throws Exception {
+		// Intenta mirar en el log de usuarios para ver usuario que ha realizado el registro
+		// Si no lo encuentra, devuelve usuario por defecto de conexion a registro
+		LogUsuariosRegistro logusu = DelegateRegistroWebUtil.getLogUsuariosRegistroDelegate().obtenerLogUsuarioRegistro(new LogUsuariosRegistroId(tipoRegistro, numeroRegistro));
+		String usuRegistro = null;
+		if (logusu == null) {
+			usuRegistro = getUsuarioConexionRegistro();
+		} else {
+			usuRegistro = logusu.getUsuarioRegistro(); 
+		}
+		return usuRegistro;
 	}
 }

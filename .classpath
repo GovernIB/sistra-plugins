@@ -72,7 +72,7 @@
 	<classpathentry kind="lib" path="lib/client/2-redose-model.jar"/>
 	<classpathentry kind="lib" path="lib/client/2-redose-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/client/5-sistra-model.jar"/>
-	<classpathentry kind="lib" path="lib/client/5-sistra-persistence.jar"/>
+	<classpathentry kind="lib" path="lib/client/5-sistra-persistence.jar" sourcepath="/projecte-sistra-2.3"/>
 	<classpathentry kind="lib" path="lib/regweblib/logic-1.0.5-client.jar"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>

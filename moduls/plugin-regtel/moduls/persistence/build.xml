@@ -10,6 +10,7 @@
 	<property name="home.dir" location="${basedir}/../../../.."/>
 	<property name="modul.dir" value="${basedir}/../.."/>
 	<property file="${home.dir}/config.properties"/>
+	<property file="${modul.dir}/config.properties"/>
 
     <property name="output.dir" location="${modul.dir}/output"/>
     <property name="modul.output.dir" location="${output.dir}/${modul}"/>
@@ -34,9 +35,7 @@
 
 	 <path id="ejb.class.path">
     	<fileset dir="${lib.dir}">
-    		<include name="ejb-2_0.jar"/>
-    		<include name="commons-logging*.jar"/>
-    		<include name="commons-lang*.jar"/>
+    		<include name="*.jar"/>
    		</fileset>
     	<fileset dir="${lib.dir}/client">
     		<include name="redose-client.jar"/>    		
@@ -58,6 +57,9 @@
 	 	<fileset dir="${ejb.product}">
 	        <include name="regtelCAIB-wsclient.jar"/>
 	    </fileset> 
+	 	<fileset dir="${ejb.product}">
+            <include name="regtelCAIB-model.jar"/>
+        </fileset>  
     </path>	
 	
     <path id="doclet.class.path">
@@ -106,7 +108,7 @@
             >
 
             <fileset dir="${ejb.src}">
-                <include name="**/RegistroWebEJB.java"/>
+                <include name="**/*EJB.java"/>            	
             </fileset>
 
             <packageSubstitution packages="ejb" substituteWith="intf" />
@@ -142,6 +144,17 @@
                 />
 
         </ejbdoclet>
+    	
+    	<!-- PARA HIBERNATE -->
+        <copy file="${ejb.etc}/regtelPluginCaib-hibernate.cfg.xml" todir="${ejb.gen.etc}" overwrite="true"/>
+    	<copy file="${ejb.etc}/regtelPluginCaib-hibernate.properties" todir="${ejb.gen.etc}" overwrite="true"/>
+
+        <replace file="${ejb.gen.etc}/regtelPluginCaib-hibernate.cfg.xml">
+            <replacefilter token="@datasource.jndi@" value="${datasource.jndi}"/>
+            <replacefilter token="@hibernate.dialect@" value="${hibernate.dialect}"/>
+        	<replacefilter token="@hibernate.show_sql@" value="${hibernate.show_sql}"/>
+        </replace>
+    		
 
     </target>
 
@@ -170,12 +183,12 @@
             <manifest>
                 <attribute name="Created-By" value="${indra}"/>
             </manifest>
-            <metainf dir="${ejb.gen.etc}" includes="*.xml" excludes="hibernate.cfg.xml"/>
-            <!--<fileset dir="${ejb.gen.etc}" includes="hibernate.cfg.xml"/>
-        	<fileset dir="${ejb.gen.etc}" includes="hibernate.properties"/>-->
+            <metainf dir="${ejb.gen.etc}" includes="*.xml" excludes="regtelPluginCaib-hibernate.cfg.xml"/>
+            <fileset dir="${ejb.gen.etc}" includes="regtelPluginCaib-hibernate.cfg.xml"/>
+        	<fileset dir="${ejb.gen.etc}" includes="regtelPluginCaib-hibernate.properties"/>
             <fileset dir="${ejb.etc}" includes="ehcache.xml"/>
         	<include name="**/*.properties" />
-        	<include name="**/*.class" />
+        	<include name="**/*.class" />        	        	
         </jar>
     </target>
 
@@ -190,6 +203,8 @@
             <include name="**/delegate/**/*.class" />
             <include name="**/intf/**/*.class" />        	
             <include name="**/util/**/*.class" />
+            <include name="**/Hibernate.class"/>
+            <include name="**/HibernateHome.class"/>
         </jar>
     </target>		
 

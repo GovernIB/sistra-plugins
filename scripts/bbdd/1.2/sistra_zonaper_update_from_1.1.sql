@@ -24,3 +24,7 @@ comment on column ZPE_RPGTPV.TPV_FECMAX is
 
 comment on column ZPE_RPGTPV.TPV_MSGMAX is
 'Mensaje a mostrar en caso de que se exceda el tiempo de pago';
+
+
+ALTER TABLE ZPE_RPGTPV MODIFY TPV_MODTRA VARCHAR2(20)
+ALTER TABLE ZPE_RPAGOS MODIFY PAG_MODTRA VARCHAR2(20)

@@ -19,6 +19,9 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.redose.modelInterfaz.ReferenciaRDS;
+import es.caib.regtel.plugincaib.model.LogUsuariosRegistro;
+import es.caib.regtel.plugincaib.model.LogUsuariosRegistroId;
+import es.caib.regtel.plugincaib.persistence.delegate.DelegateRegistroWebUtil;
 import es.caib.regweb.logic.helper.ParametrosRegistroEntrada;
 import es.caib.regweb.logic.helper.ParametrosRegistroSalida;
 import es.caib.regweb.logic.interfaces.RegistroEntradaFacade;
@@ -289,6 +292,9 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 		LoginContext lc = null;
 		try {
 			
+			// Obtenemos usuario que registro
+			String usuRegistro = obtenerUsuarioRegistro("E", numeroRegistro);
+			
 			// Extraemos info del num de registro
 			String [] tokens = numeroRegistro.split("/");			
 			String codiOficina = tokens[0];
@@ -297,7 +303,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 		
 			// Establecemos parametros
 			ParametrosRegistroEntrada registro = new ParametrosRegistroEntrada();
-			registro.fijaUsuario(getUsuarioRegistro());
+			registro.fijaUsuario(usuRegistro);
 			registro.setOrigenRegistro("SISTRA"); 
 			registro.setoficina(codiOficina);
 			registro.setNumeroEntrada(numero); 			
@@ -337,6 +343,9 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 		LoginContext lc = null;
 		try {
 			
+			// Obtenemos usuario que registro
+			String usuRegistro = obtenerUsuarioRegistro("S", numeroRegistro);
+			
 			// Extraemos info del num de registro
 			String [] tokens = numeroRegistro.split("/");
 			String codiOficina = tokens[0];
@@ -345,7 +354,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 		
 			// Establecemos parametros
 			ParametrosRegistroSalida registro = new ParametrosRegistroSalida();
-			registro.fijaUsuario(getUsuarioRegistro());
+			registro.fijaUsuario(usuRegistro);
 			//registro.setOrigenRegistro("SISTRA"); 
 			registro.setAnoSalida(ano); 
 			registro.setNumeroSalida(numero); 
@@ -1010,6 +1019,19 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 			oficina = oficina.trim();
 		}
 		return oficina;		
+	}
+	
+	public String obtenerUsuarioRegistro(String tipoRegistro, String numeroRegistro) throws Exception {
+		// Intenta mirar en el log de usuarios para ver usuario que ha realizado el registro
+		// Si no lo encuentra, devuelve usuario por defecto de conexion a registro
+		LogUsuariosRegistro logusu = DelegateRegistroWebUtil.getLogUsuariosRegistroDelegate().obtenerLogUsuarioRegistro(new LogUsuariosRegistroId(tipoRegistro, numeroRegistro));
+		String usuRegistro = null;
+		if (logusu == null) {
+			usuRegistro = getUsuarioRegistro();
+		} else {
+			usuRegistro = logusu.getUsuarioRegistro(); 
+		}
+		return usuRegistro;
 	}
 
 }

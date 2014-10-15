@@ -95,6 +95,7 @@
 			<include name="pagosTPV-persistence.jar"/>
 			<include name="pagosTPV-front.war"/>
 			<include name="pagosTPV-back.war"/>
+			<include name="regtelCAIB-model.jar"/>
 			<include name="regtelCAIB-persistence.jar"/>
 			<include name="sistra-portal.war"/>
 			<include name="sistra-checkEmail.war"/>

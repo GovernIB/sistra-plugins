@@ -48,7 +48,8 @@
 	</target>
 	
 	<target name="distribute" description="Distribucion">
-		<copy file="${output.dir}/moduls/plugin-regtelCAIB.jar" todir="${distribucion.dir}"/>				
+		<copy file="${output.dir}/moduls/plugin-regtelCAIB.jar" todir="${distribucion.dir}"/>		
+		<copy file="${output.dir}/moduls/regtelCAIB-model.jar" todir="${distribucion.dir}"/>
 		<copy file="${output.dir}/moduls/regtelCAIB-persistence.jar" todir="${distribucion.dir}"/>
 		<copy file="${output.dir}/moduls/regtelCAIB-wsclient.jar" todir="${distribucion.dir}"/>
 	</target>
@@ -61,6 +62,7 @@
 	
 	<target name="propagate">
 		<ant dir="webservicesClient" target="${task}" inheritall="false"/>
+		<ant dir="model" target="${task}" inheritall="false"/>
 		<ant dir="persistence" target="${task}" inheritall="false"/>
 		<ant dir="plugin" target="${task}" inheritall="false"/>		
 	</target>

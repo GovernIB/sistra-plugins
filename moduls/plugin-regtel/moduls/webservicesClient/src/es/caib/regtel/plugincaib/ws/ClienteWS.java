@@ -25,7 +25,7 @@ public class ClienteWS {
 		es.caib.regtel.plugincaib.ws.services.RegwebFacade port = service.getPort(PORT_NAME,es.caib.regtel.plugincaib.ws.services.RegwebFacade.class);
           
 		// Configura puerto para log
-		WsClientSistraUtil.configurePort((BindingProvider)port,url,user,pass);
+		WsClientSistraUtil.configurePort((BindingProvider)port,null,url,user,pass);
 		
         return port;
 	}	

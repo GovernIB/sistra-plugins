@@ -15,6 +15,10 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.redose.modelInterfaz.ReferenciaRDS;
+import es.caib.regtel.plugincaib.model.LogUsuariosRegistro;
+import es.caib.regtel.plugincaib.model.LogUsuariosRegistroId;
+import es.caib.regtel.plugincaib.persistence.delegate.DelegateException;
+import es.caib.regtel.plugincaib.persistence.delegate.DelegateRegistroWebUtil;
 import es.caib.sistra.plugins.regtel.ResultadoRegistro;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.Justificante;
@@ -22,6 +26,11 @@ import es.caib.xml.registro.factoria.impl.Justificante;
 
 /**
  * SessionBean de registro telemático 
+ * 
+ * Las conexiones a registro se haran con el usuario configurado en el properties, se denomina "usuario de conexion".
+ * Se establecera el usuario que realiza el registro. El "usuario de registro" coincidira con el "usuario de conexion" 
+ * excepto a la hora de confirmar registro y a la  hora de anular registro, que se hara con el usuario que realizó el registro.
+ * Para controlar en la anulación que "usuario de registro" usar se realizará un log de los usuarios de registro.
  *
  * @ejb.bean
  *  name="regtel/plugincaib/persistence/RegistroWebEJB"
@@ -54,8 +63,8 @@ public abstract class RegistroWebEJB implements SessionBean
 				regweb = new RegistroWebImplWs();			
 			} else {
 				regweb = new RegistroWebImplEjb();
-			}
-			regweb.setPrincipal(context.getCallerPrincipal().getName());
+			}			
+			regweb.setPrincipal(getPrincipal());
 			return regweb;
 		} catch (Exception ex) {
 			logger.error("Error al obtener implementacion regweb", ex);
@@ -93,11 +102,12 @@ public abstract class RegistroWebEJB implements SessionBean
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
 		RegistroWebImplInt regweb = getImplementacionRegweb();
-		return regweb.registroEntrada(asiento, refAsiento, refAnexos);		
+		ResultadoRegistro res = regweb.registroEntrada(asiento, refAsiento, refAnexos);
+		logUsuarioRegistro("E",res,getUsuarioConexionRegistro());
+		return res;
 	}
+	
 
-	
-	
 	/**
      * @ejb.interface-method
      * @ejb.permission role-name = "${role.todos}"
@@ -108,7 +118,9 @@ public abstract class RegistroWebEJB implements SessionBean
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {		
 		RegistroWebImplInt regweb = getImplementacionRegweb();
-		return regweb.registroSalida(asiento, refAsiento, refAnexos);		
+		ResultadoRegistro res = regweb.registroSalida(asiento, refAsiento, refAnexos);		
+		logUsuarioRegistro("S",res,getUsuarioConexionRegistro());
+		return res;
 	}
 
 	
@@ -128,9 +140,11 @@ public abstract class RegistroWebEJB implements SessionBean
 			Map refAnexos) throws Exception {
 		
 		RegistroWebImplInt regweb = getImplementacionRegweb();
-		return regweb.confirmarPreregistro(oficina, codigoProvincia,
+		ResultadoRegistro res = regweb.confirmarPreregistro(oficina, codigoProvincia,
 				codigoMunicipio, descripcionMunicipio, justificantePreregistro,
 				refJustificante, refAsiento, refAnexos);	
+		logUsuarioRegistro("E",res,getPrincipal());
+		return res;
 				
 	}
 
@@ -223,4 +237,31 @@ public abstract class RegistroWebEJB implements SessionBean
 		}
 		return config; 
 	}	
+	
+	private String getUsuarioConexionRegistro() throws Exception {
+		String auto = getConfig().getProperty("plugin.regweb.auth.auto");
+		String userName = null;
+		if ("true".equals(auto)) {
+			userName = getConfig().getProperty("auto.user");			
+		} else {
+			userName = getConfig().getProperty("plugin.regweb.auth.username");
+		}
+		return userName;
+	}		
+	
+	
+	private String getPrincipal() throws Exception {
+		return context.getCallerPrincipal().getName();
+	}		
+	
+
+	private void logUsuarioRegistro(String tipoRegistro, ResultadoRegistro res,
+			String usuarioRegistro) throws DelegateException {
+		LogUsuariosRegistro lu = new LogUsuariosRegistro();
+		lu.setId(new LogUsuariosRegistroId(tipoRegistro, res.getNumeroRegistro()));
+		lu.setFechaRegistro(res.getFechaRegistro());
+		lu.setUsuarioRegistro(usuarioRegistro);
+		DelegateRegistroWebUtil.getLogUsuariosRegistroDelegate().realizarLogUsuarioRegistro(lu);
+	}
+
 }
