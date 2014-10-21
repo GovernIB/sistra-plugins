@@ -43,8 +43,10 @@
         </web>
     </module>
      
-    <!--  Registro -->
-    <module><ejb>regtelCAIB-persistence.jar</ejb></module>    
+   <!-- Registro CAIB -->
+	<module><java>regtelCAIB-model.jar</java></module>
+	<module><java>regtelCAIB-wsclient.jar</java></module>		
+	<module><ejb>regtelCAIB-persistence.jar</ejb></module>  
     
    <!-- Iframe portal --> 
    <module>
@@ -75,9 +77,6 @@
 
     <!-- VALCERT: NECESARIO PARA EL PLUGIN DE CUSTODIA CAIB -->
     <module><java>lib/sistra-valcert-axis-1.6.6.jar</java></module>    
-    
-     <!-- REGWEB WS: NECESARIO PARA PLUGIN-REGTEL -->
-    <module><java>lib/regtelCAIB-wsclient.jar</java></module>
     
      <!-- REGWEB EJB: NECESARIO PARA PLUGIN-REGTEL -->
     <module><java>lib/logic-1.0.5-client.jar</java></module>

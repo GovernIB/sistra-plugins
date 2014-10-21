@@ -253,6 +253,7 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    </complexType>
    <complexType name="ParametrosRegistroEntradaWS">
     <sequence>
+     <element name="usuarioRegistro" type="xsd:string"/>
      <element name="password" type="xsd:string"/>
      <element name="usuarioConexion" type="xsd:string"/>
      <element maxOccurs="1" minOccurs="0" name="actualizacion" type="xsd:boolean"/>
@@ -306,7 +307,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element maxOccurs="1" minOccurs="0" name="tipo" type="xsd:string"/>
      <element maxOccurs="1" minOccurs="0" name="validado" type="xsd:boolean"/>
      <element maxOccurs="1" minOccurs="0" name="errores" type="tns2:listaErroresEntrada"/>
-     <element name="usuarioRegistro" nillable="true" type="xsd:string"/>
     </sequence>
    </complexType>
   </schema>
@@ -326,6 +326,8 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
    </complexType>
    <complexType name="ParametrosRegistroSalidaWS">
     <sequence>
+     <element name="usuarioRegistro" type="xsd:string"/>
+     <element name="usuarioConexion" type="xsd:string"/>
      <element name="password" type="xsd:string"/>
      <element maxOccurs="1" minOccurs="0" name="anoSalida" type="xsd:string"/>
      <element maxOccurs="1" minOccurs="0" name="actualizacion" type="xsd:boolean"/>
@@ -373,8 +375,6 @@ Built on Apr 22, 2006 (06:55:48 PDT)-->
      <element maxOccurs="1" minOccurs="0" name="emailRemitent" type="xsd:string"/>
      <element maxOccurs="1" minOccurs="0" name="localitzadorsDocs" type="xsd:string"/>
      <element maxOccurs="1" minOccurs="0" name="errores" type="tns3:listaErroresSalida"/>
-     <element name="usuarioConexion" nillable="true" type="xsd:string"/>
-     <element name="usuarioRegistro" nillable="true" type="xsd:string"/>
     </sequence>
    </complexType>
   </schema>

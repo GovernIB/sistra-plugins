@@ -17,6 +17,7 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
+ *         &lt;element name="usuarioRegistro" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="password" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="usuarioConexion" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="actualizacion" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
@@ -70,7 +71,6 @@ import javax.xml.bind.annotation.XmlType;
  *         &lt;element name="tipo" type="{http://www.w3.org/2001/XMLSchema}string" minOccurs="0"/>
  *         &lt;element name="validado" type="{http://www.w3.org/2001/XMLSchema}boolean" minOccurs="0"/>
  *         &lt;element name="errores" type="{urn:es:caib:regweb:ws:v1:model:ParametrosRegistroEntradaWS}listaErroresEntrada" minOccurs="0"/>
- *         &lt;element name="usuarioRegistro" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -81,6 +81,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "ParametrosRegistroEntradaWS", namespace = "urn:es:caib:regweb:ws:v1:model:ParametrosRegistroEntradaWS", propOrder = {
+    "usuarioRegistro",
     "password",
     "usuarioConexion",
     "actualizacion",
@@ -133,11 +134,12 @@ import javax.xml.bind.annotation.XmlType;
     "salida2",
     "tipo",
     "validado",
-    "errores",
-    "usuarioRegistro"
+    "errores"
 })
 public class ParametrosRegistroEntradaWS {
 
+    @XmlElement(required = true)
+    protected String usuarioRegistro;
     @XmlElement(required = true)
     protected String password;
     @XmlElement(required = true)
@@ -193,8 +195,30 @@ public class ParametrosRegistroEntradaWS {
     protected String tipo;
     protected Boolean validado;
     protected ListaErroresEntrada errores;
-    @XmlElement(required = true, nillable = true)
-    protected String usuarioRegistro;
+
+    /**
+     * Gets the value of the usuarioRegistro property.
+     * 
+     * @return
+     *     possible object is
+     *     {@link String }
+     *     
+     */
+    public String getUsuarioRegistro() {
+        return usuarioRegistro;
+    }
+
+    /**
+     * Sets the value of the usuarioRegistro property.
+     * 
+     * @param value
+     *     allowed object is
+     *     {@link String }
+     *     
+     */
+    public void setUsuarioRegistro(String value) {
+        this.usuarioRegistro = value;
+    }
 
     /**
      * Gets the value of the password property.
@@ -1466,30 +1490,6 @@ public class ParametrosRegistroEntradaWS {
      */
     public void setErrores(ListaErroresEntrada value) {
         this.errores = value;
-    }
-
-    /**
-     * Gets the value of the usuarioRegistro property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getUsuarioRegistro() {
-        return usuarioRegistro;
-    }
-
-    /**
-     * Sets the value of the usuarioRegistro property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setUsuarioRegistro(String value) {
-        this.usuarioRegistro = value;
     }
 
 }

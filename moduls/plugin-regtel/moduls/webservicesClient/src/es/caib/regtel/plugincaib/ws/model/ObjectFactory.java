@@ -42,43 +42,19 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ValidarEntrada }
+     * Create an instance of {@link GrabarSalidaResponse }
      * 
      */
-    public ValidarEntrada createValidarEntrada() {
-        return new ValidarEntrada();
+    public GrabarSalidaResponse createGrabarSalidaResponse() {
+        return new GrabarSalidaResponse();
     }
 
     /**
-     * Create an instance of {@link ErrorEntrada }
+     * Create an instance of {@link ListaErroresEntrada }
      * 
      */
-    public ErrorEntrada createErrorEntrada() {
-        return new ErrorEntrada();
-    }
-
-    /**
-     * Create an instance of {@link BuscarTodosDestinatariosResponse }
-     * 
-     */
-    public BuscarTodosDestinatariosResponse createBuscarTodosDestinatariosResponse() {
-        return new BuscarTodosDestinatariosResponse();
-    }
-
-    /**
-     * Create an instance of {@link ActualizarSalidaResponse }
-     * 
-     */
-    public ActualizarSalidaResponse createActualizarSalidaResponse() {
-        return new ActualizarSalidaResponse();
-    }
-
-    /**
-     * Create an instance of {@link ParametrosRegistroEntradaWS }
-     * 
-     */
-    public ParametrosRegistroEntradaWS createParametrosRegistroEntradaWS() {
-        return new ParametrosRegistroEntradaWS();
+    public ListaErroresEntrada createListaErroresEntrada() {
+        return new ListaErroresEntrada();
     }
 
     /**
@@ -90,51 +66,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link BuscarTodosDestinatarios }
+     * Create an instance of {@link ParametrosRegistroPublicadoEntradaWS }
      * 
      */
-    public BuscarTodosDestinatarios createBuscarTodosDestinatarios() {
-        return new BuscarTodosDestinatarios();
-    }
-
-    /**
-     * Create an instance of {@link LeerEntradaResponse }
-     * 
-     */
-    public LeerEntradaResponse createLeerEntradaResponse() {
-        return new LeerEntradaResponse();
-    }
-
-    /**
-     * Create an instance of {@link BuscarOficinasFisicasDescripcionResponse }
-     * 
-     */
-    public BuscarOficinasFisicasDescripcionResponse createBuscarOficinasFisicasDescripcionResponse() {
-        return new BuscarOficinasFisicasDescripcionResponse();
-    }
-
-    /**
-     * Create an instance of {@link ActualizarSalida }
-     * 
-     */
-    public ActualizarSalida createActualizarSalida() {
-        return new ActualizarSalida();
-    }
-
-    /**
-     * Create an instance of {@link ListaErroresSalida }
-     * 
-     */
-    public ListaErroresSalida createListaErroresSalida() {
-        return new ListaErroresSalida();
-    }
-
-    /**
-     * Create an instance of {@link ActualizarEntradaResponse }
-     * 
-     */
-    public ActualizarEntradaResponse createActualizarEntradaResponse() {
-        return new ActualizarEntradaResponse();
+    public ParametrosRegistroPublicadoEntradaWS createParametrosRegistroPublicadoEntradaWS() {
+        return new ParametrosRegistroPublicadoEntradaWS();
     }
 
     /**
@@ -146,35 +82,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ParametrosRegistroSalidaWS }
+     * Create an instance of {@link ActualizarEntrada }
      * 
      */
-    public ParametrosRegistroSalidaWS createParametrosRegistroSalidaWS() {
-        return new ParametrosRegistroSalidaWS();
-    }
-
-    /**
-     * Create an instance of {@link BuscarOficinasFisicasDescripcion }
-     * 
-     */
-    public BuscarOficinasFisicasDescripcion createBuscarOficinasFisicasDescripcion() {
-        return new BuscarOficinasFisicasDescripcion();
-    }
-
-    /**
-     * Create an instance of {@link RegwebFacadeException }
-     * 
-     */
-    public RegwebFacadeException createRegwebFacadeException() {
-        return new RegwebFacadeException();
-    }
-
-    /**
-     * Create an instance of {@link ParametrosRegistroPublicadoEntradaWS }
-     * 
-     */
-    public ParametrosRegistroPublicadoEntradaWS createParametrosRegistroPublicadoEntradaWS() {
-        return new ParametrosRegistroPublicadoEntradaWS();
+    public ActualizarEntrada createActualizarEntrada() {
+        return new ActualizarEntrada();
     }
 
     /**
@@ -186,19 +98,51 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AnularEntradaResponse }
+     * Create an instance of {@link AnularSalidaResponse }
      * 
      */
-    public AnularEntradaResponse createAnularEntradaResponse() {
-        return new AnularEntradaResponse();
+    public AnularSalidaResponse createAnularSalidaResponse() {
+        return new AnularSalidaResponse();
     }
 
     /**
-     * Create an instance of {@link GrabarEntrada }
+     * Create an instance of {@link BuscarDocumentosResponse }
      * 
      */
-    public GrabarEntrada createGrabarEntrada() {
-        return new GrabarEntrada();
+    public BuscarDocumentosResponse createBuscarDocumentosResponse() {
+        return new BuscarDocumentosResponse();
+    }
+
+    /**
+     * Create an instance of {@link BuscarOficinasFisicasResponse }
+     * 
+     */
+    public BuscarOficinasFisicasResponse createBuscarOficinasFisicasResponse() {
+        return new BuscarOficinasFisicasResponse();
+    }
+
+    /**
+     * Create an instance of {@link GrabarSalida }
+     * 
+     */
+    public GrabarSalida createGrabarSalida() {
+        return new GrabarSalida();
+    }
+
+    /**
+     * Create an instance of {@link ValidarEntrada }
+     * 
+     */
+    public ValidarEntrada createValidarEntrada() {
+        return new ValidarEntrada();
+    }
+
+    /**
+     * Create an instance of {@link BuscarTodosDestinatarios }
+     * 
+     */
+    public BuscarTodosDestinatarios createBuscarTodosDestinatarios() {
+        return new BuscarTodosDestinatarios();
     }
 
     /**
@@ -218,83 +162,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ListaResultados }
-     * 
-     */
-    public ListaResultados createListaResultados() {
-        return new ListaResultados();
-    }
-
-    /**
-     * Create an instance of {@link GrabarSalida }
-     * 
-     */
-    public GrabarSalida createGrabarSalida() {
-        return new GrabarSalida();
-    }
-
-    /**
-     * Create an instance of {@link LeerEntrada }
-     * 
-     */
-    public LeerEntrada createLeerEntrada() {
-        return new LeerEntrada();
-    }
-
-    /**
-     * Create an instance of {@link GrabarSalidaResponse }
-     * 
-     */
-    public GrabarSalidaResponse createGrabarSalidaResponse() {
-        return new GrabarSalidaResponse();
-    }
-
-    /**
-     * Create an instance of {@link BuscarOficinasFisicas }
-     * 
-     */
-    public BuscarOficinasFisicas createBuscarOficinasFisicas() {
-        return new BuscarOficinasFisicas();
-    }
-
-    /**
-     * Create an instance of {@link BuscarDocumentosResponse }
-     * 
-     */
-    public BuscarDocumentosResponse createBuscarDocumentosResponse() {
-        return new BuscarDocumentosResponse();
-    }
-
-    /**
-     * Create an instance of {@link AnularEntrada }
-     * 
-     */
-    public AnularEntrada createAnularEntrada() {
-        return new AnularEntrada();
-    }
-
-    /**
-     * Create an instance of {@link ListaErroresEntrada }
-     * 
-     */
-    public ListaErroresEntrada createListaErroresEntrada() {
-        return new ListaErroresEntrada();
-    }
-
-    /**
      * Create an instance of {@link LeerSalida }
      * 
      */
     public LeerSalida createLeerSalida() {
         return new LeerSalida();
-    }
-
-    /**
-     * Create an instance of {@link AnularSalida }
-     * 
-     */
-    public AnularSalida createAnularSalida() {
-        return new AnularSalida();
     }
 
     /**
@@ -306,27 +178,155 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link ActualizarEntrada }
+     * Create an instance of {@link ErrorEntrada }
      * 
      */
-    public ActualizarEntrada createActualizarEntrada() {
-        return new ActualizarEntrada();
+    public ErrorEntrada createErrorEntrada() {
+        return new ErrorEntrada();
     }
 
     /**
-     * Create an instance of {@link BuscarOficinasFisicasResponse }
+     * Create an instance of {@link ActualizarEntradaResponse }
      * 
      */
-    public BuscarOficinasFisicasResponse createBuscarOficinasFisicasResponse() {
-        return new BuscarOficinasFisicasResponse();
+    public ActualizarEntradaResponse createActualizarEntradaResponse() {
+        return new ActualizarEntradaResponse();
     }
 
     /**
-     * Create an instance of {@link AnularSalidaResponse }
+     * Create an instance of {@link RegwebFacadeException }
      * 
      */
-    public AnularSalidaResponse createAnularSalidaResponse() {
-        return new AnularSalidaResponse();
+    public RegwebFacadeException createRegwebFacadeException() {
+        return new RegwebFacadeException();
+    }
+
+    /**
+     * Create an instance of {@link BuscarOficinasFisicasDescripcionResponse }
+     * 
+     */
+    public BuscarOficinasFisicasDescripcionResponse createBuscarOficinasFisicasDescripcionResponse() {
+        return new BuscarOficinasFisicasDescripcionResponse();
+    }
+
+    /**
+     * Create an instance of {@link ActualizarSalida }
+     * 
+     */
+    public ActualizarSalida createActualizarSalida() {
+        return new ActualizarSalida();
+    }
+
+    /**
+     * Create an instance of {@link ActualizarSalidaResponse }
+     * 
+     */
+    public ActualizarSalidaResponse createActualizarSalidaResponse() {
+        return new ActualizarSalidaResponse();
+    }
+
+    /**
+     * Create an instance of {@link ListaResultados }
+     * 
+     */
+    public ListaResultados createListaResultados() {
+        return new ListaResultados();
+    }
+
+    /**
+     * Create an instance of {@link ParametrosRegistroEntradaWS }
+     * 
+     */
+    public ParametrosRegistroEntradaWS createParametrosRegistroEntradaWS() {
+        return new ParametrosRegistroEntradaWS();
+    }
+
+    /**
+     * Create an instance of {@link LeerEntrada }
+     * 
+     */
+    public LeerEntrada createLeerEntrada() {
+        return new LeerEntrada();
+    }
+
+    /**
+     * Create an instance of {@link BuscarTodosDestinatariosResponse }
+     * 
+     */
+    public BuscarTodosDestinatariosResponse createBuscarTodosDestinatariosResponse() {
+        return new BuscarTodosDestinatariosResponse();
+    }
+
+    /**
+     * Create an instance of {@link AnularEntradaResponse }
+     * 
+     */
+    public AnularEntradaResponse createAnularEntradaResponse() {
+        return new AnularEntradaResponse();
+    }
+
+    /**
+     * Create an instance of {@link LeerEntradaResponse }
+     * 
+     */
+    public LeerEntradaResponse createLeerEntradaResponse() {
+        return new LeerEntradaResponse();
+    }
+
+    /**
+     * Create an instance of {@link AnularSalida }
+     * 
+     */
+    public AnularSalida createAnularSalida() {
+        return new AnularSalida();
+    }
+
+    /**
+     * Create an instance of {@link BuscarOficinasFisicas }
+     * 
+     */
+    public BuscarOficinasFisicas createBuscarOficinasFisicas() {
+        return new BuscarOficinasFisicas();
+    }
+
+    /**
+     * Create an instance of {@link ParametrosRegistroSalidaWS }
+     * 
+     */
+    public ParametrosRegistroSalidaWS createParametrosRegistroSalidaWS() {
+        return new ParametrosRegistroSalidaWS();
+    }
+
+    /**
+     * Create an instance of {@link GrabarEntrada }
+     * 
+     */
+    public GrabarEntrada createGrabarEntrada() {
+        return new GrabarEntrada();
+    }
+
+    /**
+     * Create an instance of {@link BuscarOficinasFisicasDescripcion }
+     * 
+     */
+    public BuscarOficinasFisicasDescripcion createBuscarOficinasFisicasDescripcion() {
+        return new BuscarOficinasFisicasDescripcion();
+    }
+
+    /**
+     * Create an instance of {@link ListaErroresSalida }
+     * 
+     */
+    public ListaErroresSalida createListaErroresSalida() {
+        return new ListaErroresSalida();
+    }
+
+    /**
+     * Create an instance of {@link AnularEntrada }
+     * 
+     */
+    public AnularEntrada createAnularEntrada() {
+        return new AnularEntrada();
     }
 
     /**
