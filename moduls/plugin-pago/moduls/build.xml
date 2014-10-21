@@ -50,6 +50,7 @@
 		<delete dir="${output.dir}" quiet="yes" />
 	</target>
 	
+	<!--
 	<target name="assemble-front" description="actualitza l'ear amb les construccions recents dels components">
 		<delete file="${product.dir}/${projectePagos}.ear" quiet="yes"/>
 		<ear earfile="${product.dir}/${projectePagos}.ear" appxml="${etc}/plugin-pago/application.xml">
@@ -69,7 +70,8 @@
 		
 		</ear>
 	</target>
-
+	-->
+	
 	<target name="main" depends="clean,prepare" description="realitza tot el proces de construccio">
 		<antcall target="propagate">
 			<param name="task" value="main"/>
