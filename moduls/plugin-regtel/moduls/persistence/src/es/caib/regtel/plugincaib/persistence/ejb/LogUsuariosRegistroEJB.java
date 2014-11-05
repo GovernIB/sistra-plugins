@@ -51,6 +51,7 @@ public class LogUsuariosRegistroEJB extends HibernateEJB  {
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      * @ejb.permission role-name = "${role.auto}"
+     * @ejb.transaction type="RequiresNew"
      */
 	public void realizarLogUsuarioRegistro(LogUsuariosRegistro logUsu) {
 		
