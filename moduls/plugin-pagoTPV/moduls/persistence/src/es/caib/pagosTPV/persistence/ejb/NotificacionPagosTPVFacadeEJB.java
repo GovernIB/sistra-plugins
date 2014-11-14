@@ -52,6 +52,13 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
      */
 	public void realizarNotificacion(RequestNotificacionTPV notificacionPago) {
 		
+		log.debug("Realizar notificacion pago: " + notificacionPago.getOrder());
+		
+		if (recuperarNotificacion(notificacionPago.getOrder()) != null) {
+			log.error("Ya existe una notificacion referente a la orden: " + notificacionPago.getOrder());
+			throw new EJBException("Ya existe una notificacion referente a la orden: " + notificacionPago.getOrder());
+		}
+		
 		Session session = getSession();
 		
 		try{
