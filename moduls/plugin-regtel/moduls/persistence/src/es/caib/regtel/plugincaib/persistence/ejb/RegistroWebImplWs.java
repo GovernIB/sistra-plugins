@@ -15,9 +15,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.redose.modelInterfaz.ReferenciaRDS;
-import es.caib.regtel.plugincaib.model.LogUsuariosRegistro;
-import es.caib.regtel.plugincaib.model.LogUsuariosRegistroId;
-import es.caib.regtel.plugincaib.persistence.delegate.DelegateRegistroWebUtil;
+import es.caib.regtel.plugincaib.persistence.util.Configuracion;
 import es.caib.regtel.plugincaib.ws.ClienteWS;
 import es.caib.regtel.plugincaib.ws.model.ErrorEntrada;
 import es.caib.regtel.plugincaib.ws.model.ErrorSalida;
@@ -196,7 +194,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 		
     	String usuarioConexion = getUsuarioConexionRegistro();
     	String passwdConexion = getPasswdUsuarioConexionRegistro();
-    	String usuarioRegistro = obtenerUsuarioRegistro("E", numeroRegistro);    	
+    	String usuarioRegistro = Configuracion.getInstance().getUsuarioAnulacion();    	
     	
 		logger.debug("accediendo a anular registro entrada: " + numeroRegistro + " - usuario conexion: " + usuarioConexion + " - usuario registro: " + usuarioRegistro);
 						
@@ -232,7 +230,7 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 	
 		String usuarioConexion = getUsuarioConexionRegistro();
 		String passwdConexion = getPasswdUsuarioConexionRegistro();
-    	String usuarioRegistro = obtenerUsuarioRegistro("E", numeroRegistro);    
+		String usuarioRegistro = Configuracion.getInstance().getUsuarioAnulacion();   
 		
 		// Extraemos info del num de registro
 		String [] tokens = numeroRegistro.split("/");
@@ -779,16 +777,4 @@ public class RegistroWebImplWs implements RegistroWebImplInt
 		return ClienteWS.generarPort(getConfig().getProperty("plugin.regweb.url"), null, null);		
 	}
 	
-	public String obtenerUsuarioRegistro(String tipoRegistro, String numeroRegistro) throws Exception {
-		// Intenta mirar en el log de usuarios para ver usuario que ha realizado el registro
-		// Si no lo encuentra, devuelve usuario por defecto de conexion a registro
-		LogUsuariosRegistro logusu = DelegateRegistroWebUtil.getLogUsuariosRegistroDelegate().obtenerLogUsuarioRegistro(new LogUsuariosRegistroId(tipoRegistro, numeroRegistro));
-		String usuRegistro = null;
-		if (logusu == null) {
-			usuRegistro = getUsuarioConexionRegistro();
-		} else {
-			usuRegistro = logusu.getUsuarioRegistro(); 
-		}
-		return usuRegistro;
-	}
 }

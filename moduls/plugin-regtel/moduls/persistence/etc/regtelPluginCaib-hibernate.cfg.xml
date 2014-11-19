@@ -21,8 +21,10 @@
         <property name="cache.provider_class">net.sf.ehcache.hibernate.Provider</property>
         <property name="cache.use_query_cache">true</property>
 
+		<!-- 
 		<mapping resource="es/caib/regtel/plugincaib/model/LogUsuariosRegistro.hbm.xml" />		
-		
+		 -->
+		 
     </session-factory>
 
 </hibernate-configuration>

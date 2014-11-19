@@ -15,10 +15,6 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.redose.modelInterfaz.ReferenciaRDS;
-import es.caib.regtel.plugincaib.model.LogUsuariosRegistro;
-import es.caib.regtel.plugincaib.model.LogUsuariosRegistroId;
-import es.caib.regtel.plugincaib.persistence.delegate.DelegateException;
-import es.caib.regtel.plugincaib.persistence.delegate.DelegateRegistroWebUtil;
 import es.caib.sistra.plugins.regtel.ResultadoRegistro;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.Justificante;
@@ -102,8 +98,7 @@ public abstract class RegistroWebEJB implements SessionBean
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
 		RegistroWebImplInt regweb = getImplementacionRegweb();
-		ResultadoRegistro res = regweb.registroEntrada(asiento, refAsiento, refAnexos);
-		logUsuarioRegistro("E",res,getUsuarioConexionRegistro());
+		ResultadoRegistro res = regweb.registroEntrada(asiento, refAsiento, refAnexos);		
 		return res;
 	}
 	
@@ -119,7 +114,6 @@ public abstract class RegistroWebEJB implements SessionBean
 			Map refAnexos) throws Exception {		
 		RegistroWebImplInt regweb = getImplementacionRegweb();
 		ResultadoRegistro res = regweb.registroSalida(asiento, refAsiento, refAnexos);		
-		logUsuarioRegistro("S",res,getUsuarioConexionRegistro());
 		return res;
 	}
 
@@ -143,7 +137,6 @@ public abstract class RegistroWebEJB implements SessionBean
 		ResultadoRegistro res = regweb.confirmarPreregistro(oficina, codigoProvincia,
 				codigoMunicipio, descripcionMunicipio, justificantePreregistro,
 				refJustificante, refAsiento, refAnexos);	
-		logUsuarioRegistro("E",res,getPrincipal());
 		return res;
 				
 	}
@@ -252,16 +245,6 @@ public abstract class RegistroWebEJB implements SessionBean
 	
 	private String getPrincipal() throws Exception {
 		return context.getCallerPrincipal().getName();
-	}		
-	
-
-	private void logUsuarioRegistro(String tipoRegistro, ResultadoRegistro res,
-			String usuarioRegistro) throws DelegateException {
-		LogUsuariosRegistro lu = new LogUsuariosRegistro();
-		lu.setId(new LogUsuariosRegistroId(tipoRegistro, res.getNumeroRegistro()));
-		lu.setFechaRegistro(res.getFechaRegistro());
-		lu.setUsuarioRegistro(usuarioRegistro);
-		DelegateRegistroWebUtil.getLogUsuariosRegistroDelegate().realizarLogUsuarioRegistro(lu);
-	}
+	}			
 
 }
