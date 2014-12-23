@@ -218,7 +218,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	 */
 	private void actualizaModeloPagos() {
 		ModeloPagosTPV mp = new ModeloPagosTPV(sesionPago);
-		mp.setPagoFinalizado('N');
+		mp.setPagoFinalizado("N");
 		Session session = getSession();
 		try{
 			if(mp != null){

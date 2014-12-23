@@ -12,7 +12,7 @@ import es.caib.sistra.plugins.pagos.SesionSistra;
 public class ModeloPagosTPV implements Serializable
 {
 	private String localizador;
-	private char tipoPago;
+	private String tipoPago;
 	private String identificadorTramite;
 	private String modeloTramite;
 	private int versionTramite;	
@@ -36,7 +36,7 @@ public class ModeloPagosTPV implements Serializable
 	private String urlMantenimientoSesionSistra;
 	private String token;
 	private Date tiempoLimiteToken;
-	private char pagoFinalizado;
+	private String pagoFinalizado;
 	private String identificadorOrganismo;
 	private String historicoPedidosKO;
 	
@@ -62,7 +62,7 @@ public class ModeloPagosTPV implements Serializable
 	
 	private void sesionCaibToModeloPagosTPV(SesionPagoCAIB sesionCAIB) {
 		this.localizador = sesionCAIB.getLocalizador();
-		this.tipoPago = sesionCAIB.getDatosPago().getTipoPago();
+		this.tipoPago =  charToString(sesionCAIB.getDatosPago().getTipoPago());
 		this.identificadorTramite = sesionCAIB.getDatosPago().getIdentificadorTramite();
 		this.modeloTramite = sesionCAIB.getDatosPago().getModeloTramite();
 		this.versionTramite = sesionCAIB.getDatosPago().getVersionTramite();
@@ -79,7 +79,7 @@ public class ModeloPagosTPV implements Serializable
 		this.nombreDeclarante = sesionCAIB.getDatosPago().getNombreDeclarante();
 		this.telefonoDeclarante = sesionCAIB.getDatosPago().getTelefonoDeclarante();
 		this.estado = sesionCAIB.getEstadoPago().getEstado();		
-		this.tipoPagoSeleccionado = Character.toString(sesionCAIB.getEstadoPago().getTipo());
+		this.tipoPagoSeleccionado = charToString(sesionCAIB.getEstadoPago().getTipo());
 		this.identificadorPago = sesionCAIB.getEstadoPago().getIdentificadorPago();
 		this.fechaPago = sesionCAIB.getEstadoPago().getFechaPago();
 		this.reciboB64PagoTelematico = sesionCAIB.getEstadoPago().getReciboB64PagoTelematico();
@@ -97,7 +97,7 @@ public class ModeloPagosTPV implements Serializable
 		sesionCAIB.setLocalizador(localizador);
 		sesionCAIB.setHistoricoPedidosKO(historicoPedidosKO);
 		sesionCAIB.setDatosPago(new DatosPago());
-		sesionCAIB.getDatosPago().setTipoPago(tipoPago);
+		sesionCAIB.getDatosPago().setTipoPago(stringToChar(tipoPago));
 		sesionCAIB.getDatosPago().setIdentificadorTramite(identificadorTramite);
 		sesionCAIB.getDatosPago().setModeloTramite(modeloTramite);
 		sesionCAIB.getDatosPago().setVersionTramite(versionTramite);
@@ -114,9 +114,7 @@ public class ModeloPagosTPV implements Serializable
 		sesionCAIB.getDatosPago().setNombreUsuario(nombreUsuario);
 		sesionCAIB.getDatosPago().setIdioma(idioma);
 		sesionCAIB.setEstadoPago(new EstadoSesionPago());
-		if (StringUtils.isNotBlank(tipoPagoSeleccionado)) {
-			sesionCAIB.getEstadoPago().setTipo(tipoPagoSeleccionado.charAt(0));
-		}
+		sesionCAIB.getEstadoPago().setTipo(stringToChar(tipoPagoSeleccionado));
 		sesionCAIB.getEstadoPago().setEstado(estado);		
 		sesionCAIB.getEstadoPago().setIdentificadorPago(identificadorPago);
 		sesionCAIB.getEstadoPago().setFechaPago(fechaPago);
@@ -270,12 +268,12 @@ public class ModeloPagosTPV implements Serializable
 		this.nombreUsuario = nombreUsuario;
 	}
 
-	public char getPagoFinalizado() {
+	public String getPagoFinalizado() {
 		return pagoFinalizado;
 	}
 
 
-	public void setPagoFinalizado(char pagoFinalizado) {
+	public void setPagoFinalizado(String pagoFinalizado) {
 		this.pagoFinalizado = pagoFinalizado;
 	}
 
@@ -310,12 +308,12 @@ public class ModeloPagosTPV implements Serializable
 	}
 
 
-	public char getTipoPago() {
+	public String getTipoPago() {
 		return tipoPago;
 	}
 
 
-	public void setTipoPago(char tipoPago) {
+	public void setTipoPago(String tipoPago) {
 		this.tipoPago = tipoPago;
 	}
 
@@ -389,4 +387,20 @@ public class ModeloPagosTPV implements Serializable
 		this.mensajeTiempoMaximoPago = mensajeTiempoMaximoPago;
 	}
 
+	private char stringToChar(String s) {
+		char res = Character.UNASSIGNED;
+		if (!StringUtils.isEmpty(s)) {
+			res = s.charAt(0);
+		}
+		return res;
+	}
+	
+	private String charToString(char c) {
+		String res = null;
+		if (c != Character.UNASSIGNED) {
+			res = Character.toString(c);
+		}
+		return res;
+	}
+	
 }

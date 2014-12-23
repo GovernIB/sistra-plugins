@@ -90,7 +90,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			
 			// Almacenamos sesion
 			ModeloPagosTPV mp = new ModeloPagosTPV(sesionCAIB,tokenCAIB);
-			mp.setPagoFinalizado('N');
+			mp.setPagoFinalizado("N");
 	        session.save(mp);
 				        
 			// Devolvemos sesion de pago creada
@@ -247,7 +247,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
     			throw new Exception("No se permite finalizar una sesion de pago pendiente de confirmacion");
     		}
     		// Borramos sesion de pago
-    		mp.setPagoFinalizado('S');
+    		mp.setPagoFinalizado("S");
     		session.saveOrUpdate(mp);
     		
 	        log.debug("Eliminada datos sesion pago");
