@@ -4,6 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -470,6 +473,11 @@ public class FormateadorPdfConsultaQuejasIB implements FormateadorDocumento{
 		
 		// Para que no se parta el campo
 		seccion.setSplitLate(false);
+		
+		// Fecha de consulta de la respuesta
+		Date feccon = new Date();
+		DateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		String fecform = formato.format(feccon);
 
 
 		// Estado
@@ -508,7 +516,8 @@ public class FormateadorPdfConsultaQuejasIB implements FormateadorDocumento{
     	ByteArrayOutputStream bos;
     	
 
-		bos = new ByteArrayOutputStream();    		
+		bos = new ByteArrayOutputStream();
+		docPDF.setPie(props.getProperty("datosSolicitud.fecform") + " " + fecform);
 		docPDF.generate(bos);
 		
 		ByteArrayInputStream bais = new ByteArrayInputStream(bos.toByteArray());

@@ -2,6 +2,9 @@ package es.caib.redose.persistence.formateadores;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Properties;
 
@@ -342,7 +345,12 @@ public class FormateadorPdfConsultaQuejas implements FormateadorDocumento{
 		
 		seccion.setSplitLate(false);
 
-
+		// Fecha de consulta de la respuesta
+		Date feccon = new Date();
+		DateFormat formato = new SimpleDateFormat("dd/MM/yyyy HH:mm");
+		String fecform = formato.format(feccon);
+		/*propiedad = new Propiedad(props.getProperty("datosSolicitud.fecform"),fecform,widths);
+		seccion.addCampo(propiedad);*/
 
 		// Estado
 		valor = "";
@@ -380,7 +388,8 @@ public class FormateadorPdfConsultaQuejas implements FormateadorDocumento{
     	ByteArrayOutputStream bos;
     	
 
-		bos = new ByteArrayOutputStream();    		
+		bos = new ByteArrayOutputStream();
+		docPDF.setPie(props.getProperty("datosSolicitud.fecform") + " " + fecform);
 		docPDF.generate(bos);
     	
 		// Devolvemos pdf generado		
