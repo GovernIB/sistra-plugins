@@ -133,6 +133,7 @@
                 mergedir="${web.merge.struts}"
                 />
 
+        	<!-- No tiene que estar securizado
         	<jbosswebxml
                 destdir="${web.gen.etc}"
                 version="3.2"
@@ -141,11 +142,14 @@
                 mergedir="${web.merge.jboss}"
                 securityDomain="${front.auth.domain}"
                 />
+                -->
         	
         </webdoclet>
 
        <replace file="${web.gen.etc}/web.xml">
+       	<!-- No tiene que estar securizado
           <replacefilter token="@role.todos@" value="${role.todos}"/>
+          -->
 	      <replacefilter token="@release.cvs.tag@" value="${release.cvs.tag}"/>
        </replace>
 

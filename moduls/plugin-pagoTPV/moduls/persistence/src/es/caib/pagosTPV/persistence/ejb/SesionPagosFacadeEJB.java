@@ -3,6 +3,7 @@ package es.caib.pagosTPV.persistence.ejb;
 import java.rmi.RemoteException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.security.Principal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.Date;
@@ -23,7 +24,6 @@ import org.apache.commons.logging.LogFactory;
 import es.caib.audita.modelInterfaz.ConstantesAuditoria;
 import es.caib.audita.modelInterfaz.Evento;
 import es.caib.audita.persistence.delegate.DelegateAUDUtil;
-import es.caib.loginModule.client.SeyconPrincipal;
 import es.caib.pagosTPV.model.DocumentoPagoPresencial;
 import es.caib.pagosTPV.model.ModeloPagosTPV;
 import es.caib.pagosTPV.model.NotificacionPagosTPV;
@@ -35,7 +35,9 @@ import es.caib.pagosTPV.persistence.util.Configuracion;
 import es.caib.pagosTPV.persistence.util.PagoTPVUtil;
 import es.caib.redose.modelInterfaz.DocumentoRDS;
 import es.caib.redose.persistence.delegate.DelegateRDSUtil;
+import es.caib.sistra.plugins.PluginFactory;
 import es.caib.sistra.plugins.login.ConstantesLogin;
+import es.caib.sistra.plugins.login.PluginLoginIntf;
 import es.caib.sistra.plugins.pagos.ConstantesPago;
 import es.caib.sistra.plugins.pagos.DatosPago;
 import es.caib.sistra.plugins.pagos.EstadoSesionPago;
@@ -313,20 +315,18 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			evento.setClave(clave);
 			evento.setIdPersistencia(this.sesionPago.getDatosPago().getIdentificadorTramite());
 			
-			SeyconPrincipal p = (SeyconPrincipal) this.ctx.getCallerPrincipal();
-			String nivelAuth=null;
-			if (p.getCredentialType() == SeyconPrincipal.ANONYMOUS_CREDENTIAL){				
-				nivelAuth= Character.toString(ConstantesLogin.LOGIN_ANONIMO);
-			}else if (p.getCredentialType() == SeyconPrincipal.PASSWORD_CREDENTIAL){					
-				nivelAuth= Character.toString(ConstantesLogin.LOGIN_USUARIO);
-			}else if (p.getCredentialType() == SeyconPrincipal.SIGNATURE_CREDENTIAL){
-				nivelAuth= Character.toString(ConstantesLogin.LOGIN_CERTIFICADO);								
-			}
+			Principal p = this.ctx.getCallerPrincipal();
+			
+			PluginLoginIntf plgLogin = PluginFactory.getInstance().getPluginLogin();
+			
+			char metodoAuth = plgLogin.getMetodoAutenticacion(p);
+			String nivelAuth = Character.toString(metodoAuth);
+			
 			evento.setNivelAutenticacion(nivelAuth);
-			if (p.getCredentialType() != SeyconPrincipal.ANONYMOUS_CREDENTIAL){
+			if (metodoAuth != ConstantesLogin.LOGIN_ANONIMO){
 				evento.setUsuarioSeycon(p.getName());
-				evento.setNumeroDocumentoIdentificacion(p.getNif());
-				evento.setNombre(p.getFullName());
+				evento.setNumeroDocumentoIdentificacion(plgLogin.getNif(p));
+				evento.setNombre(plgLogin.getNombreCompleto(p));
 			}						
 
 			// Auditamos evento			
