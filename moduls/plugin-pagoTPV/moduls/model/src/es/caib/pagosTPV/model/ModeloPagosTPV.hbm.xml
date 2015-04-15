@@ -24,8 +24,8 @@
     <property name="concepto"  column="TPV_CONCEP"  not-null="true" length="200"/>
     <property name="fechaDevengo"  column="TPV_DATADV"  not-null="true"/>
     <property name="importe"  column="TPV_IMPORT"  not-null="true" length="100"/>
-    <property name="nifDeclarante"  column="TPV_NIFDEC"  not-null="true" length="12"/>
-    <property name="nombreDeclarante"  column="TPV_NOMDEC"  not-null="true" length="200"/>
+    <property name="nifDeclarante"  column="TPV_NIFDEC" length="12"/>
+    <property name="nombreDeclarante"  column="TPV_NOMDEC" length="200"/>
     <property name="telefonoDeclarante"  column="TPV_TELDEC" length="10"/>
     <property name="estado"  column="TPV_ESTADO"  not-null="false"/>
     <property name="tipoPagoSeleccionado"  column="TPV_TIPOPG" not-null="false" length="1"/>

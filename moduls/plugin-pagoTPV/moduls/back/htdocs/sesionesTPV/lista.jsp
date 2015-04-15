@@ -72,10 +72,12 @@
 			<th><bean:message key="sesionesTPV.fecha"/></th>	
 			<th><bean:message key="sesionesTPV.localizador"/></th>
 			<th><bean:message key="sesionesTPV.tramite"/></th>
+			<th><bean:message key="sesionesTPV.sesionTramitacion"/></th>
 			<th><bean:message key="sesionesTPV.estado"/></th>
 			<th><bean:message key="sesionesTPV.orden"/></th>
 			<th><bean:message key="sesionesTPV.nif"/></th>
 			<th><bean:message key="sesionesTPV.nombre"/></th>
+			
 		</tr>
 			<logic:iterate id="sesionTPV" name="page" property="list">	
             <tr>
@@ -87,6 +89,9 @@
             	</td>
                 <td class="outputd">
             		<bean:write name="sesionTPV" property="modeloTramite"/> - V<bean:write name="sesionTPV" property="versionTramite"/>
+            	</td>
+            	<td class="outputd">
+            		<bean:write name="sesionTPV" property="identificadorTramite"/>
             	</td>
                 <td class="outputd">
                 	<logic:equal name="sesionTPV" property="estado" value="<%=Integer.toString(ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR)%>">
@@ -110,7 +115,7 @@
                 		<bean:define id="urlConfirmar"><html:rewrite page="/back/sesionesTPV/confirmarSesionTPV.do" paramId="localizador" paramName="sesionTPV" paramProperty="localizador"/></bean:define>
                     	<button class="button" type="button" onclick="forward('<%=urlConfirmar%>')"><bean:message key="sesionesTPV.confirmar" /></button>
                 	</logic:equal>                    
-                </td>       	            	
+                </td>                                                       	            	
             </tr>
         </logic:iterate>        
     </table>

@@ -600,7 +600,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				StringUtils.isEmpty(pagoTPV.getMerchantProductDescription())|| 
 				StringUtils.isEmpty(pagoTPV.getMerchantSignature())|| 
 				StringUtils.isEmpty(pagoTPV.getMerchantTerminal())|| 
-				StringUtils.isEmpty(pagoTPV.getMerchantTitular()) ||
+				// StringUtils.isEmpty(pagoTPV.getMerchantTitular()) ||
 				StringUtils.isEmpty(pagoTPV.getMerchantTransactionTypeAut()) ||
 				StringUtils.isEmpty(pagoTPV.getMerchantUrlKO()) ||
 				StringUtils.isEmpty(pagoTPV.getMerchantUrlOK()) ||
