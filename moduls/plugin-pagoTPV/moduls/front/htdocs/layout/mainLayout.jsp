@@ -39,10 +39,10 @@
 </script>
 
 <logic:present name="mostrarAlerta">
-<body onload="mostrarMensajeAlerta(mensajeAlerta);">
+<body class="imc-plataforma-pago" onload="mostrarMensajeAlerta(mensajeAlerta);">
 </logic:present>
 <logic:notPresent name="mostrarAlerta">
-<body>
+<body class="imc-plataforma-pago">
 </logic:notPresent>
 <div id="contenidor">
 
