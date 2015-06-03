@@ -46,6 +46,7 @@
 	<ant dir="${moduls.dir}/plugin-custodia/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/sistraportal/moduls/portal" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/formateadores/moduls/formateadores" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-regweb3/moduls" target="${task}" inheritall="false"/>
 </target>
 	
 	

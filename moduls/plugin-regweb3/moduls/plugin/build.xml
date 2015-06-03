@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 
-<project name="sms.pluginCAIB" default="main" basedir=".">
+<project name="regweb3.pluginCAIB" default="main" basedir=".">
 
 	<property name="home.dir" location="${basedir}/../../../.."/>
 	<property name="modul.dir" value="${basedir}/../.."/>
@@ -8,8 +8,8 @@
 		
     <property file="${basedir}/build.properties"/>
 	
-    <property name="modul" value="plugin-sms"/>
-    <property name="package" value="es.caib.sistra.plugins.sms.impl.caib"/>
+    <property name="modul" value="plugin-regweb3"/>
+    <property name="package" value="es.caib.sistra.plugins.regweb3.impl.caib"/>
     
 	<property name="lib.dir" location="${home.dir}/lib"/>
     <property name="output.dir" location="${modul.dir}/output"/>
@@ -24,13 +24,23 @@
     <property name="jar.product" location="${output.dir}/moduls"/>
 
     <path id="jar.class.path">
-    	<fileset dir="${lib.dir}">
-            <include name="provato.soap.client.jar"/>
-            <include name="provato-api.jar"/>
-    		<include name="commons-logging*.jar"/>
+    	<fileset dir="${lib.dir}/regweb3">
+            <include name="*.jar"/>            
    		</fileset>	
     	<fileset dir="${lib.dir}/sistra">
-    		<include name="sistra-plugins.jar"/>    		
+    		<include name="*.jar"/>    		
+   		</fileset>
+   		<fileset dir="${lib.dir}/client">
+    		<include name="*.jar"/>    		
+   		</fileset>
+    	<fileset dir="${lib.dir}">
+	    	<include name="*.jar"/>      		
+   		</fileset>	
+   		<fileset dir="${lib.dir}/jaxb">
+    		<include name="*.jar"/>    		 
+   		</fileset>
+    	<fileset dir="${lib.dir}/cxf">
+    		<include name="*.jar"/>    		 
    		</fileset>
     </path>	
 
@@ -60,9 +70,9 @@
     </target>
 
     <target name="jar.jar" depends="jar.compile">
-        <delete file="${jar.product}/plugin-smsCAIB.jar" quiet="yes"/>
+        <delete file="${jar.product}/plugin-regweb3.jar" quiet="yes"/>
         <jar
-            jarfile="${jar.product}/plugin-smsCAIB.jar"
+            jarfile="${jar.product}/plugin-regweb3.jar"
             basedir="${jar.classes}">
             <manifest>
                 <attribute name="Created-By" value="${indra}"/>
@@ -88,7 +98,7 @@
         </javadoc>
     </target>
 	<target name="distribute" description="Distribucion">
-		<copy file="${output.dir}/moduls/plugin-smsCAIB.jar" todir="${distribucion.dir}"/>		
+		<copy file="${output.dir}/moduls/plugin-regweb3.jar" todir="${distribucion.dir}"/>		
 	</target>
     <target name="doc" depends="jar.javadoc" description="Realiza las tareas de documentación"/>
     <target name="main" depends="jar.jar,distribute" description="Construye el jar"/>

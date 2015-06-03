@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project name="plugin-regweb3" default="main" basedir=".">
+
+    <property name="projecte" value="${ant.project.name}"/>
+	<property name="home.dir" location="${basedir}/../../.."/>
+	<property name="modul.dir" value="${basedir}/.."/>
+	<property file="${home.dir}/config.properties"/>
+	<property name="distribucion.dir" value="${home.dir}/output/moduls"/>
+		
+	<property name="lib" location="${home.dir}/lib"/>
+	<property name="etc" location="${home.dir}/etc"/>
+	<property name="etc.jboss" location="${etc}/jboss-${jboss.version}"/>
+	
+	<property name="output.dir" location="${modul.dir}/output"/>
+	<property name="product.dir" location="${output.dir}/product"/>
+	<property name="moduls.dir" location="${output.dir}/moduls"/>
+	
+	<property name="doc.dir" location="${output.dir}/doc"/>
+	
+
+	<target name="properties" description="Muestra las propiedades del sistema">
+		<echo>
+            -----------------------------------------------------
+            Propiedades del sistema:
+
+            basedir=${basedir}
+            ant.file=${ant.file}
+            ant.version=${ant.version}
+            ant.project.name=${ant.project.name}
+            ant.java.version=${ant.java.version}
+            -----------------------------------------------------
+        </echo>
+	</target>
+	<target name="prepare" description="Crea los directorios necesarios para la construcción de la aplicación">
+		<mkdir dir="${output.dir}" />		
+	</target>
+	
+	<target name="clean" description="Destruye los directorios de trabajo">
+		<delete dir="${output.dir}" quiet="yes" />
+	</target>
+	
+	<target name="main" depends="clean,prepare" description="realitza tot el proces de construccio">
+		<antcall target="propagate">
+			<param name="task" value="main"/>
+		</antcall>
+		<antcall target="distribute"/>
+	</target>
+	
+	<target name="distribute" description="Distribucion">
+		<copy file="${output.dir}/moduls/plugin-regweb3.jar" todir="${distribucion.dir}"/>
+	</target>
+	
+	<target name="doc" depends="prepare" description="Genera la documentación">
+		<antcall target="propagate">
+			<param name="task" value="doc"/>
+		</antcall>
+	</target>
+	
+	<target name="propagate">		
+		<ant dir="plugin" target="${task}" inheritall="false"/>		
+	</target>
+	
+</project>
