@@ -47,28 +47,7 @@ public class FrontRequestProcessor extends TilesRequestProcessor {
 	 			OrganismoInfo oi = DelegateUtil.getConfiguracionDelegate().obtenerOrganismoInfo();
 	 			getServletContext().setAttribute(Constants.ORGANISMO_INFO_KEY,oi);
 	 		}
-            
-        	
-        	/*
-	 		if (getServletContext().getAttribute(Constants.URL_SOPORTE_INCIDENCIAS) == null){
-	 			getServletContext().setAttribute(Constants.URL_SOPORTE_INCIDENCIAS,DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("organismo.soporteTecnico.url"));
-	 		}
-	 		if (getServletContext().getAttribute(Constants.TELEFONO_INCIDENCIAS) == null){
-		 		getServletContext().setAttribute(Constants.TELEFONO_INCIDENCIAS,DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("organismo.soporteTecnico.telefono"));
-	 		}
-		 	if (getServletContext().getAttribute(Constants.ORGANISMO_INFO_KEY) == null){
-		 		getServletContext().setAttribute(Constants.ORGANISMO_INFO_KEY,DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("organismo.footer.contacto"));
-		 	}
-		 	if (getServletContext().getAttribute(Constants.ORGANISMO_NAME) == null){
-		 		getServletContext().setAttribute(Constants.ORGANISMO_NAME,DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("organismo.nombre"));
-		 	}	 	    	
-		 	if (getServletContext().getAttribute(Constants.ORGANISMO_LOGO) == null){
-		 		getServletContext().setAttribute(Constants.ORGANISMO_LOGO,DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("organismo.logo"));
-		 	}
-	 	    if (getServletContext().getAttribute(Constants.ORGANISMO_URL) == null){
-	 		  	getServletContext().setAttribute(Constants.ORGANISMO_URL,DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("organismo.portal.url"));
-	 		}
-	 		*/
+                    	
         }catch (Exception ex){
         	log.error("Error obteniendo informacion organismo",ex);
         	throw new ServletException(ex);
