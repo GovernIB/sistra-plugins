@@ -2,6 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="src" path="moduls/plugin-custodia/moduls/plugin/src"/>
+	<classpathentry kind="src" path="moduls/plugin-regweb3/moduls/plugin/src"/>
 	<classpathentry kind="src" path="moduls/formateadores/moduls/formateadores/src"/>
 	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/back/src"/>
 	<classpathentry kind="src" path="moduls/plugin-pagoTPV/output/persistence/gen-src"/>
@@ -49,7 +50,6 @@
 	<classpathentry kind="lib" path="lib/struts.jar"/>
 	<classpathentry kind="lib" path="lib/as400/jt400.jar"/>
 	<classpathentry kind="lib" path="lib/axis14/axis.jar"/>
-	<classpathentry kind="lib" path="lib/axis14/wsdl4j-1.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/firma/bcmail.jar"/>
 	<classpathentry kind="lib" path="lib/firma/bcprov.jar"/>
 	<classpathentry kind="lib" path="lib/firma/bctsp.jar"/>
@@ -107,6 +107,8 @@
 	<classpathentry kind="lib" path="lib/cxf/wstx-asl-3.2.9.jar"/>
 	<classpathentry kind="lib" path="lib/cxf/XmlSchema-1.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/cxf/xmlsec-1.4.3.jar"/>
-	<classpathentry kind="lib" path="lib/sistra/sistra-utilWs.jar"/>
+	<classpathentry kind="lib" path="lib/sistra/sistra-utilWs.jar" sourcepath="/projecte-sistra-3.0"/>
+	<classpathentry kind="lib" path="lib/regweb3/regweb-ws-api-3.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/regweb3/dir3caib-ws-api-1.0.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
