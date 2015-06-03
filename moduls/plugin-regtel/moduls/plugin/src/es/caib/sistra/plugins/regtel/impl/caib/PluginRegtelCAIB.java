@@ -41,6 +41,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 	}
 
 	public ResultadoRegistro confirmarPreregistro(
+			String usuario,
 			String oficina,
 			String codigoProvincia,
 			String codigoMunicipio,
@@ -49,21 +50,21 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 			ReferenciaRDS refJustificante,
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
-		return DelegateRegistroWebUtil.getRegistroWebDelegate().confirmarPreregistro(oficina, codigoProvincia, codigoMunicipio, descripcionMunicipio, justificantePreregistro, refJustificante, refAsiento, refAnexos);
+		return DelegateRegistroWebUtil.getRegistroWebDelegate().confirmarPreregistro(usuario, oficina, codigoProvincia, codigoMunicipio, descripcionMunicipio, justificantePreregistro, refJustificante, refAsiento, refAnexos);
 	}
 
-	public List obtenerOficinasRegistro() {
+	public List obtenerOficinasRegistro(char tipoRegistro) {
 		try {
-			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerOficinasRegistro();
+			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerOficinasRegistro(tipoRegistro);
 		} catch (DelegateException e) {
 			logger.error("Error obtenerOficinasRegistro: " + e.getMessage(), e);
 			return new ArrayList();
 		}	
 	}
 
-	public List obtenerOficinasRegistroUsuario(String usuario) {
+	public List obtenerOficinasRegistroUsuario(char tipoRegistro, String usuario) {
 		try {
-			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerOficinasRegistroUsuario(usuario);
+			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerOficinasRegistroUsuario(tipoRegistro, usuario);
 		} catch (DelegateException e) {
 			logger.error("Error obtenerOficinasRegistroUsuario: " + e.getMessage(), e);
 			return new ArrayList();
@@ -96,9 +97,9 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		DelegateRegistroWebUtil.getRegistroWebDelegate().anularRegistroSalida(numeroRegistro, fechaRegistro);
 	}
 
-	public String obtenerDescripcionSelloOficina(String codigoOficina) {
+	public String obtenerDescripcionSelloOficina(char tipoRegistro, String codigoOficina) {
 		try {
-			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerDescripcionSelloOficina(codigoOficina);
+			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerDescripcionSelloOficina(tipoRegistro, codigoOficina);
 		} catch (DelegateException e) {
 			logger.error("Error obtenerDescripcionSelloOficina: " + e.getMessage(), e);
 			return null;
