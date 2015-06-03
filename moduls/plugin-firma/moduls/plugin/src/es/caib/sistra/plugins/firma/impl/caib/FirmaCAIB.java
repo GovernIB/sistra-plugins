@@ -66,5 +66,31 @@ public class FirmaCAIB implements FirmaIntf{
 	public void setSignature(Signature signature) {
 		this.signature = signature;
 	}
+	
+	/**
+	 * Obtiene certificado en B64.
+	 */
+	public String getCertificadoB64() {	
+		try {
+			char[] chars = Base64Coder.encode(this.signature.getCert().getEncoded());
+	    	String b64 = new String(chars);		
+			return b64;
+		} catch (Exception ex) {
+			log.error("Error al obtener certificado en B64",ex);
+			return null;
+		}
+	}
+
+	/**
+	 * Obtiene contenido firma.
+	 */
+	public byte[] getContenidoFirma() {		
+		try {
+			return UtilFirmaCAIB.serializaFirmaToBytes(signature);
+		} catch (Exception e) {
+			log.error("Error al obtener contenido firma",e);
+			return null;
+		}
+	}
 
 }
