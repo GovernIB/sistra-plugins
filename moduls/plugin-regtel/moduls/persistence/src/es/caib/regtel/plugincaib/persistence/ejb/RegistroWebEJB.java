@@ -59,8 +59,7 @@ public abstract class RegistroWebEJB implements SessionBean
 				regweb = new RegistroWebImplWs();			
 			} else {
 				regweb = new RegistroWebImplEjb();
-			}			
-			regweb.setPrincipal(getPrincipal());
+			}						
 			return regweb;
 		} catch (Exception ex) {
 			logger.error("Error al obtener implementacion regweb", ex);
@@ -124,6 +123,7 @@ public abstract class RegistroWebEJB implements SessionBean
      * @ejb.permission role-name = "${role.auto}"
      */
 	public ResultadoRegistro confirmarPreregistro(
+			String usuario,
 			String oficina,
 			String codigoProvincia,
 			String codigoMunicipio,
@@ -134,7 +134,7 @@ public abstract class RegistroWebEJB implements SessionBean
 			Map refAnexos) throws Exception {
 		
 		RegistroWebImplInt regweb = getImplementacionRegweb();
-		ResultadoRegistro res = regweb.confirmarPreregistro(oficina, codigoProvincia,
+		ResultadoRegistro res = regweb.confirmarPreregistro(usuario, oficina, codigoProvincia,
 				codigoMunicipio, descripcionMunicipio, justificantePreregistro,
 				refJustificante, refAsiento, refAnexos);	
 		return res;
@@ -146,9 +146,9 @@ public abstract class RegistroWebEJB implements SessionBean
      * @ejb.permission role-name = "${role.todos}"
      * @ejb.permission role-name = "${role.auto}"
      */
-	public List obtenerOficinasRegistro() {
+	public List obtenerOficinasRegistro(char tipoRegistro) {
 		RegistroWebImplInt regweb = getImplementacionRegweb();
-		return regweb.obtenerOficinasRegistro();		
+		return regweb.obtenerOficinasRegistro(tipoRegistro);		
 	}
 
 	/**
@@ -156,9 +156,9 @@ public abstract class RegistroWebEJB implements SessionBean
      * @ejb.permission role-name = "${role.todos}"
      * @ejb.permission role-name = "${role.auto}"
      */
-	public List obtenerOficinasRegistroUsuario(String usuario) {
+	public List obtenerOficinasRegistroUsuario(char tipoRegistro, String usuario) {
 		RegistroWebImplInt regweb = getImplementacionRegweb();
-		return regweb.obtenerOficinasRegistroUsuario(usuario);
+		return regweb.obtenerOficinasRegistroUsuario(tipoRegistro, usuario);
 	}
 
 	/**
@@ -207,9 +207,9 @@ public abstract class RegistroWebEJB implements SessionBean
      * @ejb.permission role-name = "${role.todos}"
      * @ejb.permission role-name = "${role.auto}"
      */
-	public String obtenerDescripcionSelloOficina(String codigoOficina) throws Exception {
+	public String obtenerDescripcionSelloOficina(char tipoRegistro, String codigoOficina) throws Exception {
 		RegistroWebImplInt regweb = getImplementacionRegweb();
-		return regweb.obtenerDescripcionSelloOficina(codigoOficina);
+		return regweb.obtenerDescripcionSelloOficina(tipoRegistro, codigoOficina);
 	}
 	
 	// -------------------------------------------------------------------------------------------------------------------------------

@@ -37,10 +37,10 @@ public class RegistroWebDelegate implements StatelessDelegate {
     	}
 	}
 	
-	public ResultadoRegistro confirmarPreregistro(String oficina,String codigoProvincia,String codigoMunicipio,String descripcionMunicipio,Justificante justificantePreregistro,ReferenciaRDS refJustificante,ReferenciaRDS refAsiento,Map refAnexos) throws DelegateException
+	public ResultadoRegistro confirmarPreregistro(String usuario, String oficina,String codigoProvincia,String codigoMunicipio,String descripcionMunicipio,Justificante justificantePreregistro,ReferenciaRDS refJustificante,ReferenciaRDS refAsiento,Map refAnexos) throws DelegateException
 	{
 		try {
-        	return getFacade().confirmarPreregistro(oficina, codigoProvincia, codigoMunicipio, descripcionMunicipio, justificantePreregistro, refJustificante, refAsiento, refAnexos);
+        	return getFacade().confirmarPreregistro(usuario, oficina, codigoProvincia, codigoMunicipio, descripcionMunicipio, justificantePreregistro, refJustificante, refAsiento, refAnexos);
 		} catch (Exception e) {
         	throw new DelegateException(e);
     	}
@@ -74,19 +74,19 @@ public class RegistroWebDelegate implements StatelessDelegate {
     	}
 	}
 	
-	public List obtenerOficinasRegistro() throws DelegateException
+	public List obtenerOficinasRegistro(char tipoRegistro) throws DelegateException
 	{
 		try {
-        	return getFacade().obtenerOficinasRegistro();
+        	return getFacade().obtenerOficinasRegistro(tipoRegistro);
 		} catch (Exception e) {
         	throw new DelegateException(e);
     	}
 	}
 	
-	public List obtenerOficinasRegistroUsuario(String usuario) throws DelegateException
+	public List obtenerOficinasRegistroUsuario(char tipoRegistro, String usuario) throws DelegateException
 	{
 		try {
-        	return getFacade().obtenerOficinasRegistroUsuario(usuario);
+        	return getFacade().obtenerOficinasRegistroUsuario(tipoRegistro, usuario);
 		} catch (Exception e) {
         	throw new DelegateException(e);
     	}
@@ -111,10 +111,10 @@ public class RegistroWebDelegate implements StatelessDelegate {
 	}	
 	
 
-	public String obtenerDescripcionSelloOficina(String codigoOficina) throws DelegateException
+	public String obtenerDescripcionSelloOficina(char tipoRegistro, String codigoOficina) throws DelegateException
 	{
 		try {
-        	return getFacade().obtenerDescripcionSelloOficina(codigoOficina);
+        	return getFacade().obtenerDescripcionSelloOficina(tipoRegistro,codigoOficina);
 		} catch (Exception e) {
         	throw new DelegateException(e);
     	}

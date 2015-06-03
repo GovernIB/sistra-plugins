@@ -49,7 +49,6 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 {	
 	private static final Log logger = LogFactory.getLog(RegistroWebImplEjb.class);
 	
-	private String principal;
 	
 	private Properties config = null;
 
@@ -61,11 +60,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 	
 	public final static String SEPARADOR_OFICINA_FISICA = ".";
 	public final static String REGEXP_SEPARADOR_OFICINA_FISICA = "\\."; // Exp regular para hacer split
-	
-
-	public void setPrincipal(String principal) {
-		this.principal = principal;	
-	}
+		
 	
     public void ejbCreate() throws CreateException {
 		try
@@ -130,6 +125,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
      * @ejb.permission role-name = "${role.auto}"
      */
 	public ResultadoRegistro confirmarPreregistro(
+			String usuario,
 			String oficina,
 			String codigoProvincia,
 			String codigoMunicipio,
@@ -147,7 +143,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 		ParametrosRegistroEntrada params = mapeaAsientoParametrosRegistroEntrada(justificantePreregistro.getAsientoRegistral()); 
 		
 		// Particularizamos campos para preregistro
-		params.fijaUsuario(principal); // Usuario es el conectado a la aplicacion
+		params.fijaUsuario(usuario); // Usuario es el conectado a la aplicacion
 		params.fijaPasswordUser(null);
 		if(codigoProvincia != null && CODIGO_PROVINCIA_CAIB.equals(codigoProvincia)){
 			params.setbalears(codigoMunicipio);
@@ -170,7 +166,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
      * @ejb.permission role-name = "${role.todos}"
      * @ejb.permission role-name = "${role.auto}"
      */
-	public List obtenerOficinasRegistro() {
+	public List obtenerOficinasRegistro(char tipoRegistro) {
 		return obtenerOficinasRegistro(null);
 	}
 
@@ -179,7 +175,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
      * @ejb.permission role-name = "${role.todos}"
      * @ejb.permission role-name = "${role.auto}"
      */
-	public List obtenerOficinasRegistroUsuario(String usuario) {
+	public List obtenerOficinasRegistroUsuario(char tipoRegistro, String usuario) {
 		if (usuario == null){
 			logger.error("No se ha indicado usuario. Devolvemos lista vacía.");
 			return new ArrayList();
@@ -390,7 +386,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
      * @ejb.permission role-name = "${role.todos}"
      * @ejb.permission role-name = "${role.auto}"
      */
-	public String obtenerDescripcionSelloOficina(String codigoOficina) {
+	public String obtenerDescripcionSelloOficina(char tipoRegistro, String codigoOficina) {
 		
 		String descSello = "";
 		

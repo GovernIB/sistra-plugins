@@ -4,6 +4,5 @@ import es.caib.sistra.plugins.regtel.PluginRegistroIntf;
 
 public interface RegistroWebImplInt extends PluginRegistroIntf{
 
-	public void setPrincipal(String principal);
 	
 }
