@@ -4,9 +4,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Iterator;
 
-import javax.xml.namespace.QName;
 import javax.xml.ws.BindingProvider;
-import javax.xml.ws.Service;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -44,7 +42,7 @@ public class UtilsRegweb3 {
 		String pass = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password");
 
 		// Url WSDL: local o remoto segun haya proxy
-		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebRegistroEntradaWs");
+		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebRegistroEntrada");
         RegWebRegistroEntradaWsService service = new RegWebRegistroEntradaWsService(wsdl);
 
         RegWebRegistroEntradaWs api = service.getRegWebRegistroEntradaWs();      
@@ -66,7 +64,7 @@ public class UtilsRegweb3 {
 		String pass = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password");
 
 		// Url WSDL: local o remoto segun haya proxy
-		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebRegistroSalidaWs");
+		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebRegistroSalida");
         RegWebRegistroSalidaWsService service = new RegWebRegistroSalidaWsService(wsdl);
 
         RegWebRegistroSalidaWs api = service.getRegWebRegistroSalidaWs();      
@@ -88,7 +86,7 @@ public class UtilsRegweb3 {
 		String pass = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password");
 
 		// Url WSDL: local o remoto segun haya proxy
-		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebInfoWs");
+		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebInfo");
         RegWebInfoWsService service = new RegWebInfoWsService(wsdl);
 
         RegWebInfoWs api = service.getRegWebInfoWs();      
@@ -110,7 +108,7 @@ public class UtilsRegweb3 {
 		String pass = ConfiguracionRegweb3.getInstance().getProperty("regweb3.dir3.password");
 
 		// Url WSDL: local o remoto segun haya proxy
-		URL wsdl = obtenerUrlWsdl(endpoint, "Dir3CaibObtenerUnidadesWs");
+		URL wsdl = obtenerUrlWsdl(endpoint, "Dir3CaibObtenerUnidades");
 
         Dir3CaibObtenerUnidadesWsService service = new Dir3CaibObtenerUnidadesWsService(wsdl);           
         Dir3CaibObtenerUnidadesWs api = service.getDir3CaibObtenerUnidadesWs();      

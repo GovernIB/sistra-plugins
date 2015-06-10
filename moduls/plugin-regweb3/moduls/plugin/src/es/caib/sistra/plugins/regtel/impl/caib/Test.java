@@ -31,7 +31,7 @@ public class Test {
 		
 		// testObtenerDescripcionSelloOficina(plg);
 		
-		testObtenerServiciosDestino(plg);
+		// testObtenerServiciosDestino(plg);
 
 		System.out.println("Fin");
 		
@@ -48,7 +48,7 @@ public class Test {
 	
 
 	private static void testOficinasUsuario(PluginRegweb3 plg, String usuario) {
-		List oficinas = plg.obtenerOficinasRegistroUsuario(ConstantesPluginRegistro.REGISTRO_ENTRADA, usuario);
+		List oficinas = plg.obtenerOficinasRegistroUsuario(ConstantesPluginRegistro.REGISTRO_SALIDA, usuario);
 		
 		for (Iterator it = oficinas.iterator(); it.hasNext();) {
 			OficinaRegistro of = (OficinaRegistro) it.next();

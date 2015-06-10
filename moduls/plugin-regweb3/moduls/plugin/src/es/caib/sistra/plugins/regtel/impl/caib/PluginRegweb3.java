@@ -6,8 +6,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import javax.activation.MimetypesFileTypeMap;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -50,8 +48,6 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 
 	private static final Log logger = LogFactory.getLog(PluginRegweb3.class);
 	
-	
-	
 	/** {@inheritDoc} */   	
 	public ResultadoRegistro registroEntrada(
 			AsientoRegistral asiento,
@@ -67,7 +63,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		
 		// Devuelve resultado registro
 		ResultadoRegistro resReg = new ResultadoRegistro();
-		resReg.setFechaRegistro(result.getFecha().toGregorianCalendar().getTime());
+		resReg.setFechaRegistro(result.getFecha());
 		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
 		return resReg;			
 	}
@@ -87,7 +83,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		
 		// Devuelve resultado registro
 		ResultadoRegistro resReg = new ResultadoRegistro();
-		resReg.setFechaRegistro(result.getFecha().toGregorianCalendar().getTime());
+		resReg.setFechaRegistro(result.getFecha());
 		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
 		return resReg;		
 	}
@@ -122,7 +118,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		
 		// Devuelve resultado registro
 		ResultadoRegistro resReg = new ResultadoRegistro();
-		resReg.setFechaRegistro(result.getFecha().toGregorianCalendar().getTime());
+		resReg.setFechaRegistro(result.getFecha());
 		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
 		return resReg;		
 		
@@ -423,7 +419,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         anexoAsiento.setTipoDocumento(tipoDocumento);     
         anexoAsiento.setOrigenCiudadanoAdmin(origenDocumento);
         
-        // TODO Solo se puede anexar 1 firma
+        // Solo se puede anexar 1 firma
         if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
         	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_DETACHED);
         	FirmaIntf firma = docRDS.getFirmas()[0];
@@ -431,7 +427,6 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         	anexoAsiento.setFirmaAnexada(contentFirma);        	
         	anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
         	anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));  
-        	anexoAsiento.setCertificado(firma.getCertificadoB64());
         } else {
         	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
         }
