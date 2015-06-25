@@ -13,11 +13,11 @@ public class ConstantesRegweb3 {
 	public static final Long REGISTRO_SALIDA = 2L;
 	
 	/** Tipo interesado Persona física. */
-	public final static String TIPO_INTERESADO_PERSONA_FISICA = "01"; 
+	public final static String TIPO_INTERESADO_PERSONA_FISICA = "2"; 
 	/** Tipo interesado Persona juridica. */
-	public final static String TIPO_INTERESADO_PERSONA_JURIDICA = "02";
+	public final static String TIPO_INTERESADO_PERSONA_JURIDICA = "3";
 	/** Tipo interesado Administración. */
-	public final static String TIPO_INTERESADO_PERSONA_ADMINISTRACION = "03";
+	public final static String TIPO_INTERESADO_PERSONA_ADMINISTRACION = "1";
 	
 	/** Tipo documento identificacion: NIF. */
 	public final static String TIPO_DOCID_NIF = "N";
