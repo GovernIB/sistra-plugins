@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -320,9 +321,13 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         DatosInteresado interesadoAsiento = UtilsRegweb3.getInteresado(asiento);
         InteresadoWs interesadoWs = new InteresadoWs();
         DatosInteresadoWs interesado = new DatosInteresadoWs();
-        interesado.setTipoInteresado(new Long(UtilsRegweb3.getTipoInteresado(interesadoAsiento.getNumeroIdentificacion())));
-        interesado.setDocumento(interesadoAsiento.getNumeroIdentificacion());
-        interesado.setTipoDocumentoIdentificacion(UtilsRegweb3.getTipoDocumentoIdentificacion(interesadoAsiento.getNumeroIdentificacion()));   
+        if (StringUtils.isNotBlank(interesadoAsiento.getNumeroIdentificacion())) {
+        	interesado.setTipoInteresado(new Long(UtilsRegweb3.getTipoInteresado(interesadoAsiento.getNumeroIdentificacion())));
+        	interesado.setDocumento(interesadoAsiento.getNumeroIdentificacion());        
+        	interesado.setTipoDocumentoIdentificacion(UtilsRegweb3.getTipoDocumentoIdentificacion(interesadoAsiento.getNumeroIdentificacion()));
+        } else {
+        	interesado.setTipoInteresado(new Long(ConstantesRegweb3.TIPO_INTERESADO_PERSONA_FISICA));
+        }
         if (interesado.getTipoInteresado().longValue() == Long.parseLong(ConstantesRegweb3.TIPO_INTERESADO_PERSONA_JURIDICA)) {
         	interesado.setRazonSocial(interesadoAsiento.getIdentificacionInteresado());
         } else {
