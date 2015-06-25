@@ -10,12 +10,12 @@ import org.apache.commons.lang.StringUtils;
 
 import es.caib.dir3caib.ws.api.unidad.Dir3CaibObtenerUnidadesWs;
 import es.caib.dir3caib.ws.api.unidad.Dir3CaibObtenerUnidadesWsService;
-import es.caib.regweb.ws.api.v3.RegWebInfoWs;
-import es.caib.regweb.ws.api.v3.RegWebInfoWsService;
-import es.caib.regweb.ws.api.v3.RegWebRegistroEntradaWs;
-import es.caib.regweb.ws.api.v3.RegWebRegistroEntradaWsService;
-import es.caib.regweb.ws.api.v3.RegWebRegistroSalidaWs;
-import es.caib.regweb.ws.api.v3.RegWebRegistroSalidaWsService;
+import es.caib.regweb3.ws.api.v3.RegWebInfoWs;
+import es.caib.regweb3.ws.api.v3.RegWebInfoWsService;
+import es.caib.regweb3.ws.api.v3.RegWebRegistroEntradaWs;
+import es.caib.regweb3.ws.api.v3.RegWebRegistroEntradaWsService;
+import es.caib.regweb3.ws.api.v3.RegWebRegistroSalidaWs;
+import es.caib.regweb3.ws.api.v3.RegWebRegistroSalidaWsService;
 import es.caib.sistra.plugins.firma.FirmaIntf;
 import es.caib.util.NifCif;
 import es.caib.util.ws.client.WsClientUtil;
