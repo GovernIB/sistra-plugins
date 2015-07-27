@@ -63,4 +63,13 @@ public class ConstantesRegweb3 {
 	/** Modo firma: detached. */
 	public final static Integer MODO_FIRMA_DETACHED = new Integer(2);
 	
+	/** Validez documento: Copia (documento adjunto es una copia del original sin estar cotejada por ningún organismo oficial y por tanto, sin validez jurídica).*/
+	public final static String VALIDEZ_DOCUMENTO_COPIA = "01";
+	/** Validez documento: Copia compulsada (documento adjunto es una copia del original y cotejada por un organismo oficial, y por tanto, con validez jurídica).*/
+	public final static String VALIDEZ_DOCUMENTO_COPIA_COMPULSADA = "02";
+	/** Validez documento: Copia original (documento adjunto es una copia del documento pero con exactamente la misma validez jurídica que el original).*/
+	public final static String VALIDEZ_DOCUMENTO_COPIA_ORIGINAL = "03";
+	/** Validez documento: Copia original (documento adjunto es el original electrónico).*/
+	public final static String VALIDEZ_DOCUMENTO_ORIGINAL = "04";
+	
 }

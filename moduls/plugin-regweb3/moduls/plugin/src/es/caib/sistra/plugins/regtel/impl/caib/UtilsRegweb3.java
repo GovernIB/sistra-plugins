@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 
 import es.caib.dir3caib.ws.api.unidad.Dir3CaibObtenerUnidadesWs;
 import es.caib.dir3caib.ws.api.unidad.Dir3CaibObtenerUnidadesWsService;
+import es.caib.regweb3.ws.api.v3.DatosInteresadoWs;
 import es.caib.regweb3.ws.api.v3.RegWebInfoWs;
 import es.caib.regweb3.ws.api.v3.RegWebInfoWsService;
 import es.caib.regweb3.ws.api.v3.RegWebRegistroEntradaWs;
@@ -220,17 +221,21 @@ public class UtilsRegweb3 {
 	}
 
 	/**
-	 * Obtener interesado.
+	 * Obtener datos interesado asiento.
 	 * @param asiento asiento
+	 * @param tipoInteresado tipo interesado (RPT/RPD).
+	 * 
 	 * @return interesado
 	 */
-	public static DatosInteresado getInteresado(AsientoRegistral asiento) {
+	public static DatosInteresado obtenerDatosInteresadoAsiento(
+			AsientoRegistral asiento, String tipoInteresado) {
 		DatosInteresado result = null;
 		for (Iterator it = asiento.getDatosInteresado().iterator(); it.hasNext();) {
 			DatosInteresado datosInteresado = (DatosInteresado) it.next();
-			if ("RPT".equals(datosInteresado.getTipoInteresado()))
+			if (tipoInteresado.equals(datosInteresado.getTipoInteresado())) {
 				result = datosInteresado;
 				break;
+			}
 		}
 		return result;
 	}		
@@ -296,6 +301,48 @@ public class UtilsRegweb3 {
 		}else{
 			return "";
 		}
+	}
+    
+	/**
+	 * Crear interesado a partir datos asiento.
+	 * 
+	 * @param interesadoAsiento
+	 * @return
+	 * @throws Exception
+	 */
+	public static DatosInteresadoWs crearInteresado(
+			DatosInteresado interesadoAsiento) throws Exception {
+		DatosInteresadoWs interesado = new DatosInteresadoWs();
+		if (StringUtils.isNotBlank(interesadoAsiento.getNumeroIdentificacion())) {
+			interesado.setTipoInteresado(new Long(UtilsRegweb3
+					.getTipoInteresado(interesadoAsiento
+							.getNumeroIdentificacion())));
+			interesado
+					.setDocumento(interesadoAsiento.getNumeroIdentificacion());
+			interesado.setTipoDocumentoIdentificacion(UtilsRegweb3
+					.getTipoDocumentoIdentificacion(interesadoAsiento
+							.getNumeroIdentificacion()));
+		} else {
+			interesado.setTipoInteresado(new Long(
+					ConstantesRegweb3.TIPO_INTERESADO_PERSONA_FISICA));
+		}
+		if (interesado.getTipoInteresado().longValue() == Long
+				.parseLong(ConstantesRegweb3.TIPO_INTERESADO_PERSONA_JURIDICA)) {
+			interesado.setRazonSocial(interesadoAsiento
+					.getIdentificacionInteresado());
+		} else {
+			if (interesadoAsiento.getIdentificacionInteresadoDesglosada() == null) {
+				throw new Exception(
+						"Se requiere la identificacion del interesado de forma desglosada");
+			}
+			interesado.setNombre(interesadoAsiento
+					.getIdentificacionInteresadoDesglosada().getNombre());
+			interesado.setApellido1(interesadoAsiento
+					.getIdentificacionInteresadoDesglosada().getApellido1());
+			interesado.setApellido2(interesadoAsiento
+					.getIdentificacionInteresadoDesglosada().getApellido2());
+		}
+		return interesado;
 	}
 	
 	// --------- Funciones auxiliares

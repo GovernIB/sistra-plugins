@@ -317,72 +317,88 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         // TODO ¿CODIGO ASUNTO?
         //registroEntradaWs.setCodigoAsunto(null);
 
-        // Datos interesado
-        DatosInteresado interesadoAsiento = UtilsRegweb3.getInteresado(asiento);
-        InteresadoWs interesadoWs = new InteresadoWs();
-        DatosInteresadoWs interesado = new DatosInteresadoWs();
-        if (StringUtils.isNotBlank(interesadoAsiento.getNumeroIdentificacion())) {
-        	interesado.setTipoInteresado(new Long(UtilsRegweb3.getTipoInteresado(interesadoAsiento.getNumeroIdentificacion())));
-        	interesado.setDocumento(interesadoAsiento.getNumeroIdentificacion());        
-        	interesado.setTipoDocumentoIdentificacion(UtilsRegweb3.getTipoDocumentoIdentificacion(interesadoAsiento.getNumeroIdentificacion()));
+        // Datos interesado: representante / representado               
+        DatosInteresado representanteAsiento = UtilsRegweb3.obtenerDatosInteresadoAsiento(asiento, "RPT");
+        DatosInteresado representadoAsiento = UtilsRegweb3.obtenerDatosInteresadoAsiento(asiento, "RPD");
+        
+        DatosInteresadoWs interesado = null;
+        DatosInteresadoWs representante = null;
+        
+        if (representadoAsiento != null) {
+        	interesado =  UtilsRegweb3.crearInteresado(representadoAsiento);
+        	representante = UtilsRegweb3.crearInteresado(representanteAsiento);
         } else {
-        	interesado.setTipoInteresado(new Long(ConstantesRegweb3.TIPO_INTERESADO_PERSONA_FISICA));
+        	interesado =  UtilsRegweb3.crearInteresado(representanteAsiento);
         }
-        if (interesado.getTipoInteresado().longValue() == Long.parseLong(ConstantesRegweb3.TIPO_INTERESADO_PERSONA_JURIDICA)) {
-        	interesado.setRazonSocial(interesadoAsiento.getIdentificacionInteresado());
-        } else {
-	        if (interesadoAsiento.getIdentificacionInteresadoDesglosada() == null) {
-	        	throw new Exception("Se requiere la identificacion del interesado de forma desglosada");
-	        }        
-	        interesado.setNombre(interesadoAsiento.getIdentificacionInteresadoDesglosada().getNombre());
-	        interesado.setApellido1(interesadoAsiento.getIdentificacionInteresadoDesglosada().getApellido1());
-	        interesado.setApellido2(interesadoAsiento.getIdentificacionInteresadoDesglosada().getApellido2());        
-        }               
-        interesadoWs.setInteresado(interesado);        
+               
+        InteresadoWs interesadoWs = new InteresadoWs();
+        interesadoWs.setInteresado(interesado); 
+        interesadoWs.setRepresentante(representante);
         registroWs.getInteresados().add(interesadoWs);
 
         
         // Anexos
         if ("true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs"))) {
-	        Integer origenDocumento;
+	        
+        	boolean anexarInternos = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos"));
+        	boolean anexarFormateados = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.formateados"));
+        	
+        	Integer origenDocumento;
 	        String tipoDocumental;
-			if (esRegistroSalida) {
+	        if (esRegistroSalida) {
 				origenDocumento  = ConstantesRegweb3.ORIGEN_DOCUMENTO_ADMINISTRACION;
-				tipoDocumental = ConstantesRegweb3.TIPO_DOCUMENTAL_NOTIFICACION;
+				tipoDocumental = ConstantesRegweb3.TIPO_DOCUMENTAL_NOTIFICACION;			
 			} else {
 				origenDocumento  = ConstantesRegweb3.ORIGEN_DOCUMENTO_CIUDADANO;
 				tipoDocumental = ConstantesRegweb3.TIPO_DOCUMENTAL_SOLICITUD;
 			}
 			
 	        // - Asiento registral
-			AnexoWs anexoAsientoWs = generarAnexoWs(refAsiento, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
-					tipoDocumental, origenDocumento);
-	        registroWs.getAnexos().add(anexoAsientoWs);
+	        // 		- Xml de asiento
+			if (anexarInternos) {				
+				AnexoWs anexoAsientoWs = generarAnexoWs(refAsiento, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
+						tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
+		        registroWs.getAnexos().add(anexoAsientoWs);
+			}
+			if (anexarFormateados) {
+				AnexoWs anexoAsientoFWs = generarAnexoWs(refAsiento, true, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
+						tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
+		        registroWs.getAnexos().add(anexoAsientoFWs);
+			}
 	        
 	        // - Ficheros asiento
 	        for (Iterator it = asiento.getDatosAnexoDocumentacion().iterator();it.hasNext();) {
 	        	AnexoWs anexoWs = null;
 	        	String tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO;
-	        	
+	        	String validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA;
 	        	
 	        	DatosAnexoDocumentacion da = (DatosAnexoDocumentacion) it.next();
 	        	ReferenciaRDS refRDS = (ReferenciaRDS) refAnexos.get(da.getIdentificadorDocumento());
 	        	
-	        	// Fichero tecnico: datos propios, aviso notificacion
+	        	// Fichero tecnico: datos propios, aviso notificacion, formularios, pagos
 	        	if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_DATOS_PROPIOS) ||
 	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_AVISO_NOTIFICACION) || 
-	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_OFICIO_REMISION)) {
+	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_OFICIO_REMISION) || 
+	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO) || 
+	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_PAGO)) {
 	        			tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
+	        			validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
 	        	} 
 	        	
-	        	// Formulario        	
-	        	if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO)) {
-	        		tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FORMULARIO;
-	        	}        	
-	        	
 	        	// Generamos anexo ws y añadimos a lista
-	        	anexoWs = generarAnexoWs(refRDS, tipoDocumento, tipoDocumental, origenDocumento);
-	        	registroWs.getAnexos().add(anexoWs);
+	        	if (anexarInternos || tipoDocumento != ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO) {
+	        		anexoWs = generarAnexoWs(refRDS, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
+	        		registroWs.getAnexos().add(anexoWs);
+	        	}
+	        	
+	        	// Para formularios y pagos vemos si se adjunta como formateados
+	        	if (anexarFormateados && 
+	        			(da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO) || da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_PAGO) ) ) {	        	
+	        		tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FORMULARIO;
+	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
+	        		anexoWs = generarAnexoWs(refRDS, true, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
+	        		registroWs.getAnexos().add(anexoWs);
+	        	}
 	        	
 	        }
         }
@@ -402,6 +418,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         
 	}
 
+	
+	
 	/**
 	 * Genera AnexoWS en funcion documento REDOSE
 	 * @param refRDS
@@ -410,19 +428,26 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	 * @param origenDocumento
 	 * @return
 	 */
-	private AnexoWs generarAnexoWs(ReferenciaRDS refRDS, String tipoDocumento, String tipoDocumental,
-			Integer origenDocumento) throws Exception {
+	private AnexoWs generarAnexoWs(ReferenciaRDS refRDS, boolean formatearDocumento, String tipoDocumento, String tipoDocumental,
+			Integer origenDocumento, String validezDocumento) throws Exception {
 		RdsDelegate rdsDelegate = DelegateRDSUtil.getRdsDelegate();
-		DocumentoRDS docRDS = rdsDelegate.consultarDocumento(refRDS);
+		DocumentoRDS docRDS = null;
+		
+		if (formatearDocumento) {
+			docRDS = rdsDelegate.consultarDocumentoFormateado(refRDS);
+		} else {
+			docRDS = rdsDelegate.consultarDocumento(refRDS);
+		}
 		
 		AnexoWs anexoAsiento = new AnexoWs();
         anexoAsiento.setTitulo(docRDS.getTitulo());
         anexoAsiento.setNombreFicheroAnexado(docRDS.getNombreFichero());
         anexoAsiento.setFicheroAnexado(docRDS.getDatosFichero());        
-        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(docRDS.getExtensionFichero()));
+        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDS.getNombreFichero())));
         anexoAsiento.setTipoDocumental(tipoDocumental);
         anexoAsiento.setTipoDocumento(tipoDocumento);     
         anexoAsiento.setOrigenCiudadanoAdmin(origenDocumento);
+        anexoAsiento.setValidezDocumento(validezDocumento);
         
         // Solo se puede anexar 1 firma
         if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
@@ -437,7 +462,30 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         }
 		return anexoAsiento;
 	}
+
+	/**
+	 * Genera AnexoWS en funcion documento REDOSE
+	 * @param refRDS
+	 * @param tipoDocumento
+	 * @param tipoDocumental
+	 * @param origenDocumento
+	 * @return
+	 */
+	private AnexoWs generarAnexoWs(ReferenciaRDS refRDS, String tipoDocumento, String tipoDocumental,
+			Integer origenDocumento, String validezDocumento) throws Exception {
+		return generarAnexoWs(refRDS, false, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
+	}
 	
+	/**
+     * Obtiene extension fichero.
+     */
+	private String getExtension(String filename){
+		if(filename.lastIndexOf(".") != -1){
+			return filename.substring(filename.lastIndexOf(".") + 1);
+		}else{
+			return "";
+		}
+	}
 	
 	
 
