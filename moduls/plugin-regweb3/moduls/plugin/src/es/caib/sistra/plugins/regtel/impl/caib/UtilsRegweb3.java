@@ -19,6 +19,7 @@ import es.caib.regweb3.ws.api.v3.RegWebRegistroSalidaWs;
 import es.caib.regweb3.ws.api.v3.RegWebRegistroSalidaWsService;
 import es.caib.sistra.plugins.firma.FirmaIntf;
 import es.caib.util.NifCif;
+import es.caib.util.ws.client.WsClientSistraUtil;
 import es.caib.util.ws.client.WsClientUtil;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.DatosInteresado;
@@ -345,6 +346,34 @@ public class UtilsRegweb3 {
 		return interesado;
 	}
 	
+	/**
+	 * 
+	  	De izquierda a derecha se etiquetan las columnas como C, B, A, C, B, A…
+	 
+		Los números de cada columna se sustituyen por otros de acuerdo a la columna a la que pertenezcan. De 0 a 9:
+		
+		A | 0 1 2 3 4 5 6 7 8 9 (se queda igual)
+		B | 0 3 8 2 7 4 1 5 9 6
+		C | 0 2 4 6 8 1 3 5 7 9
+		
+		Se suman los números así obtenidos y el dígito de control es lo que falta para alcanzar el siguiente múltiplo de 10 (0 si es múltiplo de 10, 10 – [suma de los dígitos mod. 10] en otro caso)
+		
+		Ejemplos (Verificados con el INE):
+		
+		17141
+		CBACB
+		25183
+		
+		2+5+1+8+3 = 19, el siguiente múltiplo de 10 es 20, luego el dígito de control es 20-19 = 1.
+	  
+	 * @param prov
+	 * @return
+	 */
+	public static int calcularMunicipioDC(String prov, String municipio) {
+		
+		return 0;
+	}
+	
 	// --------- Funciones auxiliares
 	
 	/**
@@ -359,9 +388,10 @@ public class UtilsRegweb3 {
 		 
 		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
 	    
-		// TODO DESPUES DE LAS PRUEBAS, DEJARLO COMO CONFIG GENERAL DE SISTRA
-		//WsClientSistraUtil.configurePort(bp, endpoint, user, pass);
-	    WsClientUtil.configurePort(bp, endpoint, null, user, pass, "BASIC", true, true, true, true);
+		WsClientSistraUtil.configurePort(bp, endpoint, user, pass);
+	    
+		// PARA PRUEBAS DESDE MAIN
+		//WsClientUtil.configurePort(bp, endpoint, null, user, pass, "BASIC", true, true, true, true);
 	    
 	}
 
