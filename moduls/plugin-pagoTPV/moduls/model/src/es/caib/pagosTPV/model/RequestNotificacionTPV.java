@@ -1,5 +1,8 @@
 package es.caib.pagosTPV.model;
 
+import org.apache.commons.lang.builder.ToStringBuilder;
+import org.apache.commons.lang.builder.ToStringStyle;
+
 /**
  * 
  * Peticion de notificacion de pago por parte del TPV.
@@ -168,5 +171,7 @@ public class RequestNotificacionTPV {
 		this.cardType = cardType;
 	}
 
-	
+	public String print() {
+	  return	ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
+	}
 }

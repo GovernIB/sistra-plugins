@@ -54,6 +54,11 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
 		
 		log.debug("Realizar notificacion pago: " + notificacionPago.getOrder());
 		
+		if (notificacionPago.getOrder() == null) {
+			log.error("No se ha recibido parametro orden. Contenido orden: \n" + notificacionPago.print());
+			throw new EJBException("No se ha recibido parametro orden");
+		}
+		
 		if (recuperarNotificacion(notificacionPago.getOrder()) != null) {
 			log.error("Ya existe una notificacion referente a la orden: " + notificacionPago.getOrder());
 			throw new EJBException("Ya existe una notificacion referente a la orden: " + notificacionPago.getOrder());

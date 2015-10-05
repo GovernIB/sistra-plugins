@@ -175,10 +175,6 @@ public class UrlPagoTPV {
 	public void setMerchantUrlKO(String merchantUrlKO) {
 		this.merchantUrlKO = merchantUrlKO;
 	}
-
-	public String print() {
-	 return	ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
-	}
 	public String getMerchantData() {
 		return merchantData;
 	}
@@ -197,4 +193,9 @@ public class UrlPagoTPV {
 	public void setMensajeTiempoExcedido(String mensajeTiempoExcedido) {
 		this.mensajeTiempoExcedido = mensajeTiempoExcedido;
 	}
+	
+	public String print() {
+	 return	ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
+	}
+	
 }

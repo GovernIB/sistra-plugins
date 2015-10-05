@@ -3,6 +3,8 @@ package es.caib.pagosTPV.front.action;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.struts.action.ActionForm;
 import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
@@ -35,6 +37,8 @@ import es.caib.sistra.plugins.pagos.EstadoSesionPago;
 public class IniciarPagoBancaAction extends BaseAction
 {
 	
+	protected static Log log = LogFactory.getLog(IniciarPagoBancaAction.class);
+	
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
@@ -51,7 +55,8 @@ public class IniciarPagoBancaAction extends BaseAction
 			// Iniciamos sesion de pago
 			UrlPagoTPV urlPago = dlg.realizarPagoBanca();
 			
-			if (!urlPago.isTiempoExcedido()) { 
+			if (!urlPago.isTiempoExcedido()) {
+				log.debug("Inicio pago TPV : \n" + urlPago.print());
 				request.setAttribute("urlPago", urlPago);			
 				return mapping.findForward("success");
 			} else {

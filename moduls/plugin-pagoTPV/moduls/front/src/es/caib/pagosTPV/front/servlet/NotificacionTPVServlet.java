@@ -7,6 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+
 import es.caib.pagosTPV.model.RequestNotificacionTPV;
 import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
 
@@ -19,6 +22,8 @@ import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
  * @web.servlet-mapping url-pattern="/notificacionTPV"
  */
 public class NotificacionTPVServlet extends HttpServlet {
+	
+	protected static Log log = LogFactory.getLog(NotificacionTPVServlet.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         throw new ServletException("GET method not supported.");
@@ -42,7 +47,9 @@ public class NotificacionTPVServlet extends HttpServlet {
         requestNotif.setAuthorisationCode (request.getParameter("Ds_AuthorisationCode"));
         requestNotif.setConsumerLanguage  (request.getParameter("Ds_ConsumerLanguage"));
         requestNotif.setCardType          (request.getParameter("Ds_Card_Type"));
-
+        
+        log.debug("Notificacion TPV recibida: \n" + requestNotif.print());
+        
         try {
         	DelegateUtil.getNotificacionPagosTPVDelegateDelegate().realizarNotificacion(requestNotif);
             response.setStatus(HttpServletResponse.SC_OK);
