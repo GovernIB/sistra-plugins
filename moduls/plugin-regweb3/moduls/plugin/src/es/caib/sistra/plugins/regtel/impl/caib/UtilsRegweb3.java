@@ -2,7 +2,9 @@ package es.caib.sistra.plugins.regtel.impl.caib;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import javax.xml.ws.BindingProvider;
 
@@ -32,6 +34,9 @@ import es.caib.xml.registro.factoria.impl.DatosInteresado;
  */
 public class UtilsRegweb3 {
 
+	/** Codigos paises INE. */
+	private static final Map<String, String> CODIGOS_INE_PAIS = null;
+	
 	/**
 	 * Obtiene service registro entrada.
 	 * @return service registro entrada
@@ -343,35 +348,18 @@ public class UtilsRegweb3 {
 			interesado.setApellido2(interesadoAsiento
 					.getIdentificacionInteresadoDesglosada().getApellido2());
 		}
+		
+		if (interesadoAsiento.getDireccionCodificada() != null) {
+			interesado.setPais(convertirCodigoPaisIsoAlfaToNum(interesadoAsiento.getDireccionCodificada().getPaisOrigen()));
+			interesado.setProvincia(convertirLong(interesadoAsiento.getDireccionCodificada().getCodigoProvincia()));
+			interesado.setLocalidad(convertirCodigoMunicipio(interesadoAsiento.getDireccionCodificada().getCodigoProvincia(), interesadoAsiento.getDireccionCodificada().getCodigoMunicipio()));
+			interesado.setDireccion(interesadoAsiento.getDireccionCodificada().getDomicilio());
+			interesado.setCp(interesadoAsiento.getDireccionCodificada().getCodigoPostal());
+			interesado.setEmail(interesadoAsiento.getDireccionCodificada().getEmail());		
+			interesado.setTelefono(interesadoAsiento.getDireccionCodificada().getTelefono());
+		}
+		
 		return interesado;
-	}
-	
-	/**
-	 * 
-	  	De izquierda a derecha se etiquetan las columnas como C, B, A, C, B, A…
-	 
-		Los números de cada columna se sustituyen por otros de acuerdo a la columna a la que pertenezcan. De 0 a 9:
-		
-		A | 0 1 2 3 4 5 6 7 8 9 (se queda igual)
-		B | 0 3 8 2 7 4 1 5 9 6
-		C | 0 2 4 6 8 1 3 5 7 9
-		
-		Se suman los números así obtenidos y el dígito de control es lo que falta para alcanzar el siguiente múltiplo de 10 (0 si es múltiplo de 10, 10 – [suma de los dígitos mod. 10] en otro caso)
-		
-		Ejemplos (Verificados con el INE):
-		
-		17141
-		CBACB
-		25183
-		
-		2+5+1+8+3 = 19, el siguiente múltiplo de 10 es 20, luego el dígito de control es 20-19 = 1.
-	  
-	 * @param prov
-	 * @return
-	 */
-	public static int calcularMunicipioDC(String prov, String municipio) {
-		
-		return 0;
 	}
 	
 	// --------- Funciones auxiliares
@@ -395,6 +383,104 @@ public class UtilsRegweb3 {
 	    
 	}
 
-			
+	/**
+	 * Calcula codigo ISO numerico pais a partir de de codigo ISO alfanumerico. 
+	 * @param codPaisIsoAlf codigo ISO pais alfanumerico. 
+	 * @return codigo codigo ISO pais numerico
+	 */
+	private static Long convertirCodigoPaisIsoAlfaToNum(String codPaisIsoAlf) {
+		Long res = null;
+		if (codPaisIsoAlf != null) {
+			String codPaisIsoNum = ConfiguracionRegweb3.getInstance().getProperty("regweb3.pais.iso.alf2num." + codPaisIsoAlf.toUpperCase());
+			if (codPaisIsoNum != null) {
+				res = new Long(codPaisIsoNum);
+			}
+		}
+		return res;
+	}
+	
+	/**
+	 * Convierte a cod municipio en formato regweb (codprov + codmuni + dc).
+	 * @param codProv cod provincia
+	 * @param codMuni cod municipio
+	 * @return cod municipio en formato regweb
+	 */
+	private static Long convertirCodigoMunicipio (String codProv, String codMuni) {
+		Long res = null;
+		if (StringUtils.isNotBlank(codProv) && StringUtils.isNotBlank(codMuni)){
+			res = new Long (codProv + codMuni + calcularMunicipioDC(codProv, codMuni) );
+		}
+		return res;		
+	}
+	
+	/**
+	 * 
+	  	De izquierda a derecha se etiquetan las columnas como C, B, A, C, B, A…
+	 
+		Los números de cada columna se sustituyen por otros de acuerdo a la columna a la que pertenezcan. De 0 a 9:
+		
+		A | 0 1 2 3 4 5 6 7 8 9 (se queda igual)
+		B | 0 3 8 2 7 4 1 5 9 6
+		C | 0 2 4 6 8 1 3 5 7 9
+		
+		Se suman los números así obtenidos y el dígito de control es lo que falta para alcanzar el siguiente múltiplo de 10 (0 si es múltiplo de 10, 10 – [suma de los dígitos mod. 10] en otro caso)
+		
+		Ejemplos (Verificados con el INE):
+		
+		17141
+		CBACB
+		25183
+		
+		2+5+1+8+3 = 19, el siguiente múltiplo de 10 es 20, luego el dígito de control es 20-19 = 1.
+	  
+	 * @param prov codigo provincia
+	 * @param municipio codigo municipio
+	 * @return  codigo control
+	 */
+	private static int calcularMunicipioDC(String prov, String municipio) {
+		
+		String colA[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+		String colB[] = {"0", "3", "8", "2", "7", "4", "1", "5", "9", "6"};
+		String colC[] = {"0", "2", "4", "6", "8", "1", "3", "5", "7", "9"};
+		
+		String codMunicipio = prov + municipio;
+		
+		
+		String encodeStr = "";
+		for (int i=0; i < codMunicipio.length(); i++) {
+			int col = i%3;
+			int num = Integer.parseInt(codMunicipio.charAt(i) + "");
+			switch (col) {
+			case 0:
+				encodeStr += colC[num];
+				break;
+			case 1:
+				encodeStr += colB[num];
+				break;
+			case 2:
+				encodeStr += colA[num];
+				break;
+			default:
+				break;
+			}
+		}
+		
+		int encodeNum = Integer.parseInt(encodeStr); 
+		
+		return encodeNum;
+	}
+	
+	/**
+	 * Convierte a long.
+	 * @param num numero
+	 * @return Long
+	 */
+	private static Long convertirLong(String num) {
+		Long res = null;
+		if (num != null){
+			res = new Long(num);
+		}
+		return res;
+	}
 	
 }

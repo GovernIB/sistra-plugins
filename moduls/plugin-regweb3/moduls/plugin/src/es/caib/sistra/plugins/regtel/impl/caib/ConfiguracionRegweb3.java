@@ -17,7 +17,7 @@ public class ConfiguracionRegweb3 {
 		// Accedemos a propiedades
 		try{
 			props = new Properties();
-			props.load(new FileInputStream(System.getProperty("ad.path.properties") + "sistra/plugins/plugin-regweb3.properties"));								
+			props.load(new FileInputStream(System.getProperty("ad.path.properties") + "sistra/plugins/plugin-regweb3.properties"));			
 		}catch(Exception ex){
 			log.error("Error obteniendo propiedades plugin",ex);						
 		}	
