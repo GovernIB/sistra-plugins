@@ -25,6 +25,7 @@ import es.caib.util.ws.client.WsClientSistraUtil;
 import es.caib.util.ws.client.WsClientUtil;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.DatosInteresado;
+import es.caib.xml.taxa.modelo.CODIPOSTAL;
 
 
 /**
@@ -405,10 +406,13 @@ public class UtilsRegweb3 {
 	 * @param codMuni cod municipio
 	 * @return cod municipio en formato regweb
 	 */
-	private static Long convertirCodigoMunicipio (String codProv, String codMuni) {
+	public static Long convertirCodigoMunicipio (String codProv, String codMuni) {
 		Long res = null;
 		if (StringUtils.isNotBlank(codProv) && StringUtils.isNotBlank(codMuni)){
-			res = new Long (codProv + codMuni + calcularMunicipioDC(codProv, codMuni) );
+			String cp = StringUtils.leftPad(codProv, 2, "0");
+			String cm = StringUtils.leftPad(codMuni, 3, "0");
+			String codIne = cp + cm + calcularMunicipioDC(cp, cm);
+			res = new Long (codIne);
 		}
 		return res;		
 	}
@@ -465,9 +469,18 @@ public class UtilsRegweb3 {
 			}
 		}
 		
-		int encodeNum = Integer.parseInt(encodeStr); 
+		int sum = 0;
+		for (int i=0; i < encodeStr.length(); i++) {
+			sum += Integer.parseInt(""+ encodeStr.charAt(i));
+		}
 		
-		return encodeNum;
+		int resto = sum % 10;
+	    int dc = 0;
+	    if (resto != 0)  {
+	      dc = 10 - resto;
+	    }
+ 
+		return dc;
 	}
 	
 	/**
