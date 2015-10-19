@@ -411,7 +411,7 @@ public class UtilsRegweb3 {
 		if (StringUtils.isNotBlank(codProv) && StringUtils.isNotBlank(codMuni)){
 			String cp = StringUtils.leftPad(codProv, 2, "0");
 			String cm = StringUtils.leftPad(codMuni, 3, "0");
-			String codIne = cp + cm + calcularMunicipioDC(cp, cm);
+			String codIne = cm + calcularMunicipioDC(cp, cm);
 			res = new Long (codIne);
 		}
 		return res;		
