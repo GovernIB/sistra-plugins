@@ -21,6 +21,10 @@ public class NotificacionPagosTPV implements Serializable
 	 */
 	private String resultado;
 	/**
+	 * Datos firmados.
+	 */
+	private String datosFirmados;	
+	/**
 	 * Firma notificacion.
 	 */
 	private String firma;
@@ -79,6 +83,12 @@ public class NotificacionPagosTPV implements Serializable
 	}
 	public void setHora(String hora) {
 		this.hora = hora;
+	}
+	public String getDatosFirmados() {
+		return datosFirmados;
+	}
+	public void setDatosFirmados(String datosFirmados) {
+		this.datosFirmados = datosFirmados;
 	}
 	
 	

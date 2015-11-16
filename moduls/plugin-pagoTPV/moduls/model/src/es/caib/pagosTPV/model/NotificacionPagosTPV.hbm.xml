@@ -14,6 +14,7 @@
                            
 	<property name="localizador"  column="TPN_LOCALI" />
 	<property name="resultado"  column="TPN_RESULT" not-null="false" length="10"/>
+	<property name="datosFirmados"  column="TPN_SIGDAT" not-null="false" length="4000"/>
 	<property name="firma"  column="TPN_SIGNAT" not-null="false" length="500"/>
 	<property name="autorizacion"  column="TPN_AUTORI" length="10"/>   
 	<property name="fecha"  column="TPN_DATE" length="10"/>
