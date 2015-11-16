@@ -1,8 +1,6 @@
 package es.caib.pagosTPV.persistence.ejb;
 
 import java.rmi.RemoteException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.security.Principal;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -587,7 +585,9 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		pagoTPV.setMerchantUrlOK(Configuracion.getInstance().getUrlTPVRetornoOK());
 		pagoTPV.setUrlPagoTPV(Configuracion.getInstance().getUrlTPV());		
 		
-		pagoTPV.setMerchantSignature(generarMerchantSignature(pagoTPV, Configuracion.getInstance().getMerchantPasswordTPV(sesionPago.getDatosPago().getIdentificadorOrganismo())));
+		pagoTPV.setMerchantParameters(PagoTPVUtil.generarParametrosPedidoTPV(pagoTPV));
+		pagoTPV.setMerchantSignature(PagoTPVUtil.generarFirmaPedidoTPV(pagoTPV, Configuracion.getInstance().getMerchantPasswordTPV(sesionPago.getDatosPago().getIdentificadorOrganismo())));
+		
 		
 		if (StringUtils.isEmpty(pagoTPV.getMerchantAmount()) || 
 				StringUtils.isEmpty(pagoTPV.getMerchantCode())||
@@ -599,6 +599,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				StringUtils.isEmpty(pagoTPV.getMerchantOrder())|| 
 				StringUtils.isEmpty(pagoTPV.getMerchantProductDescription())|| 
 				StringUtils.isEmpty(pagoTPV.getMerchantSignature())|| 
+				StringUtils.isEmpty(pagoTPV.getMerchantParameters())||
 				StringUtils.isEmpty(pagoTPV.getMerchantTerminal())|| 
 				// StringUtils.isEmpty(pagoTPV.getMerchantTitular()) ||
 				StringUtils.isEmpty(pagoTPV.getMerchantTransactionTypeAut()) ||
@@ -615,48 +616,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	}
 	
 	
-	/**
-	 * Genera firma pedido.
-	 * @param pagoTPV Datos pedido
-	 * @param merchantPassword Password comercio
-	 * @return Firma pedido
-	 * @throws Exception
-	 */
-	private String generarMerchantSignature(UrlPagoTPV pagoTPV, String merchantPassword) throws Exception {
-        try {
-            MessageDigest sha = MessageDigest.getInstance("SHA-1");
-            sha.update(pagoTPV.getMerchantAmount().getBytes());
-            sha.update(pagoTPV.getMerchantOrder().getBytes());
-            sha.update(pagoTPV.getMerchantCode().getBytes());
-            sha.update(pagoTPV.getMerchantCurrency().getBytes());
-            sha.update(pagoTPV.getMerchantTransactionTypeAut().getBytes());
-            sha.update(pagoTPV.getMerchantMerchantURL().getBytes());
-            byte[] hash = sha.digest(merchantPassword.getBytes());
-
-            String Merchant_Signature = new String();
-
-            int h = 0;
-            String s = new String();
-            int SHA1_DIGEST_LENGTH = 20;
-            for (int i = 0; i < SHA1_DIGEST_LENGTH; i++) {
-                h = (int) hash[i];          // Convertir de byte a int
-                if (h < 0) {
-                    h += 256;  // Si son valores negativos, pueden haber problemas de conversi¢n.
-                }
-                s = Integer.toHexString(h); // Devuelve el valor hexadecimal como un String
-                if (s.length() < 2) {
-                    Merchant_Signature = Merchant_Signature.concat("0"); // A?ade un 0 si es necesario
-                }
-                Merchant_Signature = Merchant_Signature.concat(s); // A?ade la conversi¢n a la cadena ya existente
-            }
-
-            Merchant_Signature = Merchant_Signature.toUpperCase(); // Convierte la cadena generada a Mayusculas.
-
-            return Merchant_Signature;
-        } catch (NoSuchAlgorithmException nsae) {
-            throw new Exception("No se ha podido generar firma pedido", nsae);
-        }
-    }
+	
 
 
 	/**
@@ -704,7 +664,16 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		}
 		
 		// Verificamos firma
-		String signature = PagoTPVUtil.generarFirmaNotificacionTPV(sesionPago, notificacion.getResultado());
+		String signature = null;
+		// - Comprobamos si es la version anterior (SHA1), por si hubiesen pendientes de confirmar
+		if (notificacion.getDatosFirmados() == null) {
+			signature = PagoTPVUtil.generarFirmaNotificacionTPV_SHA1(sesionPago, notificacion.getResultado());
+		} else {
+		// - Version actual de firma (SHA256)
+			String merchantPassword = Configuracion.getInstance().getMerchantPasswordTPV(sesionPago.getDatosPago().getIdentificadorOrganismo());
+			signature = PagoTPVUtil.generarFirmaNotificacionTPV(notificacion, merchantPassword);	
+		}
+		
         if (!signature.equals(notificacion.getFirma())) {
         	throw new Exception("No concuerda la firma de la notificacion");
         }

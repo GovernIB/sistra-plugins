@@ -57,7 +57,7 @@ public class IniciarPagoBancaAction extends BaseAction
 			
 			if (!urlPago.isTiempoExcedido()) {
 				log.debug("Inicio pago TPV : \n" + urlPago.print());
-				request.setAttribute("urlPago", urlPago);			
+				request.setAttribute("urlPago", urlPago);	
 				return mapping.findForward("success");
 			} else {
 				request.setAttribute(Constants.MESSAGE_KEY, urlPago.getMensajeTiempoExcedido());

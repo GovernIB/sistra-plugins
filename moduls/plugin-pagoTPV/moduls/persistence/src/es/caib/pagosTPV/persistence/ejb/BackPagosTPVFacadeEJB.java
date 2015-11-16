@@ -13,6 +13,7 @@ import es.caib.pagosTPV.model.ModeloPagosTPV;
 import es.caib.pagosTPV.model.NotificacionPagosTPV;
 import es.caib.pagosTPV.model.Page;
 import es.caib.pagosTPV.model.RequestNotificacionTPV;
+import es.caib.pagosTPV.model.RequestNotificacionTPVDecoded;
 import es.caib.pagosTPV.model.SesionPagoCAIB;
 import es.caib.pagosTPV.persistence.delegate.DelegateException;
 import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
@@ -151,7 +152,7 @@ public class BackPagosTPVFacadeEJB extends HibernateEJB  {
 		
 		// Generamos notificacion manualmente
         try {
-        	RequestNotificacionTPV r = new RequestNotificacionTPV();
+        	RequestNotificacionTPVDecoded r = new RequestNotificacionTPVDecoded();
     		Date date = new Date();
     		r.setAmount(sesionPago.getDatosPago().getImporte());
     		r.setCardCountry("es");
@@ -166,10 +167,13 @@ public class BackPagosTPVFacadeEJB extends HibernateEJB  {
     		r.setResponse("0000");
     		r.setAuthorisationCode("MANUAL");
     		r.setSecurePayment("1");
-    		r.setSignature(PagoTPVUtil.generarFirmaNotificacionTPV(sesionPago, "0000"));
     		r.setTerminal(Configuracion.getInstance().getMerchantTerminalTPV(sesionPago.getDatosPago().getIdentificadorOrganismo()));
     		r.setTransactionType(Configuracion.getInstance().getMerchantTransactionTypeAut());
-			DelegateUtil.getNotificacionPagosTPVDelegateDelegate().realizarNotificacion(r);
+    		
+    		String merchantPassword = Configuracion.getInstance().getMerchantPasswordTPV(sesionPago.getDatosPago().getIdentificadorOrganismo());
+    		RequestNotificacionTPV requestNotificacion = PagoTPVUtil.createRequestNotificacionTPV(r, merchantPassword);
+    		
+			DelegateUtil.getNotificacionPagosTPVDelegateDelegate().realizarNotificacion(requestNotificacion);
 		} catch (Exception e) {
 			throw new EJBException( e );
 		}
