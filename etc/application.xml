@@ -81,4 +81,7 @@
      <!-- REGWEB EJB: NECESARIO PARA PLUGIN-REGTEL -->
     <module><java>lib/logic-1.0.5-client.jar</java></module>
     
+     <!-- TPV: JSON -->
+    <module><java>lib/org.json.jar</java></module>
+    
 </application>
