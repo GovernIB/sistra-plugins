@@ -110,5 +110,6 @@
 	<classpathentry kind="lib" path="lib/sistra/sistra-utilWs.jar" sourcepath="/projecte-sistra-3.0"/>
 	<classpathentry kind="lib" path="lib/regweb3/dir3caib-ws-api-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/regweb3/regweb3-ws-api-3.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/tpv/org.json.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

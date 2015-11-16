@@ -76,6 +76,9 @@
 		<zipfileset dir="${lib}/regweblib" prefix="lib">
 			<include name="logic-1.0.5-client.jar"/>
 		</zipfileset>
+		<zipfileset dir="${lib}/tpv" prefix="lib">
+			<include name="org.json.jar"/>
+		</zipfileset>
 		<zipfileset dir="${output.dir}/moduls" prefix="lib">
 			<include name="plugin-custodiaCAIB.jar"/>
 			<include name="plugin-firmaCAIB.jar"/>
@@ -86,7 +89,7 @@
 			<include name="plugin-smsCAIB.jar"/>
 			<include name="plugin-emailCAIB.jar"/>			
 			<include name="libreria-formateadoresCAIB.jar"/>			
-		</zipfileset>
+		</zipfileset>		
 		<zipfileset dir="${output.dir}/moduls">
 			<include name="pagosCAIB-model.jar"/>
 			<include name="pagosCAIB-persistence.jar"/>
