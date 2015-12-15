@@ -433,7 +433,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		DocumentoRDS docRDS = null;
 		
 		if (formatearDocumento) {
-			docRDS = rdsDelegate.consultarDocumentoFormateado(refRDS);
+			docRDS = rdsDelegate.consultarDocumentoFormateadoRegistro(refRDS);
 		} else {
 			docRDS = rdsDelegate.consultarDocumento(refRDS);
 		}
