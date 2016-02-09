@@ -2,6 +2,7 @@ package es.caib.sistra.plugins.login.impl.caib;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Properties;
 
 /**
@@ -11,6 +12,8 @@ import java.util.Properties;
 public class ConfigurationUtil {
 
 	private static ConfigurationUtil confUtil = new ConfigurationUtil();
+	private static final String PREFIX_SAR_SISTRA = "es.caib.sistra.configuracion.sistra.";
+	private static final String PREFIX_SAR_PLUGINS = "es.caib.sistra.configuracion.plugins.";
 	private Properties propiedades = null;
 	
 	/**
@@ -46,7 +49,35 @@ public class ConfigurationUtil {
 	 *
 	 */
 	private void readProperties() throws Exception{
-		 InputStream fisGlobal=null,fisModul=null; 
+		String sar = System.getProperty(PREFIX_SAR_SISTRA + "sar");
+		if (sar != null && "true".equals(sar)) {
+			readPropertiesFromSAR();
+		} else {
+			readPropertiesFromFilesystem();
+		}
+	}
+
+	/**
+	 * Lee propiedades desde SAR.
+	 * @throws Exception
+	 */
+	private void readPropertiesFromSAR() throws Exception {
+		propiedades = new Properties();
+		Properties propSystem = System.getProperties();
+		for (Iterator it = propSystem.keySet().iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			String value = propSystem.getProperty(key);
+			if (key.startsWith(PREFIX_SAR_SISTRA + "global")) {
+				propiedades.put(key.substring((PREFIX_SAR_SISTRA + "global").length() + 1), value);
+			}
+			if (key.startsWith(PREFIX_SAR_PLUGINS + "plugin-login")) {
+				propiedades.put(key.substring((PREFIX_SAR_PLUGINS + "plugin-login").length() + 1), value);
+			}			
+		}
+	}
+
+	private void readPropertiesFromFilesystem() throws Exception {
+		InputStream fisGlobal=null,fisModul=null; 
 		 propiedades = new Properties();
          try {
         	 // Path directorio de configuracion
@@ -66,7 +97,7 @@ public class ConfigurationUtil {
          } finally {
              try{if (fisGlobal != null){fisGlobal.close();}}catch(Exception ex){}
              try{if (fisModul != null){fisModul.close();}}catch(Exception ex){}
-         }		
+         }
 	}
 	
 }

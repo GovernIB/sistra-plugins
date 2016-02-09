@@ -3,6 +3,7 @@ package es.caib.sistra.plugins.firma.impl.caib;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -19,6 +20,9 @@ import es.caib.util.FirmaUtil;
 public class PluginFirmaCAIB implements PluginFirmaIntf{
 	
 	private static Log log = LogFactory.getLog(PluginFirmaCAIB.class);
+	
+	private static final String PREFIX_SAR_PLUGINS = "es.caib.sistra.configuracion.plugins.";
+	private static final String PREFIX_SAR_SISTRA = "es.caib.sistra.configuracion.sistra.";
 	
 	/**
 	 * Obtiene proveedor
@@ -127,14 +131,41 @@ public class PluginFirmaCAIB implements PluginFirmaIntf{
 		return props.getProperty(tipoContentType);		
 	}
 	
-	
 	/**
 	 * Lee las propiedades de los ficheros de configuracion
 	 * @throws Exception 
 	 *
 	 */
 	private Properties readProperties() throws Exception{
-		 InputStream fisModul=null; 
+		String sar = System.getProperty(PREFIX_SAR_SISTRA + "sar");
+		Properties result;
+		if (sar != null && "true".equals(sar)) {
+			result = readPropertiesFromSAR();
+		} else {
+			result = readPropertiesFromFilesystem();
+		}		
+		return result;
+	}
+
+	/**
+	 * Lee propiedades desde SAR.
+	 * @throws Exception
+	 */
+	private Properties readPropertiesFromSAR() throws Exception {
+		Properties propiedades = new Properties();
+		Properties propSystem = System.getProperties();
+		for (Iterator it = propSystem.keySet().iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			String value = propSystem.getProperty(key);			
+			if (key.startsWith(PREFIX_SAR_PLUGINS + "plugin-firma")) {
+				propiedades.put(key.substring((PREFIX_SAR_PLUGINS + "plugin-firma").length() + 1), value);
+			}			
+		}
+		return propiedades;
+	}
+	
+	private Properties readPropertiesFromFilesystem() throws Exception {
+		InputStream fisModul=null; 
 		 Properties propiedades = new Properties();
          try {
         	 // Path directorio de configuracion
@@ -147,7 +178,7 @@ public class PluginFirmaCAIB implements PluginFirmaIntf{
              throw new Exception("Excepcion accediendo a las propiedadades del plugin de firma", e);
          } finally {             
              try{if (fisModul != null){fisModul.close();}}catch(Exception ex){}
-         }		
+         }
 	}
 
 	public FirmaIntf parseFirmaFromWS(byte[] firmaBytes, String formatoFirma) throws Exception {
