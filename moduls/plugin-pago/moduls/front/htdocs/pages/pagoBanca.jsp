@@ -57,7 +57,7 @@
 			&nbsp;
 			<a href="SN" onclick="accediendoEnviando(mensajeEnviando + 'BMN');"><img src="imgs/pagos/sanostra.png" alt="BMN"/></a>			
 			&nbsp;
-			<a href="SN" onclick="accediendoEnviando(mensajeEnviando + 'BBVA');"><img src="imgs/pagos/bbva.png" alt="BBVA"/></a>
+			<a href="BB" onclick="accediendoEnviando(mensajeEnviando + 'BBVA');"><img src="imgs/pagos/bbva.png" alt="BBVA"/></a>
 		</html:form>
 	</div>
 </div>
