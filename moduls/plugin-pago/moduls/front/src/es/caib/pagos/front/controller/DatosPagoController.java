@@ -2,6 +2,8 @@ package es.caib.pagos.front.controller;
 
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +28,19 @@ public class DatosPagoController extends BaseController
 		
 		// Obtenemos datos del pago
 		DatosPago datosPago = dlg.obtenerDatosPago();
+		
+		es.caib.pagos.persistence.delegate.ConfiguracionDelegate delegateF = es.caib.pagos.persistence.delegate.DelegateUtil.getConfiguracionDelegate();
+		
+		String entidad1 = delegateF.obtenerPropiedad("pago.entidad.BM");
+		String entidad2 = delegateF.obtenerPropiedad("pago.entidad.LC");
+		String entidad3 = delegateF.obtenerPropiedad("pago.entidad.SN");
+		String entidad4 = delegateF.obtenerPropiedad("pago.entidad.BB");
+		Map pagoEntidades = new HashMap();
+		pagoEntidades.put("BM", (entidad1 == null || entidad1.equals("true"))?"BM":"DS");
+		pagoEntidades.put("LC", (entidad2 == null || entidad2.equals("true"))?"LC":"DS");
+		pagoEntidades.put("SN", (entidad3 == null || entidad3.equals("true"))?"SN":"DS");
+		pagoEntidades.put("BB", (entidad4 == null || entidad4.equals("true"))?"BB":"DS");
+		
 			
 		// Importe (convertimos de cents)
 		double impDec = Double.parseDouble(datosPago.getImporte()) / 100 ;	
@@ -63,6 +78,7 @@ public class DatosPagoController extends BaseController
 	    request.setAttribute("urlRetornoSistra",dlg.obtenerUrlRetornoSistra());
 	    request.setAttribute("presencialPermitido",presencialPermitido);
 	    request.setAttribute("telematicoPermitido",telematicoPermitido);
+	    request.setAttribute("pagoEntidades", pagoEntidades);
 
 	}
 
