@@ -16,7 +16,7 @@
 	var idioma = '<bean:write name="idioma"/>';
 	var modelo = '<bean:write name="modelo"/>';
 	var version = '<bean:write name="version"/>';
-	var urlInit = '<%=es.caib.sistra.persistence.delegate.DelegateUtil.getConfiguracionDelegate().obtenerConfiguracion().getProperty("sistra.url")%>/sistrafront/inicio?language=' + idioma + '&modelo=' + modelo + '&version=' + version;
+	var urlInit = '<%=es.caib.sistra.persistence.delegate.DelegateUtil.getConfiguracionDelegate().obtenerConfiguracion().getProperty("sistra.url")%><%=es.caib.sistra.persistence.delegate.DelegateUtil.getConfiguracionDelegate().obtenerConfiguracion().getProperty("sistra.contextoRaiz")%>/sistrafront/inicio?language=' + idioma + '&modelo=' + modelo + '&version=' + version;
 		
 	function validaIdPersistencia( idPersistencia )
 	    {
@@ -76,7 +76,7 @@
 	
 	function autenticaPortal(){		
 		//document.location='/sistrafront/protected/init.do?autenticaPortal=S&url=' + escape(document.location) ;
-		url = '<%=es.caib.sistra.persistence.delegate.DelegateUtil.getConfiguracionDelegate().obtenerConfiguracion().getProperty("sistra.url")%>/sistrafront/protected/init.do?autenticaPortal=S&url=' + escape(window.top.document.location) ;
+		url = '<%=es.caib.sistra.persistence.delegate.DelegateUtil.getConfiguracionDelegate().obtenerConfiguracion().getProperty("sistra.contextoRaiz")%><%=es.caib.sistra.persistence.delegate.DelegateUtil.getConfiguracionDelegate().obtenerConfiguracion().getProperty("sistra.url")%>/sistrafront/protected/init.do?autenticaPortal=S&url=' + escape(window.top.document.location) ;
 		irAUrl(url);
 	}
 	-->

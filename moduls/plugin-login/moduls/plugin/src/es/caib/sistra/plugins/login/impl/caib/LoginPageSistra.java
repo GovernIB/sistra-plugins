@@ -96,7 +96,7 @@ public class LoginPageSistra implements es.caib.loginModule.util.LoginPage{
     		 			request.getContextPath() + "/estilos/login.css";
     	 return urlx;
     	 */
-		return "/sistrafront/estilos/loginCAIB.css";
+		return LoginUtil.getUrlSistra() + "/sistrafront/estilos/loginCAIB.css";
     
     	     	     	     	 
      }

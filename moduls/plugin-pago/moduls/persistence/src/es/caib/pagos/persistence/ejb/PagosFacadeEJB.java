@@ -16,6 +16,7 @@ import org.apache.commons.logging.LogFactory;
 import es.caib.pagos.model.ModeloPagos;
 import es.caib.pagos.model.SesionPagoCAIB;
 import es.caib.pagos.model.TokenAccesoCAIB;
+import es.caib.pagos.persistence.util.Configuracion;
 import es.caib.pagos.persistence.util.GeneradorId;
 import es.caib.pagos.persistence.util.PasarelaPagos;
 import es.caib.sistra.plugins.pagos.ConstantesPago;
@@ -101,7 +102,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			SesionPago sesionPago = new SesionPago();
 			sesionPago.setLocalizador(loca);
 			// TODO Parametrizar context path
-			sesionPago.setUrlSesionPago("/pagosCAIBFront/init.do?token="+token);
+			sesionPago.setUrlSesionPago(Configuracion.getInstance().getProperty("sistra.contextoRaiz") + "/pagosCAIBFront/init.do?token="+token);
 			log.debug("Iniciada sesion pago: localizador " + loca + " / token acceso: " + token);
 			return sesionPago;
 		}catch (Exception ex){
@@ -160,7 +161,7 @@ public class PagosFacadeEJB extends HibernateEJB  {
 			sesionPago.setLocalizador(token);
 			
 			// Devolvemos url reanudacion de pago
-			sesionPago.setUrlSesionPago("/pagosCAIBFront/init.do?token="+token);
+			sesionPago.setUrlSesionPago(Configuracion.getInstance().getProperty("sistra.contextoRaiz") + "/pagosCAIBFront/init.do?token="+token);
 			log.debug("Reanudada sesion pago: localizador " + localizador + " / token acceso: " + token);
 			return sesionPago;
 			

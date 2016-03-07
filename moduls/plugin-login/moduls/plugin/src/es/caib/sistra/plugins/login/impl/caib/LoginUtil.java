@@ -1,5 +1,7 @@
 package es.caib.sistra.plugins.login.impl.caib;
 
+import java.util.Properties;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
@@ -67,7 +69,8 @@ public class LoginUtil {
 	public static String getUrlSistra(){
 		if (urlSistra == null) {
 			try{
-				urlSistra =  ConfigurationUtil.getInstance().obtenerPropiedades().getProperty("sistra.url");									
+				Properties propsConfig = ConfigurationUtil.getInstance().obtenerPropiedades();
+				urlSistra = propsConfig.getProperty("sistra.url") + propsConfig.getProperty("sistra.contextoRaiz");									
 			}catch(Exception ex){
 				log.error("Error obteniendo propiedad 'sistra.url'",ex);
 				urlSistra = null;				

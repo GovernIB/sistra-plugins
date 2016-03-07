@@ -33,13 +33,13 @@
     <module>
         <web>
             <web-uri>pagosTPV-front.war</web-uri>
-            <context-root>pagosTPVFront</context-root>
+            <context-root>sistra/pagosTPVFront</context-root>
         </web>
     </module>
     <module>
         <web>
             <web-uri>pagosTPV-back.war</web-uri>
-            <context-root>pagosTPVBack</context-root>
+            <context-root>sistra/pagosTPVBack</context-root>
         </web>
     </module>
      
@@ -52,7 +52,7 @@
    <module>
         <web>
             <web-uri>sistra-portal.war</web-uri>
-            <context-root>sistraportal</context-root>
+            <context-root>sistra/sistraportal</context-root>
         </web>
     </module>
     
@@ -60,7 +60,7 @@
    <module>
         <web>
             <web-uri>sistra-checkEmail.war</web-uri>
-            <context-root>/mobtratelback/checkEmail</context-root>
+            <context-root>sistra/mobtratelcheck</context-root>
         </web>
     </module>
     

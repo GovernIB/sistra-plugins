@@ -77,7 +77,7 @@ public class LoginPageZonaper implements LoginPage{
       * @return
       */
 	public String getStyleSheet() { 		
-    	 return "/zonaperfront/estilos/loginCAIB.css";    	    	     	     	     	
+    	 return LoginUtil.getUrlSistra() + "/zonaperfront/estilos/loginCAIB.css";    	    	     	     	     	
      }
           
 	 // Determinar qué tipo de acceso se requiere para la url invocada. Debe ser uno de los siguientes valores: 

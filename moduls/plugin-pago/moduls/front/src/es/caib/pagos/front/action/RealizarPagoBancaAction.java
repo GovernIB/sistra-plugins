@@ -42,7 +42,7 @@ public class RealizarPagoBancaAction extends BaseAction
 		
 		try{
 			final SesionPagoDelegate dlg = getSesionPago(request);
-			final String urlSistra = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.url"); //TODO constante
+			final String urlSistra = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.url") + DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.contextoRaiz");
 			final String contextPath = request.getContextPath();
 			final String servlet = "/confirmarPago.do";//TODO constante
 			
