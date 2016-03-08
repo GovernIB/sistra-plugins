@@ -471,7 +471,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 	}
 
 	private boolean isPrintPeticio() throws Exception {
-		String printPeticio = getConfig().getProperty("plugin.regweb.print.peticio");
+		String printPeticio = Configuracion.getInstance().getProperty("plugin.regweb.print.peticio");
 		if (printPeticio != null && "true".equals(printPeticio))
 			return true;
 		return false;
@@ -480,11 +480,11 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 	private String getIdiomaAsiento(AsientoRegistral asiento) throws Exception {
 		String idioma = asiento.getDatosAsunto().getIdiomaAsunto();
 		if ("es".equalsIgnoreCase(idioma))
-			return getConfig().getProperty("plugin.regweb.idioma.es");
+			return Configuracion.getInstance().getProperty("plugin.regweb.idioma.es");
 		else if ("ca".equalsIgnoreCase(idioma))
-			return getConfig().getProperty("plugin.regweb.idioma.ca");
+			return Configuracion.getInstance().getProperty("plugin.regweb.idioma.ca");
 		else
-			return getConfig().getProperty("plugin.regweb.idioma.default");
+			return Configuracion.getInstance().getProperty("plugin.regweb.idioma.default");
 	}
 	private String getIdentificacioRepresentant(AsientoRegistral asiento) {
 		for (Iterator it = asiento.getDatosInteresado().iterator(); it.hasNext();) {
@@ -950,43 +950,27 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 	}
 	
 	private Context getInitialContext() throws Exception {		
-		return EjbUtil.getInitialContext(false,getConfig().getProperty("plugin.regweb.url"));		
-	}
-
-	private Properties getConfig() throws Exception {
-		if (config == null) {
-			config = new Properties();
-			
-			// Path directorio de configuracion
-       	 	String pathConf = System.getProperty("ad.path.properties");
-       	 	
-			// Propiedades globales
-       	 	config.load(new FileInputStream(pathConf + "sistra/global.properties"));
-			
-       	 	// Propiedades plugin
-			config.load(new FileInputStream(pathConf + "sistra/plugins/plugin-regtel.properties"));
-		}
-		return config; 
+		return EjbUtil.getInitialContext(false,Configuracion.getInstance().getProperty("plugin.regweb.url"));		
 	}
 	
 	private String getUsuarioRegistro() throws Exception {
-		String auto = getConfig().getProperty("plugin.regweb.auth.auto");
+		String auto = Configuracion.getInstance().getProperty("plugin.regweb.auth.auto");
 		String userName = null;
 		if ("true".equals(auto)) {
-			userName = getConfig().getProperty("auto.user");			
+			userName = Configuracion.getInstance().getProperty("auto.user");			
 		} else {
-			userName = getConfig().getProperty("plugin.regweb.auth.username");
+			userName = Configuracion.getInstance().getProperty("plugin.regweb.auth.username");
 		}
 		return userName;
 	}
 	
 	private String getPasswdRegistro() throws Exception {
-		String auto = getConfig().getProperty("plugin.regweb.auth.auto");
+		String auto = Configuracion.getInstance().getProperty("plugin.regweb.auth.auto");
 		String userName = null;
 		if ("true".equals(auto)) {
-			userName = getConfig().getProperty("auto.pass");			
+			userName = Configuracion.getInstance().getProperty("auto.pass");			
 		} else {
-			userName = getConfig().getProperty("plugin.regweb.auth.password");
+			userName = Configuracion.getInstance().getProperty("plugin.regweb.auth.password");
 		}
 		return userName;		
 	}
@@ -1001,7 +985,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 	}
 	
 	private String getCodigoOficinaRegistroTelematica() throws Exception {
-		String oficina = getConfig().getProperty("plugin.regweb.oficinaTelematicaUnica.codigo");
+		String oficina = Configuracion.getInstance().getProperty("plugin.regweb.oficinaTelematicaUnica.codigo");
 		if (oficina != null) {
 			oficina = oficina.trim();
 		}
@@ -1009,7 +993,7 @@ public class RegistroWebImplEjb implements RegistroWebImplInt
 	}
 	
 	private String getDescripcionOficinaRegistroTelematica() throws Exception {
-		String oficina = getConfig().getProperty("plugin.regweb.oficinaTelematicaUnica.descripcion");
+		String oficina = Configuracion.getInstance().getProperty("plugin.regweb.oficinaTelematicaUnica.descripcion");
 		if (oficina != null) {
 			oficina = oficina.trim();
 		}

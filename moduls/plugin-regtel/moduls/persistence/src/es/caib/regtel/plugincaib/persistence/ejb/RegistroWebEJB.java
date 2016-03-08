@@ -1,6 +1,5 @@
 package es.caib.regtel.plugincaib.persistence.ejb;
 
-import java.io.FileInputStream;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +14,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.redose.modelInterfaz.ReferenciaRDS;
+import es.caib.regtel.plugincaib.persistence.util.Configuracion;
 import es.caib.sistra.plugins.regtel.ResultadoRegistro;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.Justificante;
@@ -55,7 +55,7 @@ public abstract class RegistroWebEJB implements SessionBean
 	private RegistroWebImplInt getImplementacionRegweb() {
 		try {
 			RegistroWebImplInt regweb;
-			if ("WS".equals(getConfig().getProperty("plugin.regweb.modo"))) {
+			if ("WS".equals(Configuracion.getInstance().getProperty("plugin.regweb.modo"))) {
 				regweb = new RegistroWebImplWs();			
 			} else {
 				regweb = new RegistroWebImplEjb();
@@ -215,29 +215,13 @@ public abstract class RegistroWebEJB implements SessionBean
 	// -------------------------------------------------------------------------------------------------------------------------------
 	//		FUNCIONES UTILIDAD
 	// -------------------------------------------------------------------------------------------------------------------------------
-	private Properties getConfig() throws Exception {
-		if (config == null) {
-			config = new Properties();
-			
-			// Path directorio de configuracion
-       	 	String pathConf = System.getProperty("ad.path.properties");
-       	 	
-			// Propiedades globales
-       	 	config.load(new FileInputStream(pathConf + "sistra/global.properties"));
-			
-       	 	// Propiedades plugin
-			config.load(new FileInputStream(pathConf + "sistra/plugins/plugin-regtel.properties"));
-		}
-		return config; 
-	}	
-	
 	private String getUsuarioConexionRegistro() throws Exception {
-		String auto = getConfig().getProperty("plugin.regweb.auth.auto");
+		String auto = Configuracion.getInstance().getProperty("plugin.regweb.auth.auto");
 		String userName = null;
 		if ("true".equals(auto)) {
-			userName = getConfig().getProperty("auto.user");			
+			userName = Configuracion.getInstance().getProperty("auto.user");			
 		} else {
-			userName = getConfig().getProperty("plugin.regweb.auth.username");
+			userName = Configuracion.getInstance().getProperty("plugin.regweb.auth.username");
 		}
 		return userName;
 	}		
