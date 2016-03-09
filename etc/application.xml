@@ -23,7 +23,7 @@
     <module>
         <web>
             <web-uri>pagosCAIB-front.war</web-uri>
-            <context-root>pagosCAIBFront</context-root>
+            <context-root>@contextoRaiz@pagosCAIBFront</context-root>
         </web>
     </module>
     
@@ -33,13 +33,13 @@
     <module>
         <web>
             <web-uri>pagosTPV-front.war</web-uri>
-            <context-root>sistra/pagosTPVFront</context-root>
+            <context-root>@contextoRaiz@pagosTPVFront</context-root>
         </web>
     </module>
     <module>
         <web>
             <web-uri>pagosTPV-back.war</web-uri>
-            <context-root>sistra/pagosTPVBack</context-root>
+            <context-root>@contextoRaiz@pagosTPVBack</context-root>
         </web>
     </module>
      
@@ -52,7 +52,7 @@
    <module>
         <web>
             <web-uri>sistra-portal.war</web-uri>
-            <context-root>sistra/sistraportal</context-root>
+            <context-root>@contextoRaiz@sistraportal</context-root>
         </web>
     </module>
     
@@ -60,7 +60,7 @@
    <module>
         <web>
             <web-uri>sistra-checkEmail.war</web-uri>
-            <context-root>sistra/mobtratelcheck</context-root>
+            <context-root>@contextoRaiz@mobtratelcheck</context-root>
         </web>
     </module>
     
