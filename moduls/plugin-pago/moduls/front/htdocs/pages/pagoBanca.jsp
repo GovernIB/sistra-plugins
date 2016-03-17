@@ -1,8 +1,10 @@
+<%@page import="es.caib.pagos.persistence.delegate.DelegateUtil"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-15" %>
 <%@ taglib prefix="html" uri="http://jakarta.apache.org/struts/tags-html"%>
 <%@ taglib prefix="bean" uri="http://jakarta.apache.org/struts/tags-bean"%>
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic"%>
 <%@ taglib prefix="tiles" uri="http://jakarta.apache.org/struts/tags-tiles"%>
+
 
 <h2>	<bean:message key="pago.banca" /></h2>
 
@@ -51,14 +53,14 @@
 			<html:errors />
 			<html:hidden property="banco" styleId="banco"/>
 			
-			<a href="BM" onclick="accediendoEnviando(mensajeEnviando + 'Banca March');"><img src="imgs/pagos/bancamarch.png" alt="Banca March"/></a>
+			<a href="<bean:write name="pagoEntidades" property="BM"/>"><img src="imgs/pagos/bancamarch.png" alt="Banca March"/></a>
 			&nbsp;
-			<a href="LC" onclick="accediendoEnviando(mensajeEnviando + 'La Caixa');"><img src="imgs/pagos/lacaixa.png" alt="La Caixa"/></a>
+			<a href="<bean:write name="pagoEntidades" property="LC"/>"><img src="imgs/pagos/lacaixa.png" alt="La Caixa"/></a>
 			&nbsp;
-			<!-- 
-			<a href="SN" onclick="accediendoEnviando(mensajeEnviando + 'Sa Nostra');"><img src="imgs/pagos/sanostra.png" alt="Sa Nostra"/></a>
-			 -->			
-			 <a href="SN"><img src="imgs/pagos/sanostra.png" alt="Sa Nostra"/></a>
+			<a href="<bean:write name="pagoEntidades" property="SN"/>"><img src="imgs/pagos/sanostra.png" alt="BMN"/></a>
+			&nbsp;
+			<a href="<bean:write name="pagoEntidades" property="BB"/>"><img src="imgs/pagos/bbva.png" alt="BBVA"/></a>
+			 
 		</html:form>
 	</div>
 </div>
