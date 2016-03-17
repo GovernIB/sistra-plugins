@@ -12,6 +12,8 @@ import org.apache.commons.logging.LogFactory;
 
 import es.caib.pagosTPV.model.NotificacionPagosTPV;
 import es.caib.pagosTPV.model.RequestNotificacionTPV;
+import es.caib.pagosTPV.model.RequestNotificacionTPVDecoded;
+import es.caib.pagosTPV.persistence.util.PagoTPVUtil;
 
 /**
  * SessionBean que implementa la interfaz de NotificacionPagosTPV
@@ -52,35 +54,44 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
      */
 	public void realizarNotificacion(RequestNotificacionTPV notificacionPago) {
 		
-		log.debug("Realizar notificacion pago: " + notificacionPago.getOrder());
+		log.debug("Realizar notificacion pago: decodificamos datos");
+		RequestNotificacionTPVDecoded notificacionPagoDecoded = null;
+		try {
+			notificacionPagoDecoded = PagoTPVUtil.decodeRequestNotificacionTPV(notificacionPago);
+		} catch (Exception e) {
+			throw new EJBException("No se ha podido decodificar los datos del pago");
+		}
 		
-		if (notificacionPago.getOrder() == null) {
-			log.error("No se ha recibido parametro orden. Contenido orden: \n" + notificacionPago.print());
+		log.debug("Realizar notificacion pago: " + notificacionPagoDecoded.getOrder());
+		
+		if (notificacionPagoDecoded.getOrder() == null) {
+			log.error("No se ha recibido parametro orden. Contenido orden: \n" + notificacionPagoDecoded.print());
 			throw new EJBException("No se ha recibido parametro orden");
 		}
 		
-		if (recuperarNotificacion(notificacionPago.getOrder()) != null) {
-			log.error("Ya existe una notificacion referente a la orden: " + notificacionPago.getOrder());
-			throw new EJBException("Ya existe una notificacion referente a la orden: " + notificacionPago.getOrder());
+		if (recuperarNotificacion(notificacionPagoDecoded.getOrder()) != null) {
+			log.error("Ya existe una notificacion referente a la orden: " + notificacionPagoDecoded.getOrder());
+			throw new EJBException("Ya existe una notificacion referente a la orden: " + notificacionPagoDecoded.getOrder());
 		}
 		
 		Session session = getSession();
 		
 		try{
-			log.debug("Guardar notificacion pago: " + notificacionPago.getOrder());
+			log.debug("Guardar notificacion pago: " + notificacionPagoDecoded.getOrder());
 			
 			NotificacionPagosTPV notif = new NotificacionPagosTPV();
-			notif.setOrden(notificacionPago.getOrder());
-			notif.setLocalizador(notificacionPago.getMerchantData());
-			notif.setResultado(notificacionPago.getResponse());
-			notif.setAutorizacion(notificacionPago.getAuthorisationCode());
-			notif.setFirma(notificacionPago.getSignature());
-			notif.setFecha(notificacionPago.getDate());
-			notif.setHora(notificacionPago.getHour());
+			notif.setOrden(notificacionPagoDecoded.getOrder());
+			notif.setLocalizador(notificacionPagoDecoded.getMerchantData());
+			notif.setResultado(notificacionPagoDecoded.getResponse());
+			notif.setAutorizacion(notificacionPagoDecoded.getAuthorisationCode());
+			notif.setDatosFirmados(notificacionPago.getMerchantParameters());
+			notif.setFirma(notificacionPagoDecoded.getSignature());
+			notif.setFecha(notificacionPagoDecoded.getDate());
+			notif.setHora(notificacionPagoDecoded.getHour());
 			
 			session.save(notif);
 			
-			log.debug("Guardada notificacion pago: " + notificacionPago.getOrder());
+			log.debug("Guardada notificacion pago: " + notificacionPagoDecoded.getOrder());
 			
 		}catch (Exception ex){
 			log.error("Exception guardando notificacion pago",ex);

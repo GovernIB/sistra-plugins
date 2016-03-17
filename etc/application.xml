@@ -76,9 +76,14 @@
     <module><java>lib/libreria-formateadoresCAIB.jar</java></module>    
 
     <!-- VALCERT: NECESARIO PARA EL PLUGIN DE CUSTODIA CAIB -->
+    <module><java>lib/axis.jar</java></module>  
+    <module><java>lib/commons-discovery-1.0.jar</java></module>  
     <module><java>lib/sistra-valcert-axis-1.6.6.jar</java></module>    
     
      <!-- REGWEB EJB: NECESARIO PARA PLUGIN-REGTEL -->
     <module><java>lib/logic-1.0.5-client.jar</java></module>
+    
+     <!-- TPV: JSON -->
+    <module><java>lib/org.json.jar</java></module>
     
 </application>

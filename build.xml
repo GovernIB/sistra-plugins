@@ -68,13 +68,20 @@
 			<include name="xpp3-1.1.3.4.M.jar" />
        		<include name="provato.soap.client.jar" />
 			<include name="provato-api.jar" />
+			<include name="commons-discovery-1.0.jar" />
 			<include name="sistra-valcert-axis-1.6.6.jar" />
 		</zipfileset>
+		<zipfileset dir="${lib}/axis14" prefix="lib">
+			<include name="axis.jar"/>
+		</zipfileset>	
 		<zipfileset dir="${lib}/firma" prefix="lib">
 			<include name="ideas36rc1_Java1.4.jar"/>
 		</zipfileset>		
 		<zipfileset dir="${lib}/regweblib" prefix="lib">
 			<include name="logic-1.0.5-client.jar"/>
+		</zipfileset>
+		<zipfileset dir="${lib}/tpv" prefix="lib">
+			<include name="org.json.jar"/>
 		</zipfileset>
 		<zipfileset dir="${output.dir}/moduls" prefix="lib">
 			<include name="plugin-custodiaCAIB.jar"/>
@@ -86,7 +93,7 @@
 			<include name="plugin-smsCAIB.jar"/>
 			<include name="plugin-emailCAIB.jar"/>			
 			<include name="libreria-formateadoresCAIB.jar"/>			
-		</zipfileset>
+		</zipfileset>		
 		<zipfileset dir="${output.dir}/moduls">
 			<include name="pagosCAIB-model.jar"/>
 			<include name="pagosCAIB-persistence.jar"/>

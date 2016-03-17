@@ -54,6 +54,9 @@
     	<fileset dir="${lib.dir}/jboss">
         	<include name="*.jar"/> 
     	</fileset>
+    	<fileset dir="${lib.dir}/tpv">
+        	<include name="*.jar"/> 
+    	</fileset>
         <fileset dir="${ejb.product}">
             <include name="${projectePagos}-model.jar"/>
         </fileset>    	

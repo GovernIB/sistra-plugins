@@ -48,8 +48,12 @@ $(document).ready(function() {
 	//seleccion de banco
 	$("#banca a").click(function() {
 	    var value = $(this).attr( 'href' );
-	    $("#banco").val(value);
-    	$("#pagoBancaForm").submit();	    
+	    if (value == 'SN') {
+	    	pagoDesactivado();
+	    } else {
+	    	$("#banco").val(value);
+	    	$("#pagoBancaForm").submit();
+	    }
 	    return false;
 	});
 	

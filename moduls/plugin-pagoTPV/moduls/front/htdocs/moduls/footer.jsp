@@ -8,7 +8,12 @@
 	
 	<!-- para coger la url y el telefono de soporte -->
 	<bean:define id="urlSoporte">
-		<bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="urlSoporteIncidencias"/>
+		<logic:notEmpty name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="urlSoporteIncidencias">
+			<bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="urlSoporteIncidencias"/>
+		</logic:notEmpty>
+		<logic:empty name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="urlSoporteIncidencias">
+			mailto:<bean:write name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="emailSoporteIncidencias"/>
+		</logic:empty>
 	</bean:define>
 	<bean:define id="telefonoSoporte" type="String">
 		<logic:notEmpty name="<%=es.caib.pagosTPV.front.Constants.ORGANISMO_INFO_KEY%>" property="telefonoIncidencias">

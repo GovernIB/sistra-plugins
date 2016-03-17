@@ -35,11 +35,7 @@ public class UrlPagoTPV {
 	/**
 	 * Terminal comercio.
 	 */
-	private String merchantTerminal;
-	/**
-	 * Firma pedido.
-	 */
-	private String merchantSignature;
+	private String merchantTerminal;	
 	/**
 	 * Moneda.
 	 */
@@ -84,6 +80,14 @@ public class UrlPagoTPV {
 	 * Datos comercio: enviaremos localizador sesion pago.
 	 */
 	private String merchantData;
+	/**
+	 * Parametros pedido (json en B64).
+	 */
+	private String merchantParameters;
+	/**
+	 * Firma pedido.
+	 */
+	private String merchantSignature;
 	
 	public String getUrlPagoTPV() {
 		return urlPagoTPV;
@@ -196,6 +200,12 @@ public class UrlPagoTPV {
 	
 	public String print() {
 	 return	ToStringBuilder.reflectionToString(this,ToStringStyle.MULTI_LINE_STYLE);
+	}
+	public String getMerchantParameters() {
+		return merchantParameters;
+	}
+	public void setMerchantParameters(String merchantParameters) {
+		this.merchantParameters = merchantParameters;
 	}
 	
 }
