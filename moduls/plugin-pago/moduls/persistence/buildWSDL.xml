@@ -10,8 +10,7 @@
 		<fileset dir="${lib.dir}">
 			
 			<!-- LIBS AXIS 1.4 	-->
-			<include name="axis14/axis.jar" />
-			<include name="axis14/wsdl4j-1.5.1.jar" />
+			<include name="axis14/axis.jar" />			
 			
 			<!-- JAX RPC JBOSS -->
 			<include name="jboss/jboss-jaxrpc.jar" />
@@ -26,6 +25,8 @@
 			
 			<include name="activation.jar" />
 			<include name="mail.jar" />
+			<include name="wsdl4j-1.6.2.jar" />
+			
 		</fileset>
 	</path>
 
