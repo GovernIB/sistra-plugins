@@ -44,6 +44,11 @@ public class ModeloPagosTPV implements Serializable
 	private Date fechaMaximaPago;  
 	private String mensajeTiempoMaximoPago;
 	
+	private String nivelAutenticacion;
+	private String usuarioSeycon;
+	private String nifUsuarioSeycon;
+	private String nombreUsuarioSeycon;
+	
 	
 	public ModeloPagosTPV() {}
 	
@@ -90,6 +95,11 @@ public class ModeloPagosTPV implements Serializable
 		this.fechaMaximaPago = sesionCAIB.getDatosPago().getFechaMaximaPago();
 		this.mensajeTiempoMaximoPago = sesionCAIB.getDatosPago().getMensajeTiempoMaximoPago();
 		
+		this.nivelAutenticacion = sesionCAIB.getNivelAutenticacion();
+		this.usuarioSeycon = sesionCAIB.getUsuarioSeycon();
+		this.nifUsuarioSeycon = sesionCAIB.getNifUsuarioSeycon();
+		this.nombreUsuarioSeycon = sesionCAIB.getNombreUsuarioSeycon();
+		
 	}
 	
 	public SesionPagoCAIB getSessionPagoCAIB() {
@@ -125,6 +135,12 @@ public class ModeloPagosTPV implements Serializable
 		sesionCAIB.setFechaInicioSesion(fechaInicioSesion);
 		sesionCAIB.getDatosPago().setFechaMaximaPago(fechaMaximaPago);
 		sesionCAIB.getDatosPago().setMensajeTiempoMaximoPago(mensajeTiempoMaximoPago);
+		
+		sesionCAIB.setNivelAutenticacion(nivelAutenticacion);
+		sesionCAIB.setUsuarioSeycon(usuarioSeycon);
+		sesionCAIB.setNifUsuarioSeycon(nifUsuarioSeycon);
+		sesionCAIB.setNombreUsuarioSeycon(nombreUsuarioSeycon);
+		
 		return sesionCAIB;
 	}
 	
@@ -401,6 +417,46 @@ public class ModeloPagosTPV implements Serializable
 			res = Character.toString(c);
 		}
 		return res;
+	}
+
+
+	public String getNivelAutenticacion() {
+		return nivelAutenticacion;
+	}
+
+
+	public void setNivelAutenticacion(String nivelAutenticacion) {
+		this.nivelAutenticacion = nivelAutenticacion;
+	}
+
+
+	public String getUsuarioSeycon() {
+		return usuarioSeycon;
+	}
+
+
+	public void setUsuarioSeycon(String usuarioSeycon) {
+		this.usuarioSeycon = usuarioSeycon;
+	}
+
+
+	public String getNifUsuarioSeycon() {
+		return nifUsuarioSeycon;
+	}
+
+
+	public void setNifUsuarioSeycon(String nifUsuarioSeycon) {
+		this.nifUsuarioSeycon = nifUsuarioSeycon;
+	}
+
+
+	public String getNombreUsuarioSeycon() {
+		return nombreUsuarioSeycon;
+	}
+
+
+	public void setNombreUsuarioSeycon(String nombreUsuarioSeycon) {
+		this.nombreUsuarioSeycon = nombreUsuarioSeycon;
 	}
 	
 }

@@ -1,19 +1,32 @@
 package es.caib.pagosTPV.persistence.ejb;
 
 import java.rmi.RemoteException;
+import java.security.Principal;
+import java.util.Date;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 
+import net.sf.hibernate.HibernateException;
+import net.sf.hibernate.Query;
 import net.sf.hibernate.Session;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.caib.audita.modelInterfaz.ConstantesAuditoria;
+import es.caib.audita.modelInterfaz.Evento;
+import es.caib.audita.persistence.delegate.DelegateAUDUtil;
+import es.caib.pagosTPV.model.ModeloPagosTPV;
 import es.caib.pagosTPV.model.NotificacionPagosTPV;
 import es.caib.pagosTPV.model.RequestNotificacionTPV;
 import es.caib.pagosTPV.model.RequestNotificacionTPVDecoded;
+import es.caib.pagosTPV.persistence.util.Configuracion;
 import es.caib.pagosTPV.persistence.util.PagoTPVUtil;
+import es.caib.sistra.plugins.PluginFactory;
+import es.caib.sistra.plugins.login.ConstantesLogin;
+import es.caib.sistra.plugins.login.PluginLoginIntf;
+import es.caib.sistra.plugins.pagos.ConstantesPago;
 
 /**
  * SessionBean que implementa la interfaz de NotificacionPagosTPV
@@ -35,6 +48,7 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
 	/**
      * @ejb.create-method
      * @ejb.permission role-name = "${role.todos}"
+     * @ejb.permission role-name = "${role.auto}"
      */
 	public void ejbCreate() throws CreateException {	
 		super.ejbCreate();
@@ -52,8 +66,8 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      */
-	public void realizarNotificacion(RequestNotificacionTPV notificacionPago) {
-		
+	public NotificacionPagosTPV realizarNotificacion(RequestNotificacionTPV notificacionPago) {
+		// Inserta notificacion en tabla de notificaciones
 		log.debug("Realizar notificacion pago: decodificamos datos");
 		RequestNotificacionTPVDecoded notificacionPagoDecoded = null;
 		try {
@@ -93,12 +107,79 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
 			
 			log.debug("Guardada notificacion pago: " + notificacionPagoDecoded.getOrder());
 			
+			return notif;
+			
 		}catch (Exception ex){
 			log.error("Exception guardando notificacion pago",ex);
 			throw new EJBException("Exception guardando notificacion pago",ex);
 		}finally{
             close(session);
-        }
+        }				
+	}
+
+	
+	/**
+	 * Notificacion pago por parte del TPV.
+	 * 
+     * @ejb.interface-method
+     * @ejb.permission role-name="${role.todos}"
+     * @ejb.permission role-name="${role.auto}"
+     */
+	public boolean confirmarSesionPago(String localizador) {
+		
+		// Comprobamos si existe notificacion
+		NotificacionPagosTPV notif = recuperarNotificacionPorLocalizador(localizador);
+		if (notif == null) {
+			return false;
+		}
+		
+		
+		Session session = getSession();
+		try {
+			// Verificamos si la notificacion es de pago realizado
+			if (!notif.getResultado().startsWith("00")) {
+				return false;
+			}
+			
+			// Obtenemos sesion de pago
+			Query query = session
+					.createQuery("FROM ModeloPagosTPV AS mp WHERE mp.localizador = '"
+							+ localizador + "'");
+			if (query.list().isEmpty()) {
+				throw new Exception("No se encuentra sesion de pago con localizador " + localizador);
+			}	
+			ModeloPagosTPV mp = (ModeloPagosTPV) query.uniqueResult();
+			
+			// Verificamos firma
+			String merchantPassword = Configuracion.getInstance().getMerchantPasswordTPV( mp.getIdentificadorOrganismo());
+			String signature = PagoTPVUtil.generarFirmaNotificacionTPV(notif, merchantPassword);	
+			if (!signature.equals(notif.getFirma())) {
+	        	throw new Exception("No concuerda la firma de la notificacion");
+	        }
+
+			// Se ha pagado, generamos justificante
+			String justificantePagoB64 = PagoTPVUtil
+					.generarJustificanteTPVB64(notif);
+			Date fechaPago = PagoTPVUtil.getFechaPago(notif);
+
+			// Actualizamos BBDD dando pago como realizado			
+			mp.setIdentificadorPago(notif.getOrden());
+			mp.setFechaPago(fechaPago);
+			mp.setReciboB64PagoTelematico(justificantePagoB64);
+			mp.setEstado(ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO);
+			session.update(mp);
+
+			// Realizamos log pago confirmado
+			logPagoConfirmado(mp);
+			
+			return true;
+
+		} catch (Exception ex) {
+			throw new EJBException("Excepcion actualizando estado pago", ex);
+		} finally {
+			close(session);
+		}
+		
 	}
 	
 	
@@ -109,7 +190,7 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      */
-	public NotificacionPagosTPV recuperarNotificacion(String orden) {
+	public  NotificacionPagosTPV recuperarNotificacion(String orden) {
 		Session session = getSession();
 		try{
 			NotificacionPagosTPV notif = (NotificacionPagosTPV) session.get(NotificacionPagosTPV.class, orden);
@@ -122,5 +203,56 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
         }
 	}
 	
+	
+	private NotificacionPagosTPV recuperarNotificacionPorLocalizador(String localizador) {
+		Session session = getSession();
+		try{
+			Query query = session
+				.createQuery("FROM NotificacionPagosTPV AS mp WHERE mp.localizador = '"
+							+ localizador + "'");
+			if (query.list().isEmpty()) {
+				return null;
+			}
+			NotificacionPagosTPV notif = (NotificacionPagosTPV) query.uniqueResult();
+			return notif;			
+		}catch (Exception ex){
+			log.error("Exception recuperando notificacion pago",ex);
+			throw new EJBException("Exception recuperando notificacion pago",ex);
+		}finally{
+            close(session);
+        }
+		
+	}
+	
+	
+	/**
+	 * Genera un log pago confirmado	
+	 */
+	private void logPagoConfirmado(ModeloPagosTPV mp){
+		try{
+			// Creamos evento
+			Evento evento = new Evento();
+			evento.setTipo(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_CONFIRMADO);
+			evento.setResultado("S");
+			evento.setDescripcion("");
+			evento.setModeloTramite(mp.getModeloTramite());
+			evento.setVersionTramite(mp.getVersionTramite());
+			evento.setIdioma(mp.getIdioma());
+			evento.setClave(mp.getIdentificadorPago());
+			evento.setIdPersistencia(mp.getIdentificadorTramite());
+			evento.setNivelAutenticacion(mp.getNivelAutenticacion());
+			if (!String.valueOf(ConstantesLogin.LOGIN_ANONIMO).equals(mp.getNivelAutenticacion())){
+				evento.setUsuarioSeycon(mp.getUsuarioSeycon());
+				evento.setNumeroDocumentoIdentificacion(mp.getNifUsuarioSeycon());
+				evento.setNombre(mp.getNombreUsuarioSeycon());
+			}						
 
+			// Auditamos evento			
+			DelegateAUDUtil.getAuditaDelegate().logEvento(evento, false);			
+			
+		}catch(Exception ex){
+			log.error("Excepción registrando evento en auditoria: " + ex.getMessage(),ex);
+		}
+	}
+	
 }

@@ -22,6 +22,7 @@ public class ConfirmarSesionTPV extends BaseAction
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
             HttpServletResponse response) throws Exception 
     {
+		
 		String localizador = request.getParameter("localizador");
 		int res = DelegateUtil.getBackPagosTPVDelegate().confirmarSesionTPV(localizador);
 		

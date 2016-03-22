@@ -17,6 +17,10 @@ public class SesionPagoCAIB implements Serializable{
 	private DatosPago datosPago;
 	private EstadoSesionPago estadoPago;
 	private SesionSistra sesionSistra;
+	private String nivelAutenticacion;
+	private String usuarioSeycon;
+	private String nifUsuarioSeycon;
+	private String nombreUsuarioSeycon;
 	
 	public DatosPago getDatosPago() {
 		return datosPago;
@@ -53,6 +57,30 @@ public class SesionPagoCAIB implements Serializable{
 	}
 	public void setFechaInicioSesion(Date fechaInicioSesion) {
 		this.fechaInicioSesion = fechaInicioSesion;
+	}
+	public String getNivelAutenticacion() {
+		return nivelAutenticacion;
+	}
+	public void setNivelAutenticacion(String nivelAutenticacion) {
+		this.nivelAutenticacion = nivelAutenticacion;
+	}
+	public String getUsuarioSeycon() {
+		return usuarioSeycon;
+	}
+	public void setUsuarioSeycon(String usuarioSeycon) {
+		this.usuarioSeycon = usuarioSeycon;
+	}
+	public String getNifUsuarioSeycon() {
+		return nifUsuarioSeycon;
+	}
+	public void setNifUsuarioSeycon(String nifUsuarioSeycon) {
+		this.nifUsuarioSeycon = nifUsuarioSeycon;
+	}
+	public String getNombreUsuarioSeycon() {
+		return nombreUsuarioSeycon;
+	}
+	public void setNombreUsuarioSeycon(String nombreUsuarioSeycon) {
+		this.nombreUsuarioSeycon = nombreUsuarioSeycon;
 	}
 
 }

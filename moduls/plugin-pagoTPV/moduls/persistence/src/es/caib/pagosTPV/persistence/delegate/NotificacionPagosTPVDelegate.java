@@ -19,9 +19,9 @@ public class NotificacionPagosTPVDelegate implements StatelessDelegate {
     /* ======================== MÉTODOS DE NEGOCIO ============= */
     /* ========================================================= */
 	
-	public void realizarNotificacion(RequestNotificacionTPV notificacionPago) throws DelegateException{
+	public NotificacionPagosTPV realizarNotificacion(RequestNotificacionTPV notificacionPago) throws DelegateException{
     	try {
-            getFacade().realizarNotificacion(notificacionPago);
+            return getFacade().realizarNotificacion(notificacionPago);
         } catch (Exception e) {
             throw new DelegateException(e);
         }
@@ -30,6 +30,14 @@ public class NotificacionPagosTPVDelegate implements StatelessDelegate {
 	public NotificacionPagosTPV recuperarNotificacion(String orden) throws DelegateException{
     	try {
             return getFacade().recuperarNotificacion(orden);
+        } catch (Exception e) {
+            throw new DelegateException(e);
+        }
+    }
+	
+	public boolean confirmarSesionPago(String localizador) throws DelegateException{
+    	try {
+            return getFacade().confirmarSesionPago(localizador);
         } catch (Exception e) {
             throw new DelegateException(e);
         }

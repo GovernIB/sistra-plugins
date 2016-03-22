@@ -96,6 +96,19 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				throw new CreateException("Se ha sobrepasado el tiempo limite para el token de acceso");
 			}
 			
+			// Actualizamos datos de usuario
+			Principal p = this.ctx.getCallerPrincipal();
+			PluginLoginIntf plgLogin = PluginFactory.getInstance().getPluginLogin();
+			char metodoAuth = plgLogin.getMetodoAutenticacion(p);
+			String nivelAuth = Character.toString(metodoAuth);
+			mp.setNivelAutenticacion(nivelAuth);			
+			if (metodoAuth != ConstantesLogin.LOGIN_ANONIMO){
+				mp.setUsuarioSeycon(p.getName());
+				mp.setNifUsuarioSeycon(plgLogin.getNif(p));
+				mp.setNombreUsuarioSeycon(plgLogin.getNombreCompleto(p));
+			}	
+			session.update(mp);
+			
 			// Obtenemos sesion de pago para cachearla en la instancia
 			sesionPago = mp.getSessionPagoCAIB();
 			if (sesionPago == null){
@@ -110,7 +123,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	}
 	
 	/**
-	 * Comprueba contra la pasarela de pagos si el pago ha sido realizado
+	 * Comprueba si el pago ha sido realizado (el proceso de notificacion debe haber marcado como pagado el pago).
 	 * 
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
@@ -122,11 +135,32 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 					
 		log.debug("Confirmar pago banca");
 	
+		// Refrescamos datos sesion de pago por si se ha confirmado mediante notificacion
+		Session session = getSession();
+		try{
+			Query query = session.createQuery("FROM ModeloPagosTPV AS mp WHERE mp.localizador = '"+sesionPago.getLocalizador()+"'");
+			if (query.list().isEmpty()){
+	    		throw new Exception("No se encuentra sesion de pago con localizador " + sesionPago.getLocalizador());
+	        }
+			ModeloPagosTPV mp = (ModeloPagosTPV) query.uniqueResult();
+			sesionPago = mp.getSessionPagoCAIB();
+		}catch(Exception ex){
+			throw new EJBException("Excepcion creando instancia sesion pagos",ex);
+		}finally{
+			close(session);
+	    }
+		
+		
 		// Comprobamos si se ha marcado como pagado 
 		try {
 			// Solo se puede cancelar desde aqui un pago telematico  
 		   	if (sesionPago.getEstadoPago().getTipo() != ConstantesPago.TIPOPAGO_TELEMATICO){
 		   		throw new EJBException("El pago no es telematico");
+		   	}	
+		   	
+		   	// Si esta confirmdo, lo damos por confirmado  
+		   	if (sesionPago.getEstadoPago().getEstado() == ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO){
+		   		return 1;
 		   	}	
 		   	
 			// Comprobamos si esta en estado pendiente de confirmacion
@@ -136,29 +170,14 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				throw new Exception("El pago no está pendiente de confirmar");		
 			}
 			
-			
-			NotificacionPagosTPV notif = recibidaNotificacionPago(sesionPago);
-			if (notif == null) {
-				// No se ha recibido notificacion
-				return -1;	
+			// Verificamos si se ha recibido notificacion			
+			NotificacionPagosTPV notificacion = DelegateUtil.getNotificacionPagosTPVDelegateDelegate().recuperarNotificacion(sesionPago.getEstadoPago().getIdentificadorPago());
+			if (notificacion == null){
+				return -1;
 			}
-			// Verificamos si se ha pagado
-			if (!notif.getResultado().startsWith("00")) {
-				// No se ha pagado
-				return 0;
-			}	
-			// Se ha pagado, generamos justificante
-			String justificantePagoXML = generarJustificanteTPV(notif);
-			String justificantePagoB64 = new String(Base64.encodeBase64(justificantePagoXML.getBytes(ConstantesXML.ENCODING)),ConstantesXML.ENCODING);
-			// Actualizamos BBDD dando pago como realizado
-			sesionPago.getEstadoPago().setIdentificadorPago(notif.getOrden());
-			sesionPago.getEstadoPago().setFechaPago(StringUtil.cadenaAFecha(notif.getFecha() + " " + notif.getHora() + ":00", StringUtil.FORMATO_TIMESTAMP));
-			sesionPago.getEstadoPago().setReciboB64PagoTelematico(justificantePagoB64);
-			sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO);
-			actualizaModeloPagos();
 			
-			logAuditoria(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_CONFIRMADO,"S","",this.sesionPago.getEstadoPago().getIdentificadorPago());
-			return 1;
+			// Si se ha recibido notificacion pero no esta en estado pagado, es que no se ha pagado
+			return 0;						
 				
 		} catch(Exception e){
 			log.error("Exception confirmando pago",e);
@@ -167,6 +186,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 
 	}
 
+	
 	/**
 	 * Comprueba contra la pasarela de pagos si el pago ha sido realizado, si nos devuelve que el pago no ha sido realizado se cancela.
 	 * 
@@ -219,7 +239,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	private void actualizaModeloPagos() {
 		ModeloPagosTPV mp = new ModeloPagosTPV(sesionPago);
 		mp.setPagoFinalizado("N");
-		Session session = getSession();
+		Session session = getSession();			
 		try{
 			if(mp != null){
 				session.saveOrUpdate(mp);
@@ -536,29 +556,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 
 
 	
-	/**
-	 * Genera justificante de pago TPV 
-	 * @return
-	 */
-	private String generarJustificanteTPV(NotificacionPagosTPV notificacionPago) {
-		StringBuilder str = new StringBuilder();
-		str.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
-		str.append("<JUSTIFICANTE_PAGO>");
-		str.append("<DATOS_PAGO><LOCALIZADOR>");
-		str.append(notificacionPago.getLocalizador());
-		str.append("</LOCALIZADOR><DUI>");
-		str.append(notificacionPago.getOrden());
-		str.append("</DUI><FECHA_PAGO>");
-		String strDate = notificacionPago.getFecha() + " " + notificacionPago.getHora() + ":00";
-		Date fcDate = StringUtil.cadenaAFecha(strDate, StringUtil.FORMATO_TIMESTAMP);
-		str.append(StringUtil.fechaACadena(fcDate, StringUtil.FORMATO_REGISTRO));
-		str.append("</FECHA_PAGO></DATOS_PAGO>");
-		str.append("<FIRMA>");
-		str.append(notificacionPago.getFirma());
-		str.append("</FIRMA>");
-		str.append("</JUSTIFICANTE_PAGO>");
-		return str.toString();
-	}
+	
 	
 	
 	/**
@@ -645,43 +643,5 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			close(session);
 	    }				
 	}
-	
-	/**
-	 * Verifica si se ha recibido la notificacion de pago.
-	 * @return NotificacionPagosTPV (nulo si no se ha notificado)
-	 * @throws Exception 
-	 */
-	private NotificacionPagosTPV recibidaNotificacionPago(SesionPagoCAIB sesionPago) throws Exception {
-		// Recuperamos notificacion
-		NotificacionPagosTPV notificacion = DelegateUtil.getNotificacionPagosTPVDelegateDelegate().recuperarNotificacion(sesionPago.getEstadoPago().getIdentificadorPago());
-		if (notificacion == null){
-			return null;
-		}
-		
-		// Verificamos que la notificacion pertenezca a la misma sesion de pago
-		if (!notificacion.getLocalizador().equals(sesionPago.getLocalizador())) {
-			throw new Exception("No concuerda localizador de la sesion de pagos de la notificacion");
-		}
-		
-		// Verificamos firma
-		String signature = null;
-		// - Comprobamos si es la version anterior (SHA1), por si hubiesen pendientes de confirmar
-		if (notificacion.getDatosFirmados() == null) {
-			signature = PagoTPVUtil.generarFirmaNotificacionTPV_SHA1(sesionPago, notificacion.getResultado());
-		} else {
-		// - Version actual de firma (SHA256)
-			String merchantPassword = Configuracion.getInstance().getMerchantPasswordTPV(sesionPago.getDatosPago().getIdentificadorOrganismo());
-			signature = PagoTPVUtil.generarFirmaNotificacionTPV(notificacion, merchantPassword);	
-		}
-		
-        if (!signature.equals(notificacion.getFirma())) {
-        	throw new Exception("No concuerda la firma de la notificacion");
-        }
-			
-        return notificacion;
-		
-	}
-
-	
 
 }

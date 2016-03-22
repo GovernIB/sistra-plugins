@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
+import es.caib.pagosTPV.model.NotificacionPagosTPV;
 import es.caib.pagosTPV.model.RequestNotificacionTPV;
 import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
 
@@ -35,12 +36,24 @@ public class NotificacionTPVServlet extends HttpServlet {
         requestNotif.setMerchantParameters(request.getParameter("Ds_MerchantParameters"));
         requestNotif.setSignature(request.getParameter("Ds_Signature"));
         log.debug("Notificacion TPV recibida: \n" + requestNotif.print());
+        
+        // Insertamos en tabla de notificaciones
+        NotificacionPagosTPV notifTPV = null;
         try {
-        	DelegateUtil.getNotificacionPagosTPVDelegateDelegate().realizarNotificacion(requestNotif);
+        	notifTPV = DelegateUtil.getNotificacionPagosTPVDelegateDelegate().realizarNotificacion(requestNotif);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch(Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             throw new ServletException(e);
+        }
+        
+        // Confirmamos sesion pago
+        if (notifTPV != null)  {
+	        try {
+	        	DelegateUtil.getNotificacionPagosTPVDelegateDelegate().confirmarSesionPago(notifTPV.getLocalizador());
+	        } catch(Exception e) {
+	            log.error("Error confirmando sesion pago con localizador " + notifTPV.getLocalizador(), e);
+	        }
         }
     }
 

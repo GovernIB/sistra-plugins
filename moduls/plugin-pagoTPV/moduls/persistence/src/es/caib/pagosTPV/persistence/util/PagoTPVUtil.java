@@ -2,12 +2,17 @@ package es.caib.pagosTPV.persistence.util;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
+
+import org.apache.commons.codec.binary.Base64;
 
 import es.caib.pagosTPV.model.NotificacionPagosTPV;
 import es.caib.pagosTPV.model.RequestNotificacionTPV;
 import es.caib.pagosTPV.model.RequestNotificacionTPVDecoded;
 import es.caib.pagosTPV.model.SesionPagoCAIB;
 import es.caib.pagosTPV.model.UrlPagoTPV;
+import es.caib.util.StringUtil;
+import es.caib.xml.ConstantesXML;
 
 public class PagoTPVUtil {
     
@@ -197,5 +202,40 @@ public class PagoTPVUtil {
 		return signature;
 	}	
 	
+	
+	/**
+	 * Genera justificante de pago TPV 
+	 * @return
+	 */
+	public static String generarJustificanteTPV(NotificacionPagosTPV notificacionPago) {
+		StringBuilder str = new StringBuilder();
+		str.append("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>");
+		str.append("<JUSTIFICANTE_PAGO>");
+		str.append("<DATOS_PAGO><LOCALIZADOR>");
+		str.append(notificacionPago.getLocalizador());
+		str.append("</LOCALIZADOR><DUI>");
+		str.append(notificacionPago.getOrden());
+		str.append("</DUI><FECHA_PAGO>");
+		String strDate = notificacionPago.getFecha() + " " + notificacionPago.getHora() + ":00";
+		Date fcDate = StringUtil.cadenaAFecha(strDate, StringUtil.FORMATO_TIMESTAMP);
+		str.append(StringUtil.fechaACadena(fcDate, StringUtil.FORMATO_REGISTRO));
+		str.append("</FECHA_PAGO></DATOS_PAGO>");
+		str.append("<FIRMA>");
+		str.append(notificacionPago.getFirma());
+		str.append("</FIRMA>");
+		str.append("</JUSTIFICANTE_PAGO>");
+		return str.toString();
+	}
+
+	public static String generarJustificanteTPVB64(NotificacionPagosTPV notif) throws Exception{
+		String justificantePagoXML = PagoTPVUtil.generarJustificanteTPV(notif);		
+		String justificantePagoB64 = new String(Base64.encodeBase64(justificantePagoXML.getBytes(ConstantesXML.ENCODING)),ConstantesXML.ENCODING);
+		return justificantePagoB64;
+	}
+	
+	public static  Date getFechaPago(NotificacionPagosTPV notif) {
+		return StringUtil.cadenaAFecha(notif.getFecha() + " " + notif.getHora() + ":00", StringUtil.FORMATO_TIMESTAMP);
+	}
+
 
 }

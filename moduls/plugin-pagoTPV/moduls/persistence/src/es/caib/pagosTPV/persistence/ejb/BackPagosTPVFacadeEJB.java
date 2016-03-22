@@ -178,6 +178,14 @@ public class BackPagosTPVFacadeEJB extends HibernateEJB  {
 			throw new EJBException( e );
 		}
 		
+		
+		// Confirmamos sesion pago
+		try {
+			DelegateUtil.getNotificacionPagosTPVDelegateDelegate().confirmarSesionPago(localizador);
+		} catch (Exception e) {
+			throw new EJBException( e );
+		}
+		
 		return 1;
         
 	}
