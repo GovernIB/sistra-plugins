@@ -123,6 +123,31 @@ function accediendoEnviando(obj) {
 			}
 
 function mostrarFondo() {
+	if(document.getElementById('fondo') == null) {
+		// creamos capa
+		fondoC = document.createElement('div');
+		fondoC.setAttribute('id','fondo');
+		document.body.appendChild(fondoC);
+	}
+	var capaIF = document.getElementById('fondo');
+	// tama?os de la ventana y la p?gina
+	var scroller = document.documentElement.scrollTop;
+	var ventanaX = document.documentElement.clientWidth;
+	var ventanaY = document.documentElement.clientHeight;
+	var capaY = document.getElementById('contenidor').offsetHeight;
+	usuariY = document.documentElement.clientHeight;
+	// la capa de fondo ocupa toda la p?gina
+	with (capaIF) {
+		if(ventanaY > capaY) style.height = ventanaY + 'px';
+		else style.height = capaY + 'px';
+		if(document.all) style.filter = "alpha(opacity=40)";
+		else style.opacity = 0.4;
+		if(document.all) style.width = ventanaX + 'px';
+		style.display = 'block';
+	}	
+}						
+			
+function mostrarFondoOld() {
 				if(document.getElementById('fondo') == null) {
 					// creamos capa
 					fondoC = document.createElement('div');
@@ -298,18 +323,26 @@ function icosMasInfo() {
 
 
 function ocultarAyudaAdmin() {
-	var capaI = document.getElementById('contactoAdministrador');
-	capaI.style.display = 'none';
-	esconderFondo();
+	ocultaCapa('contactoAdministrador');	
 }
 
 // Abre pantalla de ayuda
 function mostrarAyudaAdmin() {
+	muestraCapa('contactoAdministrador');
+}
+
+function ocultaCapa(idcapa) {
+	var capaI = document.getElementById(idcapa);
+	capaI.style.display = 'none';
+	esconderFondo();
+}
+
+function muestraCapa(idcapa) {
 	
 	mostrarFondo();
 	fundidoMostrar('fondo');
 
-	var capaI = document.getElementById('contactoAdministrador');
+	var capaI = document.getElementById(idcapa);
 
 	// tama?os de la ventana y la p?gina
 	var ventanaX = document.documentElement.clientWidth;
@@ -332,7 +365,6 @@ function mostrarAyudaAdmin() {
 		ventanaScrollY = document.documentElement.scrollTop;
 		capaI.style.top = (usuariY - capaInfoY)/2 + ventanaScrollY + 'px';
 	}
-	
 	
 }
 

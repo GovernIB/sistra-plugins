@@ -6,7 +6,7 @@
 
 <script type="text/javascript">
 <!--
-	bindTPVOnLoad();
+	bindTPVOnLoad();	
 //-->
 </script>
 
@@ -45,6 +45,26 @@
 		<bean:message key="pago.cancelarTPV" />
 	</a>	
 </p>
+
+<!-- ayuda -->
+<div id="avisoContinuarTramite" class="missatge" style="display:none;">
+	<h2><bean:message key="pago.avisoContinuarTramite.titulo" /></h2>
+	<p>
+		<bean:message key="pago.avisoContinuarTramite.texto1"/>
+		<b><bean:message key="pago.avisoContinuarTramite.texto2"/></b>
+		<bean:message key="pago.avisoContinuarTramite.texto3"/>
+		<b><bean:message key="pago.avisoContinuarTramite.texto4"/></b>
+		<bean:message key="pago.avisoContinuarTramite.texto5"/>		
+	</p>
+	<p>
+		<b><bean:message key="pago.avisoContinuarTramite.texto6"/></b>			
+	</p>
+	<p align="center">
+		<a id="suportDescartar" title="<bean:message key="pago.footer.descartar"/>" href="javascript:ocultaCapa('avisoContinuarTramite');">
+			<bean:message key="pago.footer.descartar"/>
+		</a>
+	</p>
+</div>
 
 <!-- capa mensaje accediendo -->
 <div id="capaInfoFondo"></div>

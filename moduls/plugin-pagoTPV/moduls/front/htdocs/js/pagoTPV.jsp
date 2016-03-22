@@ -15,6 +15,7 @@
 
 function bindTPVOnLoad() {
 	$(document).ready(function(){
+		muestraCapa('avisoContinuarTramite');		
 		$("#frmTPV").submit();	
 	});	
 }

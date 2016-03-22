@@ -21,7 +21,7 @@
 	<script type="text/javascript" src="js/jquery-1.3.2.min.js"></script>
 	<script type="text/javascript" src="js/globales.js"></script>
 	<script type="text/javascript" src="js/comuns.js"></script>
-	<script type="text/javascript" src="js/pagoTPV.jsp"></script>
+	<script type="text/javascript" src="js/pagoTPV.jsp?ts=<%System.currentTimeMillis()%>"></script>
 	<!-- DETECCION NAVEGADOR (Compatibles: IE >=6 , FireFox >= 1.5)-->
 	<script language="javascript" type="text/javascript">
 	<!--
