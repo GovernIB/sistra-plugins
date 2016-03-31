@@ -72,7 +72,7 @@
 	<classpathentry kind="lib" path="lib/client/2-redose-model.jar"/>
 	<classpathentry kind="lib" path="lib/client/2-redose-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/client/5-sistra-model.jar"/>
-	<classpathentry kind="lib" path="lib/client/5-sistra-persistence.jar" sourcepath="/projecte-sistra-2.3"/>
+	<classpathentry kind="lib" path="lib/client/5-sistra-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/regweblib/logic-1.0.5-client.jar"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
@@ -107,7 +107,7 @@
 	<classpathentry kind="lib" path="lib/cxf/wstx-asl-3.2.9.jar"/>
 	<classpathentry kind="lib" path="lib/cxf/XmlSchema-1.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/cxf/xmlsec-1.4.3.jar"/>
-	<classpathentry kind="lib" path="lib/sistra/sistra-utilWs.jar" sourcepath="/projecte-sistra-3.0"/>
+	<classpathentry kind="lib" path="lib/sistra/sistra-utilWs.jar"/>
 	<classpathentry kind="lib" path="lib/regweb3/dir3caib-ws-api-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/regweb3/regweb3-ws-api-3.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/tpv/org.json.jar"/>
