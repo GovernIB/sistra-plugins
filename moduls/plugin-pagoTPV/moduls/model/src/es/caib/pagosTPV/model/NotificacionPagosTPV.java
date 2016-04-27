@@ -91,5 +91,8 @@ public class NotificacionPagosTPV implements Serializable
 		this.datosFirmados = datosFirmados;
 	}
 	
+	public boolean isPagada() {
+		return getResultado() != null && getResultado().startsWith("00");
+	}
 	
 }

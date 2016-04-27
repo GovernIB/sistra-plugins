@@ -35,14 +35,22 @@ public class NotificacionPagosTPVDelegate implements StatelessDelegate {
         }
     }
 	
-	public boolean confirmarSesionPago(String localizador) throws DelegateException{
+	public boolean confirmarSesionPago(String localizador, String identificadorPago) throws DelegateException{
     	try {
-            return getFacade().confirmarSesionPago(localizador);
+            return getFacade().confirmarSesionPago(localizador, identificadorPago);
         } catch (Exception e) {
             throw new DelegateException(e);
         }
     }
 
+	public  String getIdentificadorPago(String datosFirmados) throws DelegateException{
+    	try {
+            return getFacade().getIdentificadorPago(datosFirmados);
+        } catch (Exception e) {
+            throw new DelegateException(e);
+        }
+    }
+	
 	
     /* ========================================================= */
     /* ======================== REFERENCIA AL FACADE  ========== */

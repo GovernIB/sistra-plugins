@@ -139,7 +139,7 @@ public class BackPagosTPVFacadeEJB extends HibernateEJB  {
 		 try {
 			NotificacionPagosTPV notif = DelegateUtil.getNotificacionPagosTPVDelegateDelegate().recuperarNotificacion(sesionPago.getEstadoPago().getIdentificadorPago());
 			if (notif != null) {
-				if (notif.getResultado().startsWith("00")) {
+				if (notif.isPagada()) {
 					return 0;
 				} else {
 					return -1;
@@ -181,7 +181,7 @@ public class BackPagosTPVFacadeEJB extends HibernateEJB  {
 		
 		// Confirmamos sesion pago
 		try {
-			DelegateUtil.getNotificacionPagosTPVDelegateDelegate().confirmarSesionPago(localizador);
+			DelegateUtil.getNotificacionPagosTPVDelegateDelegate().confirmarSesionPago(localizador, sesionPago.getEstadoPago().getIdentificadorPago());
 		} catch (Exception e) {
 			throw new EJBException( e );
 		}

@@ -125,10 +125,10 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
      * @ejb.permission role-name="${role.todos}"
      * @ejb.permission role-name="${role.auto}"
      */
-	public boolean confirmarSesionPago(String localizador) {
+	public boolean confirmarSesionPago(String localizador, String identificadorPago) {
 		
-		// Comprobamos si existe notificacion
-		NotificacionPagosTPV notif = recuperarNotificacionPorLocalizador(localizador);
+		// Comprobamos si existe notificacion pagada
+		NotificacionPagosTPV notif = recuperarNotificacionPorLocalizadorIdPago(localizador, identificadorPago);
 		if (notif == null) {
 			return false;
 		}
@@ -136,8 +136,9 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
 		
 		Session session = getSession();
 		try {
+			
 			// Verificamos si la notificacion es de pago realizado
-			if (!notif.getResultado().startsWith("00")) {
+			if (!notif.isPagada()) {
 				return false;
 			}
 			
@@ -204,12 +205,31 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
 	}
 	
 	
-	private NotificacionPagosTPV recuperarNotificacionPorLocalizador(String localizador) {
+
+	/**
+	 * Recupera identificador pago a partir de la notificacion.
+	 * @return 
+	 * 
+     * @ejb.interface-method
+     * @ejb.permission role-name="${role.todos}"
+     */
+	public  String getIdentificadorPago(String datosFirmados) {
+		try{
+			return PagoTPVUtil.getOrdenNotificacionTPV(datosFirmados);						
+		}catch (Exception ex){
+			log.error("Exception recuperando identificador pago a patir notificacion",ex);
+			throw new EJBException("Exception recuperando identificador pago a patir notificacion",ex);
+		}
+	}
+	
+	
+	
+	private NotificacionPagosTPV recuperarNotificacionPorLocalizadorIdPago(String localizador, String identificadorPago) {
 		Session session = getSession();
 		try{
 			Query query = session
 				.createQuery("FROM NotificacionPagosTPV AS mp WHERE mp.localizador = '"
-							+ localizador + "'");
+							+ localizador + "' and mp.orden = '" + identificadorPago + "'");
 			if (query.list().isEmpty()) {
 				return null;
 			}

@@ -13,6 +13,7 @@ import org.apache.commons.logging.LogFactory;
 import es.caib.pagosTPV.model.NotificacionPagosTPV;
 import es.caib.pagosTPV.model.RequestNotificacionTPV;
 import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
+import es.caib.pagosTPV.persistence.delegate.NotificacionPagosTPVDelegate;
 
 
 /**
@@ -39,8 +40,9 @@ public class NotificacionTPVServlet extends HttpServlet {
         
         // Insertamos en tabla de notificaciones
         NotificacionPagosTPV notifTPV = null;
-        try {
-        	notifTPV = DelegateUtil.getNotificacionPagosTPVDelegateDelegate().realizarNotificacion(requestNotif);
+        NotificacionPagosTPVDelegate dlgNotif = DelegateUtil.getNotificacionPagosTPVDelegateDelegate();
+		try {
+        	notifTPV = dlgNotif.realizarNotificacion(requestNotif);
             response.setStatus(HttpServletResponse.SC_OK);
         } catch(Exception e) {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
@@ -48,9 +50,10 @@ public class NotificacionTPVServlet extends HttpServlet {
         }
         
         // Confirmamos sesion pago
-        if (notifTPV != null)  {
-	        try {
-	        	DelegateUtil.getNotificacionPagosTPVDelegateDelegate().confirmarSesionPago(notifTPV.getLocalizador());
+        if (notifTPV != null && notifTPV.isPagada() )  {
+	        try {	        	
+	        	String identificadorPago = dlgNotif.getIdentificadorPago(notifTPV.getDatosFirmados());
+	        	dlgNotif.confirmarSesionPago(notifTPV.getLocalizador(), identificadorPago);
 	        } catch(Exception e) {
 	            log.error("Error confirmando sesion pago con localizador " + notifTPV.getLocalizador(), e);
 	        }

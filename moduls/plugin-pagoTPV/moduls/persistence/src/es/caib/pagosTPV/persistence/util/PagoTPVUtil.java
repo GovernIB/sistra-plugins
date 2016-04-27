@@ -62,6 +62,12 @@ public class PagoTPVUtil {
 		return firma;
 	}
 	
+	public static String getOrdenNotificacionTPV(String datosFirmados) throws Exception {
+		ApiMacSha256 api = new ApiMacSha256();
+		api.decodeMerchantParameters(datosFirmados);
+		return api.getParameter("Ds_Order");		
+	}
+	
 	
 	public static RequestNotificacionTPVDecoded decodeRequestNotificacionTPV(RequestNotificacionTPV requestNotif) throws Exception {
 		ApiMacSha256 api = new ApiMacSha256();
