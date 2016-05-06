@@ -42,6 +42,7 @@
 	<ant dir="${moduls.dir}/plugin-pagoTPV/moduls" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-regtel/moduls" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-sms/moduls/plugin" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-smsbit/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-email/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-email/moduls/checkEmail" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-custodia/moduls/plugin" target="${task}" inheritall="false"/>
@@ -96,7 +97,7 @@
 			<include name="plugin-pagosCAIB.jar"/>
 			<include name="plugin-pagosTPV.jar"/>
 			<include name="plugin-regtelCAIB.jar"/>
-			<include name="plugin-smsCAIB.jar"/>
+			<include name="plugin-smsBIT.jar"/>
 			<include name="plugin-emailCAIB.jar"/>			
 			<include name="libreria-formateadoresCAIB.jar"/>			
 		</zipfileset>		
@@ -144,7 +145,7 @@
 		<!-- Directorio donde estan los ficheros de configuracion -->
 		<arg value="${basedir}/config"/>
 		<!-- Nombre ficheros propiedades a tratar separados por coma -->
-		<arg value="plugin-login,plugin-firma,plugin-pagos,plugin-pagosTPV,plugin-regweb3,plugin-sms,plugin-custodia"/>
+		<arg value="plugin-login,plugin-firma,plugin-pagos,plugin-pagosTPV,plugin-regweb3,plugin-sms,plugin-smsbit,plugin-custodia"/>
 		<!-- Nombre ficheros propiedades a tratar separados por coma (se incluye tal cual, sin prefijo) -->
 		<arg value="custodia"/>
 		
