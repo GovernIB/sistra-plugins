@@ -12,42 +12,42 @@ import org.apache.commons.logging.LogFactory;
 public class LoginUtil {
 
 	private static Log log = LogFactory.getLog(LoginUtil.class);
-	
+
 	private static String cookieAuth = null;
-	
+
 	private static String urlSistra = null;
-	
+
 	/**
-	 * Obtiene nombre cookie auth 
+	 * Obtiene nombre cookie auth
 	 */
 	private static String getNombreCookieAuth(){
 		if (cookieAuth == null) {
 			try{
-				cookieAuth =  ConfigurationUtil.getInstance().obtenerPropiedades().getProperty("auth.cookiename");									
+				cookieAuth =  ConfigurationUtil.getInstance().obtenerPropiedades().getProperty("auth.cookiename");
 			}catch(Exception ex){
 				log.error("Error obteniendo propiedad 'auth.cookiename'",ex);
-				cookieAuth = null;				
-			}		
+				cookieAuth = null;
+			}
 		}
 		return cookieAuth;
-	}	
-	
+	}
+
 	/**
     * Detecta si existe una cookie de seycon autenticada
 	 * @param request
 	 * @return
 	 */
 	public static boolean existeCookieAutenticada(HttpServletRequest request){
-		boolean result = false;		
+		boolean result = false;
 		log.debug("Comprobando si existe cookie autenticada");
-		try{		
-			Cookie cookies[] = request.getCookies();     					
+		try{
+			Cookie cookies[] = request.getCookies();
 			if (cookies != null){
 	            for(int i = 0; i < cookies.length; i++)
 	                if(cookies[i].getName().startsWith(getNombreCookieAuth()) && cookies[i].getValue() != null){
-	                	
+
 	                	log.debug("Cookie autenticacion: " + cookies[i].getValue() );
-	                	
+
 	                	String number = cookies[i].getValue().substring(cookies[i].getValue().lastIndexOf(":") + 1);
 	                	if (number.startsWith("-")) number=number.substring(1);
 	                	if (StringUtils.isNumeric(number)) result = true;
@@ -61,8 +61,8 @@ public class LoginUtil {
 			return false;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Obtiene url donde esta sistra
 	 */
@@ -70,13 +70,13 @@ public class LoginUtil {
 		if (urlSistra == null) {
 			try{
 				Properties propsConfig = ConfigurationUtil.getInstance().obtenerPropiedades();
-				urlSistra = propsConfig.getProperty("sistra.url") + propsConfig.getProperty("sistra.contextoRaiz");									
+				urlSistra = propsConfig.getProperty("sistra.url") + propsConfig.getProperty("sistra.contextoRaiz.front");
 			}catch(Exception ex){
 				log.error("Error obteniendo propiedad 'sistra.url'",ex);
-				urlSistra = null;				
-			}		
+				urlSistra = null;
+			}
 		}
 		return urlSistra;
-	}	
-	
+	}
+
 }

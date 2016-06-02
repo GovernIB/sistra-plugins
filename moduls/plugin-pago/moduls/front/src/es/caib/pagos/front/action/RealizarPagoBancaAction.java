@@ -16,45 +16,45 @@ import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
 
 
 /**
- * @struts.action 
+ * @struts.action
  * 	name="pagoBancaForm"
- *  path="/realizarPagoBanca"        
+ *  path="/realizarPagoBanca"
  *  scope="session"
  *  validate="true"
  *  input=".pagoBanca"
- *  
+ *
  * @struts.action-forward
  * 	name="fail" path=".error"
- * 
+ *
  * @struts.action-forward
  * 	name="pagoTiempoExcedido" path=".pagoTiempoExcedido"
- *  
- * 
- *  
+ *
+ *
+ *
  */
 public class RealizarPagoBancaAction extends BaseAction
 {
-	
+
 	public ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception 
+            HttpServletResponse response) throws Exception
     {
 		final PagoBancaForm pagoBancaForm = (PagoBancaForm) form;
-		
+
 		try{
 			final SesionPagoDelegate dlg = getSesionPago(request);
-			final String urlSistra = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.url") + DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.contextoRaiz");
+			final String urlSistra = DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.url") + DelegateUtil.getConfiguracionDelegate().obtenerPropiedad("sistra.contextoRaiz.front");
 			final String contextPath = request.getContextPath();
 			final String servlet = "/confirmarPago.do";//TODO constante
-			
+
 			final StringBuilder urlVuelta = new StringBuilder(urlSistra.length() + contextPath.length() + servlet.length());
 			urlVuelta.append(urlSistra);
 			urlVuelta.append(contextPath);
 			urlVuelta.append(servlet);
-			
-			
+
+
 			ResultadoIniciarPago res = dlg.realizarPagoBanca(pagoBancaForm.getBanco(), urlVuelta.toString());
-			
-			if (!res.isTiempoExcedido()) { 
+
+			if (!res.isTiempoExcedido()) {
 				final String urlPago = res.getResultado();
 				response.sendRedirect(urlPago);
 				return null;
@@ -62,11 +62,11 @@ public class RealizarPagoBancaAction extends BaseAction
 				request.setAttribute(Constants.MESSAGE_KEY, res.getMensajeTiempoExcedido());
 				return mapping.findForward("pagoTiempoExcedido");
 			}
-			
+
 		}catch (DelegateException de){
 			request.setAttribute(Constants.MESSAGE_KEY, de.getMessage());
 			return mapping.findForward("fail");
-		} 
+		}
     }
-		
+
 }
