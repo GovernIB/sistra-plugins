@@ -72,9 +72,11 @@
 		<metainf dir="${etc.dir}/jboss-${jboss.version}" includes="*.xml"/>
 		<metainf dir="${etc.dir}" includes="cxf/org.apache.cxf.Logger"/>
 		<zipfileset dir="${lib}" prefix="lib">
+			<!--
 			<include name="xpp3-1.1.3.4.M.jar" />
        		<include name="provato.soap.client.jar" />
 			<include name="provato-api.jar" />
+			-->
 			<include name="commons-discovery-1.0.jar" />
 			<include name="sistra-valcert-axis-1.6.6.jar" />
 		</zipfileset>
