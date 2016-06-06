@@ -620,7 +620,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 
 		try{
 			return PasarelaPagos.getPdf046(sesionPago.getEstadoPago().getIdentificadorPago(), sesionPago.getDatosPago().getImporte(), 
-		    		sesionPago.getDatosPago().getNifDeclarante(), sesionPago.getDatosPago().getFechaDevengo());
+		    		sesionPago.getDatosPago().getNifDeclarante(), sesionPago.getEstadoPago().getFechaPago());
 		} catch (GetPdf046Exception ce) {
 			log.error("Error al obtener el justificante de pago.", ce);
 			throw new EJBException("sesionPagos.errorGenericoComprobarPago");
