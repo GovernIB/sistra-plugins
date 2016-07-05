@@ -57,7 +57,7 @@
 		<param name="task" value="main"/>
 	</antcall>
 
-	<copy file="${etc.dir}/application.xml" todir="${output.dir}/etc" overwrite="true"/>
+	<copy file="${etc.dir}/jboss-${jboss.version}/application.xml" todir="${output.dir}/etc" overwrite="true"/>
 	<replace file="${output.dir}/etc/application.xml">
 	     <replacefilter token="@contextoRaizFront@" value="${contextoRaiz.front}"/>
 		 <replacefilter token="@contextoRaizBack@" value="${contextoRaiz.back}"/>
@@ -78,11 +78,11 @@
        		<include name="provato.soap.client.jar" />
 			<include name="provato-api.jar" />
 			-->
-			<include name="commons-discovery-1.0.jar" />
+			<include if="isJboss5" name="commons-discovery-1.0.jar" />
 			<include name="sistra-valcert-axis-1.6.6.jar" />
 		</zipfileset>
 		<zipfileset dir="${lib}/axis14" prefix="lib">
-			<include name="axis.jar"/>
+			<include if="isJboss5" name="axis.jar"/>
 		</zipfileset>
 		<zipfileset dir="${lib}/firma" prefix="lib">
 			<include name="ideas36rc1_Java1.4.jar"/>
