@@ -19,9 +19,9 @@
     <tr><td>&nbsp;</td></tr>
     <tr><td class="user"><%=request.getRemoteUser()%></td></tr>
     <tr><td>
-        <logic:iterate id="independiente" name="independientes">
+        <!-- <logic:iterate id="independiente" name="independientes">
             <ul><tiles:insert beanName="independiente" flush="false" /></ul>
-        </logic:iterate>
+        </logic:iterate> -->
     </td></tr>
     <tr><td>&nbsp;</td></tr>
 </table>
