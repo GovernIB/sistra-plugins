@@ -1,0 +1,18 @@
+
+Data: 26/08/2016
+Autor: anadal-fundaciobit
+
+
+Aquí es descriuen molt simplement les passes a seguir per integrar Sistra amb RegWeb3:
+
+(1) Descarregar la darrera branca https://github.com/GovernIB/sistra-plugins/ (A 26/08/2016 és la sistra-plugins-3.1)
+
+(2) Compilar-la
+
+(3) Copiar dins [System.getProperty("ad.path.properties") + "sistra/plugins/plugin-regweb3.properties] el fitxer plugin-regweb3.properties que trobaràs en el directori /config del projecte sistra-plugins-3.1
+
+(4) Adaptar les propietats del fitxer plugin-regweb3.properties amb el teu regweb3 i dir3caib
+
+(5) Copiar el jar generat en el mòdul "moduls/plugin-regweb3/moduls" al directori lib de [JBOSS]/server/default/lib, així com els jars que trobaràs dins "sistra-plugins/lib/regweb3/"
+
+(6) Editar el fitxer "global.properties" i en l'entrada plugin.registro assigna-li "es.caib.sistra.plugins.regtel.impl.caib.PluginRegweb3"
