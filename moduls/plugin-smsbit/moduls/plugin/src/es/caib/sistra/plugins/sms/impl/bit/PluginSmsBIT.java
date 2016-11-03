@@ -23,7 +23,6 @@ public class PluginSmsBIT implements PluginSmsIntf{
 
 	public void enviarSMS(String idEnvio, String cuentaSMS,String telefono,String mensaje,boolean inmediato) throws Exception{
 		
-		
         String user = Configuracion.getInstance().getProperty("sms.user");
         String password = Configuracion.getInstance().getProperty("sms.password");        
         
@@ -33,7 +32,7 @@ public class PluginSmsBIT implements PluginSmsIntf{
         String campaign = "";
         
         if (posicion != -1) {
-        	 sender   = cuentaSMS.substring(0,cuentaSMS.indexOf(":")-1);
+        	 sender   = cuentaSMS.substring(0,cuentaSMS.indexOf(":"));
         	 campaign = cuentaSMS.substring(cuentaSMS.indexOf(":") + 1,cuentaSMS.length());
         }
                         
@@ -43,9 +42,8 @@ public class PluginSmsBIT implements PluginSmsIntf{
 	    try {
 	          // Preparamos la llamada
 	          PostMethod filePost = new PostMethod(url + servlet);
-	          String header = "Basic " + Base64.encodeBase64((user + ":" + password).getBytes());
-	          filePost.setRequestHeader("authorization", header);
-	   
+	          String header = "Basic " + new String(Base64.encodeBase64((user + ":" + password).getBytes("UTF-8")), "UTF-8");
+	          filePost.setRequestHeader("Authorization", header);
 	          
 	          // Establecemos los parámetros
 	          filePost.addParameter("idCampanya", campaign);
@@ -54,6 +52,7 @@ public class PluginSmsBIT implements PluginSmsIntf{
 	          // Añadimos 34 por delante del teléfono porque SMSBIT lo requiere
 	          filePost.addParameter("numero", "34"+telefono);    
 	          filePost.addParameter("texto", mensaje);
+	 
 	   
 	          // Ejecutamos la llamada
 	          HttpClient client = new HttpClient();
