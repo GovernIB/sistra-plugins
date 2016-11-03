@@ -446,10 +446,12 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         anexoAsiento.setTipoDocumental(tipoDocumental);
         anexoAsiento.setTipoDocumento(tipoDocumento);     
         anexoAsiento.setOrigenCiudadanoAdmin(origenDocumento);
-        anexoAsiento.setValidezDocumento(validezDocumento);
         
         // Solo se puede anexar 1 firma
         if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
+        	if (tipoDocumento.equals(ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO)){
+        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA_COMPULSADA;
+        	}
         	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_DETACHED);
         	FirmaIntf firma = docRDS.getFirmas()[0];
         	byte[] contentFirma = firma.getContenidoFirma();
@@ -459,6 +461,9 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         } else {
         	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
         }
+        
+        anexoAsiento.setValidezDocumento(validezDocumento);
+        
 		return anexoAsiento;
 	}
 
