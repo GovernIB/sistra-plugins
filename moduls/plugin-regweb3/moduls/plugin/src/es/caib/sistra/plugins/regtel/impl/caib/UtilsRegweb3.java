@@ -218,7 +218,7 @@ public class UtilsRegweb3 {
 			result = ConstantesRegweb3.TIPO_DOCID_CIF;
 			break;
 		case 3: // NIE
-			result = ConstantesRegweb3.TIPO_DOCID_NIF;
+			result = ConstantesRegweb3.TIPO_DOCID_NIE;
 			break;
 		default:
 			result = null;

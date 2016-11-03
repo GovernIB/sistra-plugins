@@ -19,10 +19,12 @@ public class ConstantesRegweb3 {
 	/** Tipo interesado Administración. */
 	public final static String TIPO_INTERESADO_PERSONA_ADMINISTRACION = "1";
 	
-	/** Tipo documento identificacion: NIF. */
+	/** Tipo documento identificacion: NIF física. */
 	public final static String TIPO_DOCID_NIF = "N";
-	/** Tipo documento identificacion: NIF. */
+	/** Tipo documento identificacion: NIF persona jurídica. */
 	public final static String TIPO_DOCID_CIF = "C";
+	/** Tipo documento identificacion: NIE. */
+	public final static String TIPO_DOCID_NIE = "E";
 	
 	/** Documetacion fisica: Acompaña documentación física (u otros soportes) requerida.*/
 	public final static String DOC_FISICA_REQUERIDA = "01"; 		
