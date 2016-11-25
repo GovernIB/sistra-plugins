@@ -7,9 +7,10 @@
 <property name="moduls.dir" location="${basedir}/moduls"/>
 <property name="etc.dir" location="${basedir}/etc"/>
 <property name="lib" value="lib"/>
+<property name="libregweb" value="libregweb"/>
 
 
-<target name="main" depends="clean,checkJbossVersion,prepare,assemble"/>
+<target name="main" depends="clean,checkJbossVersion,checkRegwebVersion,prepare,assemble"/>
 
 
 <target name="checkJbossVersion">
@@ -20,6 +21,23 @@
 		<equals arg1="${jboss.version}" arg2="3.2"/>
 	</condition>
 </target>
+
+<target name="checkRegwebVersion">
+	<condition property="isCurrentVersion">
+		<equals arg1="${regweb3.version}" arg2=""/>
+	</condition>
+	<condition property="isOtherVersion">
+		<not>
+			<equals arg1="${regweb3.version}" arg2=""/>
+		</not>
+	</condition>
+</target>
+	
+<target name="replacePluginRegweb"  if="isOtherVersion">
+	<copy file="${libregweb}/plugin-regweb3_${regweb3.version}.jar" tofile="${output.dir}/moduls/plugin-regweb3.jar"/>
+	<echo message="Se sustituye plugin Regweb por la version ${regweb3.version}"/>
+</target>
+
 
 <target name="clean" description="Destruye los directorios de trabajo">
 	<delete dir="output" quiet="yes" />
@@ -56,6 +74,8 @@
 	<antcall target="propagate">
 		<param name="task" value="main"/>
 	</antcall>
+	
+	<antcall target="replacePluginRegweb"/>
 
 	<copy file="${etc.dir}/jboss-${jboss.version}/application.xml" todir="${output.dir}/etc" overwrite="true"/>
 	<replace file="${output.dir}/etc/application.xml">
@@ -93,6 +113,12 @@
 		<zipfileset dir="${lib}/tpv" prefix="lib">
 			<include name="org.json.jar"/>
 		</zipfileset>
+	<!--	<zipfileset dir="${libregweb}" prefix="lib">
+			<include if="isOtherVersion" name="plugin-regweb3_${regweb3.version}.jar" />
+		</zipfileset>
+		<zipfileset dir="${output.dir}/moduls" prefix="lib">
+			<include if="isCurrentVersion" name="plugin-regweb3.jar"/>
+		</zipfileset> -->
 		<zipfileset dir="${output.dir}/moduls" prefix="lib">
 			<include name="plugin-custodiaCAIB.jar"/>
 			<include name="plugin-firmaCAIB.jar"/>
@@ -100,6 +126,7 @@
 			<include name="plugin-pagosCAIB.jar"/>
 			<include name="plugin-pagosTPV.jar"/>
 			<include name="plugin-regtelCAIB.jar"/>
+			<include name="plugin-regweb3.jar"/>
 			<include name="plugin-smsBIT.jar"/>
 			<include name="plugin-emailCAIB.jar"/>
 			<include name="libreria-formateadoresCAIB.jar"/>
