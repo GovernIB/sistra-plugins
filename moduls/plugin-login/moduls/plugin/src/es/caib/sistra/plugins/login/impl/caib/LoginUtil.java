@@ -16,6 +16,8 @@ public class LoginUtil {
 	private static String cookieAuth = null;
 
 	private static String urlSistra = null;
+	
+	private static String contextoRaizSistra = null;
 
 	/**
 	 * Obtiene nombre cookie auth
@@ -62,6 +64,23 @@ public class LoginUtil {
 		}
 	}
 
+	/**
+	 * Obtiene url donde esta sistra
+	 */
+	public static String getContextoRaizSistra(){
+		if (contextoRaizSistra == null) {
+			try{
+				Properties propsConfig = ConfigurationUtil.getInstance().obtenerPropiedades();
+				contextoRaizSistra = propsConfig.getProperty("sistra.contextoRaiz.front");
+				if (contextoRaizSistra == null) contextoRaizSistra = "";
+			}catch(Exception ex){
+				log.error("Error obteniendo propiedad 'sistra.contextoRaiz.front'",ex);
+				contextoRaizSistra = null;
+			}
+		}
+		return contextoRaizSistra;
+	}
+	
 
 	/**
 	 * Obtiene url donde esta sistra
@@ -70,7 +89,7 @@ public class LoginUtil {
 		if (urlSistra == null) {
 			try{
 				Properties propsConfig = ConfigurationUtil.getInstance().obtenerPropiedades();
-				urlSistra = propsConfig.getProperty("sistra.url") + propsConfig.getProperty("sistra.contextoRaiz.front");
+				urlSistra = propsConfig.getProperty("sistra.url");
 			}catch(Exception ex){
 				log.error("Error obteniendo propiedad 'sistra.url'",ex);
 				urlSistra = null;
