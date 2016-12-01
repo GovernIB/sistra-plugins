@@ -108,8 +108,8 @@
 	<classpathentry kind="lib" path="lib/cxf/XmlSchema-1.4.5.jar"/>
 	<classpathentry kind="lib" path="lib/cxf/xmlsec-1.4.3.jar"/>
 	<classpathentry kind="lib" path="lib/sistra/sistra-utilWs.jar"/>
-	<classpathentry kind="lib" path="lib/regweb3/dir3caib-ws-api-1.0.0.jar"/>
-	<classpathentry kind="lib" path="lib/regweb3/regweb3-ws-api-3.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/regweb3/dir3caib-ws-api-1.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/regweb3/regweb3-ws-api-3.0.7.jar"/>
 	<classpathentry kind="lib" path="lib/tpv/org.json.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
