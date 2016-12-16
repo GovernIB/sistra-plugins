@@ -39,6 +39,9 @@ public class ModeloPagos implements Serializable
 	private Date fechaMaximaPago;  
 	private String mensajeTiempoMaximoPago;
 	
+	private Date fechaInicioTramite;
+	private String idProcedimiento;
+	
 	public ModeloPagos() {}
 	
 	/*
@@ -96,6 +99,8 @@ public class ModeloPagos implements Serializable
 		this.fechaInicioSesion = sesionCAIB.getFechaInicioSesion();
 		this.fechaMaximaPago = sesionCAIB.getDatosPago().getFechaMaximaPago();
 		this.mensajeTiempoMaximoPago = sesionCAIB.getDatosPago().getMensajeTiempoMaximoPago();
+		this.fechaInicioTramite = sesionCAIB.getDatosPago().getFechaInicioTramite();
+		this.idProcedimiento = sesionCAIB.getDatosPago().getIdProcedimiento();
 	}
 
 	public ModeloPagos(SesionPagoCAIB sesionCAIB, TokenAccesoCAIB tokenCAIB) {
@@ -126,6 +131,8 @@ public class ModeloPagos implements Serializable
 		this.fechaInicioSesion = sesionCAIB.getFechaInicioSesion();
 		this.fechaMaximaPago = sesionCAIB.getDatosPago().getFechaMaximaPago();
 		this.mensajeTiempoMaximoPago = sesionCAIB.getDatosPago().getMensajeTiempoMaximoPago();
+		this.fechaInicioTramite = sesionCAIB.getDatosPago().getFechaInicioTramite();
+		this.idProcedimiento = sesionCAIB.getDatosPago().getIdProcedimiento();
 		
 	}
 	
@@ -159,6 +166,8 @@ public class ModeloPagos implements Serializable
 		sesionCAIB.setFechaInicioSesion(fechaInicioSesion);
 		sesionCAIB.getDatosPago().setFechaMaximaPago(fechaMaximaPago);
 		sesionCAIB.getDatosPago().setMensajeTiempoMaximoPago(mensajeTiempoMaximoPago);
+		sesionCAIB.getDatosPago().setFechaInicioTramite(fechaInicioTramite);
+		sesionCAIB.getDatosPago().setIdProcedimiento(idProcedimiento);
 		return sesionCAIB;
 	}
 	
@@ -382,6 +391,22 @@ public class ModeloPagos implements Serializable
 
 	public void setMensajeTiempoMaximoPago(String mensajeTiempoMaximoPago) {
 		this.mensajeTiempoMaximoPago = mensajeTiempoMaximoPago;
+	}
+
+	public Date getFechaInicioTramite() {
+		return fechaInicioTramite;
+	}
+
+	public void setFechaInicioTramite(Date fechaInicioTramite) {
+		this.fechaInicioTramite = fechaInicioTramite;
+	}
+
+	public String getIdProcedimiento() {
+		return idProcedimiento;
+	}
+
+	public void setIdProcedimiento(String idProcedimiento) {
+		this.idProcedimiento = idProcedimiento;
 	}
 	
 	

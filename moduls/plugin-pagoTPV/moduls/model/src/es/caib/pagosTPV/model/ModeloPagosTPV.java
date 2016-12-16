@@ -49,6 +49,9 @@ public class ModeloPagosTPV implements Serializable
 	private String nifUsuarioSeycon;
 	private String nombreUsuarioSeycon;
 	
+	private Date fechaInicioTramite;
+	private String idProcedimiento;
+	
 	
 	public ModeloPagosTPV() {}
 	
@@ -100,6 +103,9 @@ public class ModeloPagosTPV implements Serializable
 		this.nifUsuarioSeycon = sesionCAIB.getNifUsuarioSeycon();
 		this.nombreUsuarioSeycon = sesionCAIB.getNombreUsuarioSeycon();
 		
+		this.fechaInicioTramite = sesionCAIB.getDatosPago().getFechaInicioTramite();
+		this.idProcedimiento = sesionCAIB.getDatosPago().getIdProcedimiento();
+		
 	}
 	
 	public SesionPagoCAIB getSessionPagoCAIB() {
@@ -140,6 +146,9 @@ public class ModeloPagosTPV implements Serializable
 		sesionCAIB.setUsuarioSeycon(usuarioSeycon);
 		sesionCAIB.setNifUsuarioSeycon(nifUsuarioSeycon);
 		sesionCAIB.setNombreUsuarioSeycon(nombreUsuarioSeycon);
+		
+		sesionCAIB.getDatosPago().setFechaInicioTramite(fechaInicioTramite);
+		sesionCAIB.getDatosPago().setIdProcedimiento(idProcedimiento);
 		
 		return sesionCAIB;
 	}
@@ -457,6 +466,26 @@ public class ModeloPagosTPV implements Serializable
 
 	public void setNombreUsuarioSeycon(String nombreUsuarioSeycon) {
 		this.nombreUsuarioSeycon = nombreUsuarioSeycon;
+	}
+
+
+	public Date getFechaInicioTramite() {
+		return fechaInicioTramite;
+	}
+
+
+	public void setFechaInicioTramite(Date fechaInicioTramite) {
+		this.fechaInicioTramite = fechaInicioTramite;
+	}
+
+
+	public String getIdProcedimiento() {
+		return idProcedimiento;
+	}
+
+
+	public void setIdProcedimiento(String idProcedimiento) {
+		this.idProcedimiento = idProcedimiento;
 	}
 	
 }

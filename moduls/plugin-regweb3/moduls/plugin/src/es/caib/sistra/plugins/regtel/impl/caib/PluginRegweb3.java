@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -203,6 +204,9 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 				ServicioDestinatario sd = new ServicioDestinatario();
 				sd.setCodigo(u.getCodigo());
 				sd.setDescripcion(u.getDenominacion());
+				if (StringUtils.isNotBlank(u.getCodUnidadSuperior())) {
+					sd.setCodigoPadre(u.getCodUnidadSuperior());
+				}
 				resultado.add(sd);
 			}			
 		} catch (Exception ex) {
