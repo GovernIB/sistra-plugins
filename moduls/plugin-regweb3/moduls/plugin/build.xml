@@ -7,6 +7,7 @@
 	<property name="distribucion.dir" value="${home.dir}/output/moduls"/>
 		
     <property file="${basedir}/build.properties"/>
+	<property file="${home.dir}/config.properties"/>
 	
     <property name="modul" value="plugin-regweb3"/>
     <property name="package" value="es.caib.sistra.plugins.regweb3.impl.caib"/>
@@ -24,7 +25,7 @@
     <property name="jar.product" location="${output.dir}/moduls"/>
 
     <path id="jar.class.path">
-    	<fileset dir="${lib.dir}/regweb3">
+    	<fileset dir="${lib.dir}/regweb3/${regweb3.version}">
             <include name="*.jar"/>            
    		</fileset>	
     	<fileset dir="${lib.dir}/sistra">

@@ -35,6 +35,7 @@
 	
 <target name="replacePluginRegweb"  if="isOtherVersion">
 	<copy file="${libregweb}/plugin-regweb3_${regweb3.version}.jar" tofile="${output.dir}/moduls/plugin-regweb3.jar"/>
+	<copy file="${libregweb}/plugin-regweb3_${regweb3.version}.jar" tofile="${output.dir}/moduls/plugin-regweb3.jar"/>
 	<echo message="Se sustituye plugin Regweb por la version ${regweb3.version}"/>
 </target>
 
@@ -109,6 +110,8 @@
 		</zipfileset>
 		<zipfileset dir="${lib}/regweblib" prefix="lib">
 			<include name="logic-1.0.5-client.jar"/>
+		</zipfileset>
+		<zipfileset dir="${lib}/regweb3/${regweb3.version}" prefix="lib">
 		</zipfileset>
 		<zipfileset dir="${lib}/tpv" prefix="lib">
 			<include name="org.json.jar"/>
