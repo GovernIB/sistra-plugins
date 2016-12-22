@@ -41,6 +41,8 @@ public class DatosPagoController extends BaseController
 		pagoEntidades.put("SN", (entidad3 == null || entidad3.equals("true"))?"SN":"DS");
 		pagoEntidades.put("BB", (entidad4 == null || entidad4.equals("true"))?"BB":"DS");
 		
+		//URL de consulta de entidades colaboradoras para pago presencial
+		String entidadesPresencial = delegateF.obtenerPropiedad("pago.urlEntidades");
 			
 		// Importe (convertimos de cents)
 		double impDec = Double.parseDouble(datosPago.getImporte()) / 100 ;	
@@ -79,6 +81,7 @@ public class DatosPagoController extends BaseController
 	    request.setAttribute("presencialPermitido",presencialPermitido);
 	    request.setAttribute("telematicoPermitido",telematicoPermitido);
 	    request.setAttribute("pagoEntidades", pagoEntidades);
+	    request.setAttribute("urlEntidadesPresencial", entidadesPresencial);
 
 	}
 

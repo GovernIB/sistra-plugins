@@ -87,7 +87,8 @@
 
 </logic:equal>
 <!-- /banca electronica -->
-	
+
+<bean:define id="urlEntidadesPresencial" name="urlEntidadesPresencial" type="java.lang.String"/>
 <!-- forma presencial -->
 <logic:equal name="presencialPermitido" value="true">
 	<logic:equal name="telematicoPermitido" value="true">
@@ -99,7 +100,7 @@
 	<h3><a class="destacat"><bean:message key="pago.instrucciones.presenciales" /></a></h3>
 	<div class="instrucciones">
 		<p><bean:message key="pago.presencial.instruccion1" /></p>
-		<p><bean:message key="pago.presencial.instruccion3" /></p>
+		<p><bean:message key="pago.presencial.instruccion3" arg0="<%=urlEntidadesPresencial%>"/></p>
 		<p><bean:message key="pago.presencial.instruccion4" /></p>
 	</div>
 	<div style="align:center">
