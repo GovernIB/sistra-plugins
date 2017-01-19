@@ -43,6 +43,9 @@
 	<property name="fechaInicioSesion"  column="PAG_FECINI"/>     
 	<property name="fechaMaximaPago"  column="PAG_FECMAX"/> 
 	<property name="mensajeTiempoMaximoPago"  column="PAG_MSGMAX"/>
+	
+	<property name="fechaInicioTramite"  column="PAG_FCINTR" not-null="false"/>
+	<property name="idProcedimiento"  column="PAG_IDPROC" not-null="false"/>
 	   
 </class>
 </hibernate-mapping>

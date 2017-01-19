@@ -328,6 +328,8 @@ function ocultarAyudaAdmin() {
 
 // Abre pantalla de ayuda
 function mostrarAyudaAdmin() {
+	var capaI = document.getElementById('contactoAdministradorContent');	
+	capaI.innerHTML = "";
 	muestraCapa('contactoAdministrador');
 }
 
@@ -510,7 +512,7 @@ function checkVersionNavegador(errorIE,errorFirefox){
 	}
 	
 	if (browser != "") {
-		//obtenemos el substring donde empieza la versión
+		//obtenemos el substring donde empieza la versiï¿½n
 		aux = detect.substring(place + thestring.length);
 		//buscamos donde esta el separador decimal
 		posDecimal = aux.indexOf('.');
@@ -540,4 +542,11 @@ function checkVersionNavegador(errorIE,errorFirefox){
 
 function mostrarMensajeAlerta(mensajeAlerta) {
 	alert(mensajeAlerta);
+}
+
+function mostrarFormularioIncidencias(url) {
+	var capaI = document.getElementById('contactoAdministradorContent');	
+	capaI.innerHTML = 
+		'<iframe src="' + url + '" style="border: 0pt none; width: 500px; height: 370px;" scrolling="no"></iframe>';
+	muestraCapa('contactoAdministrador');	
 }

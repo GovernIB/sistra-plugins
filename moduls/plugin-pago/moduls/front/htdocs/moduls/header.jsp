@@ -7,6 +7,19 @@
 		<bean:write name="<%=es.caib.pagos.front.Constants.ORGANISMO_URL%>"/>
 	</bean:define>
 	<bean:define id="urlMantenimientoSistra" value="<%=((java.lang.String) session.getAttribute(es.caib.pagos.front.Constants.URL_MANTENIMIENTO_SISTRA_KEY))%>" type="java.lang.String"/>
+	
+	<bean:define id="urlFormularioIncidencias">
+		<html:rewrite page="/mostrarFormularioIncidencias.do"/>
+	</bean:define>
+
+	<script type="text/javascript">
+	<!--
+		function formularioIncidencias() {
+			mostrarFormularioIncidencias('<%=urlFormularioIncidencias%>');
+		}
+	-->
+	</script>
+	
 
 	<!-- logo illes balears -->
 	<div id="cap">

@@ -59,11 +59,12 @@
 		<h2><bean:message key="pago.footer.ayuda" /></h2>
 		<p>
 			<bean:message key="pago.footer.contacte.soporteTecnico1"/>
-			<a title="<bean:message key="pago.footer.contacte.soporteTecnico"/>" href="<%=urlSoporteFinal%>" target="_blank">
+			<a title="<bean:message key="pago.footer.contacte.soporteTecnico"/>" href="<%=urlSoporteFinal%>">
 				<bean:message key="pago.footer.contacte.soporteTecnico2"/>
 			</a>
 			<bean:message key="pago.footer.contacte.soporteTecnico3" arg0="<%=telefonoSoporte%>"/>
 		</p>
+		<div id="contactoAdministradorContent"></div>
 		<p align="center">
 			<a id="suportDescartar" title="<bean:message key="pago.footer.descartar"/>" href="javascript:ocultarAyudaAdmin();">
 				<bean:message key="pago.footer.descartar"/>
