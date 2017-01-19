@@ -64,7 +64,6 @@
 			</a>
 			<bean:message key="pago.footer.contacte.soporteTecnico3" arg0="<%=telefonoSoporte%>"/>
 		</p>
-		<div id="contactoAdministradorContent"></div>
 		<p align="center">
 			<a id="suportDescartar" title="<bean:message key="pago.footer.descartar"/>" href="javascript:ocultarAyudaAdmin();">
 				<bean:message key="pago.footer.descartar"/>

@@ -50,8 +50,7 @@
         	<include name="ejb-2_0.jar"/>
         </fileset>
     	<fileset dir="${lib.dir}/sistra">
-    		<include name="sistra-plugins.jar"/> 
-    		<include name="sistra-util.jar"/> 
+    		<include name="sistra-plugins.jar"/>        	
         </fileset>
     	<fileset dir="${web.product}">
             <include name="${projectePagos}-model.jar" />
@@ -159,8 +158,6 @@
             debug="${javac.debug}"
             deprecation="${javac.deprecation}"
             optimize="${javac.optimize}"
-        	source="1.5"
-        	target="1.5"
             >
             <src path="${web.src}"/>
             <src path="${web.gen.src}"/>

@@ -44,8 +44,5 @@
 	<property name="fechaMaximaPago"  column="TPV_FECMAX"/> 
 	<property name="mensajeTiempoMaximoPago"  column="TPV_MSGMAX"/>
 	
-	<property name="fechaInicioTramite"  column="TPV_FCINTR" not-null="false"/>
-	<property name="idProcedimiento"  column="TPV_IDPROC" not-null="false"/>
-	
 </class>
 </hibernate-mapping>
