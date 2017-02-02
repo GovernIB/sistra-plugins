@@ -9,6 +9,7 @@
 
 	<!--  Libs plugins -->
 	<module><java>lib/plugin-regtelCAIB.jar</java></module>
+	<module><java>lib/plugin-regweb3.jar</java></module>
     <module><java>lib/plugin-smsBIT.jar</java></module>
     <module><java>lib/plugin-emailCAIB.jar</java></module>
    	<module><java>lib/plugin-loginCAIB.jar</java></module>
@@ -80,5 +81,9 @@
 
      <!-- TPV: JSON -->
     <module><java>lib/org.json.jar</java></module>
+    
+    <!-- REGWEB3 CAIB -->
+	<module><java>lib/regweb3-ws-api-3.0.7.jar</java></module>
+	<module><java>lib/dir3caib-ws-api-1.0.4.jar</java></module>
 
 </application>
