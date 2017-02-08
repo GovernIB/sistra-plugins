@@ -451,19 +451,22 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         anexoAsiento.setTipoDocumento(tipoDocumento);     
         anexoAsiento.setOrigenCiudadanoAdmin(origenDocumento);
         
-        // Solo se puede anexar 1 firma
-        if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
-        	if (tipoDocumento.equals(ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO)){
-        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA_COMPULSADA;
-        	}
-        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_DETACHED);
-        	FirmaIntf firma = docRDS.getFirmas()[0];
-        	byte[] contentFirma = firma.getContenidoFirma();
-        	anexoAsiento.setFirmaAnexada(contentFirma);        	
-        	anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
-        	anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));  
-        } else {
-        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
+        // La firma no se anexa para los formateados
+        if (!formatearDocumento) {
+	        // Solo se puede anexar 1 firma
+	        if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
+	        	if (tipoDocumento.equals(ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO)){
+	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA_COMPULSADA;
+	        	}
+	        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_DETACHED);
+	        	FirmaIntf firma = docRDS.getFirmas()[0];
+	        	byte[] contentFirma = firma.getContenidoFirma();
+	        	anexoAsiento.setFirmaAnexada(contentFirma);        	
+	        	anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
+	        	anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));  
+	        } else {
+	        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
+	        }
         }
         
         anexoAsiento.setValidezDocumento(validezDocumento);
