@@ -8,6 +8,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.pagos.persistence.util.Configuracion;
+import es.caib.pagos.model.OrganismoInfo;
 
 /**
  * EJB que sirve para obtener la configuracion del modulo
@@ -45,5 +46,22 @@ public abstract class ConfiguracionFacadeEJB extends HibernateEJB  {
     	}         
     }
  	
+    
+    /**
+   	 * 
+   	 * Obtiene las propiedades de configuracion referentes al organismo y las empaqueta en 
+   	 * una clase de modelo
+   	 * 
+        * @ejb.interface-method
+        * @ejb.permission unchecked = "true"
+        */
+       public OrganismoInfo obtenerOrganismoInfo() {
+       	try{
+       		OrganismoInfo oi = Configuracion.getInstance().obtenerOrganismoInfo();
+       		return oi;
+       	}catch(Exception ex){
+       		throw new EJBException(ex);
+       	}         
+       }
 
 }

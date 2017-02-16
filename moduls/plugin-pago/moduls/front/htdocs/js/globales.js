@@ -335,6 +335,7 @@ function ocultarAyudaAdmin() {
 
 // Abre pantalla de ayuda
 function mostrarAyudaAdmin() {
+	mostrarCapa('contactoAdministradorSoporte', true);
 	var capaI = document.getElementById('contactoAdministradorContent');	
 	capaI.innerHTML = "";
 	mostrarContacto();
@@ -547,7 +548,17 @@ function mostrarMensajeAlerta(mensajeAlerta) {
 	alert(mensajeAlerta);
 }
 
+function mostrarCapa(capa, mostrar) {
+	var capaU = document.getElementById(capa);
+	if (mostrar) {
+		capaU.style.display = 'block';
+	} else {
+		capaU.style.display = 'none';
+	}
+}
+
 function mostrarFormularioIncidencias(url) {
+	mostrarCapa('contactoAdministradorSoporte', false);
 	var capaI = document.getElementById('contactoAdministradorContent');	
 	capaI.innerHTML = 
 		'<iframe src="' + url + '" style="border: 0pt none; width: 500px; height: 370px;" scrolling="no"></iframe>';

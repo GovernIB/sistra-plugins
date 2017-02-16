@@ -4,7 +4,7 @@
 
 	<bean:define id="lang" value="<%=((java.util.Locale) session.getAttribute(org.apache.struts.Globals.LOCALE_KEY)).getLanguage()%>" type="java.lang.String"/>
 	<bean:define id="urlPortal">
-		<bean:write name="<%=es.caib.pagos.front.Constants.ORGANISMO_URL%>"/>
+		<bean:write name="<%=es.caib.pagos.front.Constants.ORGANISMO_INFO_KEY%>" property="urlPortal" />		
 	</bean:define>
 	<bean:define id="urlMantenimientoSistra" value="<%=((java.lang.String) session.getAttribute(es.caib.pagos.front.Constants.URL_MANTENIMIENTO_SISTRA_KEY))%>" type="java.lang.String"/>
 	
@@ -24,7 +24,9 @@
 	<!-- logo illes balears -->
 	<div id="cap">
 		<html:link href="<%=urlPortal%>" paramId="lang" paramName="lang" accesskey="0" >
-			<img id="logoCAIB" class="logo" src="<bean:write name="<%=es.caib.pagos.front.Constants.ORGANISMO_LOGO%>"/>" alt="<bean:write name="<%=es.caib.pagos.front.Constants.ORGANISMO_NAME%>"/>" />
+			<img id="logoCAIB" class="logo" 
+				src="<bean:write name="<%=es.caib.pagos.front.Constants.ORGANISMO_INFO_KEY%>" property="urlLogo" />"
+				alt="<bean:write name="<%=es.caib.pagos.front.Constants.ORGANISMO_INFO_KEY%>" property="nombre" />" />
 		</html:link>
 	</div>
 	<!-- /logo illes balears -->

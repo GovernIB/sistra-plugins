@@ -13,8 +13,12 @@ import org.apache.struts.tiles.ComponentContext;
 import org.apache.struts.tiles.Controller;
 import org.apache.struts.util.MessageResources;
 
+import es.caib.pagos.front.Constants;
+import es.caib.pagos.front.util.LangUtil;
 import es.caib.pagos.front.util.PagosFrontRequestHelper;
+import es.caib.pagos.model.OrganismoInfo;
 import es.caib.pagos.persistence.delegate.SesionPagoDelegate;
+import es.caib.util.ContactoUtil;
 
 /**
  * Controller con métodos de utilidad.
@@ -31,6 +35,30 @@ public abstract class BaseController implements Controller {
         } catch (Exception e) {
             throw new ServletException(e);
         }
+    	
+    	// Obtenemos info organismo
+    	OrganismoInfo info = (OrganismoInfo) request.getSession().getServletContext().getAttribute(Constants.ORGANISMO_INFO_KEY);
+    	
+    	// Generamos literal de contacto
+		OrganismoInfo oi = (OrganismoInfo) servletContext.getAttribute(Constants.ORGANISMO_INFO_KEY);
+		
+		String lang = LangUtil.getLang(request);
+		String telefono = oi.getTelefonoIncidencias();
+		String email = oi.getEmailSoporteIncidencias();
+		String url = oi.getUrlSoporteIncidencias();
+		String asunto = (java.lang.String) request.getSession().getAttribute(es.caib.pagos.front.Constants.DATOS_SESION_NOMBRE_TRAMITE_KEY);
+		
+		String literalContacto;
+		try {
+			literalContacto = ContactoUtil.generarLiteralContacto(telefono, email, url,
+				asunto, lang);
+		} catch (Exception e) {
+		       throw new ServletException(e);	    
+		}
+		
+		request.setAttribute("literalContacto", literalContacto);
+    	
+    	
     }
 
     abstract public void execute(ComponentContext tileContext,

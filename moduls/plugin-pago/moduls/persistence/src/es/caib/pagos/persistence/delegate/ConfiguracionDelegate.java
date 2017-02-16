@@ -7,6 +7,8 @@ import javax.naming.NamingException;
 
 import es.caib.pagos.persistence.intf.ConfiguracionFacadeLocal;
 import es.caib.pagos.persistence.util.ConfiguracionFacadeUtil;
+import es.caib.pagos.model.OrganismoInfo;
+
 
 public class ConfiguracionDelegate implements StatelessDelegate {
 
@@ -18,6 +20,16 @@ public class ConfiguracionDelegate implements StatelessDelegate {
 		try
 		{			
 			return getFacade().obtenerPropiedad(propiedad);				
+		} catch (Exception e) {
+	        throw new DelegateException(e);
+	    }	 	 
+	 }
+	
+	public OrganismoInfo obtenerOrganismoInfo() throws DelegateException
+	{
+		try
+		{			
+			return getFacade().obtenerOrganismoInfo();				
 		} catch (Exception e) {
 	        throw new DelegateException(e);
 	    }	 	 
