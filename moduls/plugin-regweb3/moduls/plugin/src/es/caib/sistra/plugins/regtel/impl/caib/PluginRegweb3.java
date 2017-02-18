@@ -55,11 +55,14 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
 		
+		// Obtiene entidad
+		String entidad =  UtilsRegweb3.obtenerEntidadAsiento(asiento);
+		
 		// Mapea parametros ws
-		RegistroEntradaWs paramEntrada = (RegistroEntradaWs) mapearParametrosRegistro(asiento, refAsiento, refAnexos);
+		RegistroEntradaWs paramEntrada = (RegistroEntradaWs) mapearParametrosRegistro(entidad, asiento, refAsiento, refAnexos);
 		
 		// Invoca a Regweb3
-		RegWebRegistroEntradaWs service = UtilsRegweb3.getRegistroEntradaService();
+		RegWebRegistroEntradaWs service = UtilsRegweb3.getRegistroEntradaService(entidad);
 		IdentificadorWs result = service.altaRegistroEntrada(paramEntrada);
 		
 		// Devuelve resultado registro
@@ -68,6 +71,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
 		return resReg;			
 	}
+
+	
 	
 	/** {@inheritDoc} */   
 	public ResultadoRegistro registroSalida(
@@ -75,11 +80,14 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
 		
+		// Obtiene entidad
+		String entidad = UtilsRegweb3.obtenerEntidadAsiento(asiento);
+		
 		// Mapea parametros ws		
-		RegistroSalidaWs paramEntrada = (RegistroSalidaWs) mapearParametrosRegistro(asiento, refAsiento, refAnexos);
+		RegistroSalidaWs paramEntrada = (RegistroSalidaWs) mapearParametrosRegistro(entidad, asiento, refAsiento, refAnexos);
 		
 		// Invoca a Regweb3
-		RegWebRegistroSalidaWs service = UtilsRegweb3.getRegistroSalidaService();
+		RegWebRegistroSalidaWs service = UtilsRegweb3.getRegistroSalidaService(entidad);
 		IdentificadorWs result = service.altaRegistroSalida(paramEntrada);
 		
 		// Devuelve resultado registro
@@ -92,6 +100,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	/** {@inheritDoc} */   
 	public ResultadoRegistro confirmarPreregistro(
 			String usuario,
+			String entidad,
 			String oficina,
 			String codigoProvincia,
 			String codigoMunicipio,
@@ -101,6 +110,9 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
 		
+		// Verifica entidad
+		verificarEntidad(entidad);
+		
 		// Obtenemos asiento
 		AsientoRegistral asientoRegistral = justificantePreregistro.getAsientoRegistral();
 
@@ -108,13 +120,13 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		asientoRegistral.getDatosOrigen().setCodigoEntidadRegistralOrigen(oficina);
 		
 		// Mapea parametros ws
-		RegistroEntradaWs paramEntrada = (RegistroEntradaWs) mapearParametrosRegistro(asientoRegistral, refAsiento, refAnexos);
+		RegistroEntradaWs paramEntrada = (RegistroEntradaWs) mapearParametrosRegistro(entidad, asientoRegistral, refAsiento, refAnexos);
 		
 		// Establecemos como usuario que realiza el registro al usuario conectado
 		paramEntrada.setCodigoUsuario(usuario);
 		
 		// Invoca a Regweb3
-		RegWebRegistroEntradaWs service = UtilsRegweb3.getRegistroEntradaService();
+		RegWebRegistroEntradaWs service = UtilsRegweb3.getRegistroEntradaService(entidad);
 		IdentificadorWs result = service.altaRegistroEntrada(paramEntrada);
 		
 		// Devuelve resultado registro
@@ -127,15 +139,18 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	}
 
 	/** {@inheritDoc} */   
-	public List obtenerOficinasRegistro(char tipoRegistro) {
-		return obtenerOficinasRegistroUsuario(tipoRegistro, null);	
+	public List obtenerOficinasRegistro(String entidad, char tipoRegistro) {
+		return obtenerOficinasRegistroUsuario(entidad,tipoRegistro, null);	
 	}
 
 	/** {@inheritDoc} */   
-	public List obtenerOficinasRegistroUsuario(char tipoRegistro, String usuario) {
+	public List obtenerOficinasRegistroUsuario(String entidad, char tipoRegistro, String usuario) {
 		List resultado = new ArrayList();
 		try {
-			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService();
+			
+			verificarEntidad(entidad);
+			
+			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
 			
 			Long regType = null;
 			if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_ENTRADA) {
@@ -150,9 +165,9 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			List<LibroOficinaWs> resWs = null;
 			
 			if (usuario != null) {
-				resWs = service.obtenerLibrosOficinaUsuario(UtilsRegweb3.getCodigoEntidad(), usuario, regType);
+				resWs = service.obtenerLibrosOficinaUsuario(entidad, usuario, regType);
 			} else {
-				resWs = service.obtenerLibrosOficina(UtilsRegweb3.getCodigoEntidad(), regType);
+				resWs = service.obtenerLibrosOficina(entidad, regType);
 			}
 			
 			for (LibroOficinaWs lo : resWs) {
@@ -176,11 +191,12 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	}
 
 	/** {@inheritDoc} */   
-	public List obtenerTiposAsunto() {
+	public List obtenerTiposAsunto(String entidad) {
 		List resultado = new ArrayList();
 		try {
-			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService();
-			List<TipoAsuntoWs> tiposAsunto = service.listarTipoAsunto(UtilsRegweb3.getCodigoEntidad());
+			verificarEntidad(entidad);
+			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
+			List<TipoAsuntoWs> tiposAsunto = service.listarTipoAsunto(entidad);
 			for (TipoAsuntoWs asuntoR : tiposAsunto) {
 				TipoAsunto asunto = new TipoAsunto();
 				asunto.setCodigo(asuntoR.getCodigo());
@@ -195,16 +211,17 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	}
 
 	/** {@inheritDoc} */   
-	public List obtenerServiciosDestino() {
+	public List obtenerServiciosDestino(String entidad) {
 		List resultado = null;
 		try {
-			List<UnidadTF> res = UtilsRegweb3.getDir3UnidadesService().obtenerArbolUnidadesDestinatarias( UtilsRegweb3.getCodigoEntidad());
+			verificarEntidad(entidad);
+			List<UnidadTF> res = UtilsRegweb3.getDir3UnidadesService().obtenerArbolUnidadesDestinatarias(entidad);
 			resultado = new ArrayList();
 			for (UnidadTF u : res) {
 				ServicioDestinatario sd = new ServicioDestinatario();
 				sd.setCodigo(u.getCodigo());
 				sd.setDescripcion(u.getDenominacion());
-				if (StringUtils.isNotBlank(u.getCodUnidadSuperior()) && !u.getCodUnidadRaiz().equals(u.getCodigo())) {
+				if (StringUtils.isNotBlank(u.getCodUnidadSuperior())) {
 					sd.setCodigoPadre(u.getCodUnidadSuperior());
 				}
 				resultado.add(sd);
@@ -217,22 +234,27 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	}
 	
 	/** {@inheritDoc} */   
-    public void anularRegistroEntrada(String numeroRegistro, Date fechaRegistro) throws Exception {
-    	String user = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario");
-    	UtilsRegweb3.getRegistroEntradaService().anularRegistroEntrada(numeroRegistro, user, UtilsRegweb3.getCodigoEntidad(), true);    	
+    public void anularRegistroEntrada(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
+    	verificarEntidad(entidad);
+    	String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
+    	UtilsRegweb3.getRegistroEntradaService(entidad).anularRegistroEntrada(numeroRegistro, user, entidad, true);    	
 	}
 
     /** {@inheritDoc} */   
-	public void anularRegistroSalida(String numeroRegistro, Date fechaRegistro) throws Exception {
-		String user = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario");
-    	UtilsRegweb3.getRegistroSalidaService().anularRegistroSalida(numeroRegistro, user, UtilsRegweb3.getCodigoEntidad(), true);
+	public void anularRegistroSalida(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
+		verificarEntidad(entidad);
+		String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
+    	UtilsRegweb3.getRegistroSalidaService(entidad).anularRegistroSalida(numeroRegistro, user, entidad, true);
 	}
 
 	/** {@inheritDoc} */   
-	public String obtenerDescripcionSelloOficina(char tipoRegistro, String codigoOficinaAsiento) {
+	public String obtenerDescripcionSelloOficina(char tipoRegistro, String entidad, String codigoOficinaAsiento) {
 		String resultado = "";
 		try {
-			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService();
+			
+			verificarEntidad(entidad);
+			
+			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
 			
 			Long regType = null;
 			if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_ENTRADA) {
@@ -244,7 +266,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			}
 			
 			
-			List<LibroOficinaWs> resWs = service.obtenerLibrosOficina(UtilsRegweb3.getCodigoEntidad(), regType);
+			List<LibroOficinaWs> resWs = service.obtenerLibrosOficina(entidad, regType);
 			
 			boolean enc = false;
 			
@@ -281,7 +303,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	 * @return parametro ws
 	 * @throws Exception
 	 */
-	private RegistroWs mapearParametrosRegistro(
+	private RegistroWs mapearParametrosRegistro(String entidad,
 			AsientoRegistral asiento, ReferenciaRDS refAsiento, Map refAnexos) throws Exception {
 		
 		// Crea parametros segun sea registro entrada o salida
@@ -300,7 +322,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         registroWs.setVersion(UtilsRegweb3.getVersionAplicacion());
         
         // Usuario que registra (por defecto SISTRA, excepto para confirmacion preregistro)
-        registroWs.setCodigoUsuario(UtilsRegweb3.getUsuarioRegistroSistra());
+        String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
+        registroWs.setCodigoUsuario(user);
 		
 		// Datos oficina registro
         String oficinaAsientoRegistral = asiento.getDatosOrigen().getCodigoEntidadRegistralOrigen();
@@ -495,6 +518,15 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			return filename.substring(filename.lastIndexOf(".") + 1);
 		}else{
 			return "";
+		}
+	}
+	
+	/**
+	 * Verifica entidad.
+	 */
+	private void verificarEntidad(String entidad) throws Exception{
+		if (!UtilsRegweb3.verificarEntidad(entidad)) {
+			throw new Exception("Entidad " + entidad + " no soportada");
 		}
 	}
 	

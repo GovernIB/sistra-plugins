@@ -13,6 +13,8 @@ import es.caib.sistra.plugins.regtel.TipoAsunto;
 
 public class Test {
 
+	private static final String entidad = "";
+	
 	/**
 	 * @param args
 	 */
@@ -38,7 +40,7 @@ public class Test {
 	}	
 	
 	private static void testObtenerServiciosDestino(PluginRegweb3 plg) {
-		List oficinas = plg.obtenerServiciosDestino();
+		List oficinas = plg.obtenerServiciosDestino(entidad);
 		for (Iterator it = oficinas.iterator(); it.hasNext();) {
 			ServicioDestinatario of = (ServicioDestinatario) it.next();
 			System.out.println(of.getCodigo() + " - " + of.getDescripcion());
@@ -48,7 +50,7 @@ public class Test {
 	
 
 	private static void testOficinasUsuario(PluginRegweb3 plg, String usuario) {
-		List oficinas = plg.obtenerOficinasRegistroUsuario(ConstantesPluginRegistro.REGISTRO_SALIDA, usuario);
+		List oficinas = plg.obtenerOficinasRegistroUsuario(entidad, ConstantesPluginRegistro.REGISTRO_SALIDA, usuario);
 		
 		for (Iterator it = oficinas.iterator(); it.hasNext();) {
 			OficinaRegistro of = (OficinaRegistro) it.next();
@@ -57,7 +59,7 @@ public class Test {
 	}
 	
 	private static void testOficinas(PluginRegweb3 plg) {
-		List oficinas = plg.obtenerOficinasRegistro(ConstantesPluginRegistro.REGISTRO_ENTRADA);
+		List oficinas = plg.obtenerOficinasRegistro(entidad, ConstantesPluginRegistro.REGISTRO_ENTRADA);
 		
 		for (Iterator it = oficinas.iterator(); it.hasNext();) {
 			OficinaRegistro of = (OficinaRegistro) it.next();
@@ -66,12 +68,12 @@ public class Test {
 	}
 	
 	private static void testObtenerDescripcionSelloOficina(PluginRegweb3 plg) {
-		String descSello = plg.obtenerDescripcionSelloOficina(ConstantesPluginRegistro.REGISTRO_ENTRADA, "ASPI.O00015977");
+		String descSello = plg.obtenerDescripcionSelloOficina(ConstantesPluginRegistro.REGISTRO_ENTRADA, entidad, "ASPI.O00015977");
 		System.out.println("Sello: " + descSello);		
 	}
 	
 	private static void testAsuntos(PluginRegweb3 plg) {
-		List oficinas = plg.obtenerTiposAsunto();
+		List oficinas = plg.obtenerTiposAsunto(entidad);
 		
 		for (Iterator it = oficinas.iterator(); it.hasNext();) {
 			TipoAsunto of = (TipoAsunto) it.next();

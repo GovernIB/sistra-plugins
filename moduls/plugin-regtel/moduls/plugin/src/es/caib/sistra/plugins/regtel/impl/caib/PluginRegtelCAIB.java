@@ -42,6 +42,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 
 	public ResultadoRegistro confirmarPreregistro(
 			String usuario,
+			String entidad,
 			String oficina,
 			String codigoProvincia,
 			String codigoMunicipio,
@@ -53,7 +54,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		return DelegateRegistroWebUtil.getRegistroWebDelegate().confirmarPreregistro(usuario, oficina, codigoProvincia, codigoMunicipio, descripcionMunicipio, justificantePreregistro, refJustificante, refAsiento, refAnexos);
 	}
 
-	public List obtenerOficinasRegistro(char tipoRegistro) {
+	public List obtenerOficinasRegistro(String entidad, char tipoRegistro) {
 		try {
 			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerOficinasRegistro(tipoRegistro);
 		} catch (DelegateException e) {
@@ -62,7 +63,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		}	
 	}
 
-	public List obtenerOficinasRegistroUsuario(char tipoRegistro, String usuario) {
+	public List obtenerOficinasRegistroUsuario(String entidad, char tipoRegistro, String usuario) {
 		try {
 			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerOficinasRegistroUsuario(tipoRegistro, usuario);
 		} catch (DelegateException e) {
@@ -71,7 +72,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		}
 	}
 
-	public List obtenerTiposAsunto() {
+	public List obtenerTiposAsunto(String entidad) {
 		try {
 			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerTiposAsunto();
 		} catch (DelegateException e) {
@@ -80,7 +81,7 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		}		
 	}
 
-	public List obtenerServiciosDestino() {
+	public List obtenerServiciosDestino(String entidad) {
 		try {
 			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerServiciosDestino();
 		} catch (DelegateException e) {
@@ -89,15 +90,15 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		}					
 	}
 	
-    public void anularRegistroEntrada(String numeroRegistro, Date fechaRegistro) throws Exception {
+    public void anularRegistroEntrada(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
     	DelegateRegistroWebUtil.getRegistroWebDelegate().anularRegistroEntrada(numeroRegistro, fechaRegistro);
 	}
 
-	public void anularRegistroSalida(String numeroRegistro, Date fechaRegistro) throws Exception {
+	public void anularRegistroSalida(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
 		DelegateRegistroWebUtil.getRegistroWebDelegate().anularRegistroSalida(numeroRegistro, fechaRegistro);
 	}
 
-	public String obtenerDescripcionSelloOficina(char tipoRegistro, String codigoOficina) {
+	public String obtenerDescripcionSelloOficina(char tipoRegistro, String entidad, String codigoOficina) {
 		try {
 			return DelegateRegistroWebUtil.getRegistroWebDelegate().obtenerDescripcionSelloOficina(tipoRegistro, codigoOficina);
 		} catch (DelegateException e) {

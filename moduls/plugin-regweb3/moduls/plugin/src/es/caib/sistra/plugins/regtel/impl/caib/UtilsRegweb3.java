@@ -2,7 +2,6 @@ package es.caib.sistra.plugins.regtel.impl.caib;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -22,10 +21,8 @@ import es.caib.regweb3.ws.api.v3.RegWebRegistroSalidaWsService;
 import es.caib.sistra.plugins.firma.FirmaIntf;
 import es.caib.util.NifCif;
 import es.caib.util.ws.client.WsClientSistraUtil;
-import es.caib.util.ws.client.WsClientUtil;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.DatosInteresado;
-import es.caib.xml.taxa.modelo.CODIPOSTAL;
 
 
 /**
@@ -43,11 +40,11 @@ public class UtilsRegweb3 {
 	 * @return service registro entrada
 	 * @throws Exception
 	 */
-	public static RegWebRegistroEntradaWs getRegistroEntradaService() throws Exception  {
+	public static RegWebRegistroEntradaWs getRegistroEntradaService(String entidad) throws Exception  {
 	       
 		final String endpoint = ConfiguracionRegweb3.getInstance().getProperty("regweb3.endpoint.entrada");
-		String user = getUsuarioRegistroSistra();
-		String pass = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password");
+		String user = obtenerUsuarioEntidad(entidad);
+		String pass = obtenerPasswordEntidad(entidad);
 
 		// Url WSDL: local o remoto segun haya proxy
 		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebRegistroEntrada");
@@ -65,11 +62,11 @@ public class UtilsRegweb3 {
 	 * @return service registro salida
 	 * @throws Exception
 	 */
-	public static RegWebRegistroSalidaWs getRegistroSalidaService() throws Exception  {
+	public static RegWebRegistroSalidaWs getRegistroSalidaService(String entidad) throws Exception  {
 	       
 		final String endpoint = ConfiguracionRegweb3.getInstance().getProperty("regweb3.endpoint.salida");
-		String user = getUsuarioRegistroSistra();
-		String pass = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password");
+		String user = obtenerUsuarioEntidad(entidad);
+		String pass = obtenerPasswordEntidad(entidad);
 
 		// Url WSDL: local o remoto segun haya proxy
 		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebRegistroSalida");
@@ -87,11 +84,11 @@ public class UtilsRegweb3 {
 	 * @return service registro salida
 	 * @throws Exception
 	 */
-	public static RegWebInfoWs getRegistroInfoService() throws Exception  {
+	public static RegWebInfoWs getRegistroInfoService(String entidad) throws Exception  {
 	       
 		final String endpoint = ConfiguracionRegweb3.getInstance().getProperty("regweb3.endpoint.info");
-		String user = getUsuarioRegistroSistra();
-		String pass = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password");
+		String user = obtenerUsuarioEntidad(entidad);
+		String pass = obtenerPasswordEntidad(entidad);
 
 		// Url WSDL: local o remoto segun haya proxy
 		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebInfo");
@@ -145,12 +142,47 @@ public class UtilsRegweb3 {
 	}
 	
 	/**
-	 * Usuario registro de SISTRA.
-	 * @return Usuario registro de SISTRA.
+	 * Verifica si esta soportada la entidad.
+	 * @param entidad entidad
+	 * @return true si esta soportada la entidad
 	 */
-	public static String getUsuarioRegistroSistra() {
-		String user = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario");
-		return user;
+	public static boolean verificarEntidad(String entidad) {
+		String[] entidades = ConfiguracionRegweb3.getInstance().getProperty("regweb3.entidad").split(";");
+		boolean existe = false;
+		for (String e : entidades) {
+			if (e.equals(entidad)) {
+				existe = true;
+				break;
+			}
+		}
+		return existe;
+	}
+	
+	/**
+	 * Obtiene usuario entidad.	
+	 * @return usuario
+	 */
+	public static String obtenerUsuarioEntidad(String entidad) {
+		String usuario = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario." + entidad);		
+		return usuario;
+	}
+	
+	/**
+	 * Obtiene password entidad.	
+	 * @return password
+	 */
+	public static String obtenerPasswordEntidad(String entidad) {
+		String password = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password." + entidad);		
+		return password;
+	}
+	
+	/**
+	 * Obtiene entidades soportadas.	
+	 * @return entidades soportadas
+	 */
+	public static String[] obtenerEntidades() {
+		String[] entidades = ConfiguracionRegweb3.getInstance().getProperty("regweb3.entidad").split(";");		
+		return entidades;
 	}
 	
 	/**
@@ -167,15 +199,7 @@ public class UtilsRegweb3 {
 	 */
 	public static String getVersionAplicacion() {
 		return ConfiguracionRegweb3.getInstance().getProperty("regweb3.aplicacion.version");
-	}
-	
-	/**
-	 * Obtiene codigo entidad.
-	 * @return codigo entidad
-	 */
-	public static String getCodigoEntidad() {
-		return ConfiguracionRegweb3.getInstance().getProperty("regweb3.entidad");
-	}
+	}		
 	
 	/**
 	 * Obtiene tipo interesado.
@@ -415,6 +439,22 @@ public class UtilsRegweb3 {
 			res = new Long (codIne);
 		}
 		return res;		
+	}
+	
+	public static String obtenerEntidadAsiento(AsientoRegistral asiento)
+			throws Exception {
+		// Entidad: por compatibilidad con versiones anteriores si no existe entidad y el plugin solo soporta una entidad, se coge esa entidad
+		String entidad = asiento.getDatosOrigen().getCodigoEntidad();
+		if ( entidad == null) {
+			String[] entidades = UtilsRegweb3.obtenerEntidades();
+			if (entidades.length > 1) {
+				throw new Exception("No se ha establecido codigo entidad asiento");
+			}
+			entidad = entidades[1];
+		} else {
+			verificarEntidad(entidad);
+		}
+		return entidad;
 	}
 	
 	/**
