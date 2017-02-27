@@ -328,7 +328,7 @@ function ocultarAyudaAdmin() {
 
 // Abre pantalla de ayuda
 function mostrarAyudaAdmin() {
-	mostrarCapa('contactoAdministradorSoporte', true);	
+	mostrarCapaSoporte('contactoAdministradorSoporte', true);	
 	var capaI = document.getElementById('contactoAdministradorContent');	
 	capaI.innerHTML = "";
 	muestraCapa('contactoAdministrador');
@@ -545,7 +545,7 @@ function mostrarMensajeAlerta(mensajeAlerta) {
 	alert(mensajeAlerta);
 }
 
-function mostrarCapa(capa, mostrar) {
+function mostrarCapaSoporte(capa, mostrar) {
 	var capaU = document.getElementById(capa);
 	if (mostrar) {
 		capaU.style.display = 'block';
@@ -555,7 +555,7 @@ function mostrarCapa(capa, mostrar) {
 }
 
 function mostrarFormularioIncidencias(url) {
-	mostrarCapa('contactoAdministradorSoporte', false);	
+	mostrarCapaSoporte('contactoAdministradorSoporte', false);	
 	var capaI = document.getElementById('contactoAdministradorContent');	
 	capaI.innerHTML = 
 		'<iframe src="' + url + '" style="border: 0pt none; width: 500px; height: 370px;" scrolling="no"></iframe>';
