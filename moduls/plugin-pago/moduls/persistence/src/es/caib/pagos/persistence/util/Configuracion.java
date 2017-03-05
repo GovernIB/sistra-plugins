@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.util.Iterator;
 import java.util.Properties;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
@@ -88,6 +89,12 @@ public class Configuracion {
 				organismoInfo.setPieContactoHTML(getProperty("organismo.footer.contacto"));
 				organismoInfo.setTelefonoIncidencias(getProperty("organismo.soporteTecnico.telefono"));
 				organismoInfo.setUrlSoporteIncidencias(getProperty("organismo.soporteTecnico.url"));
+				String formularioIncidencias = getProperty("organismo.soporteTecnico.formulario");
+				if (StringUtils.isNotBlank(formularioIncidencias) && "true".equals(formularioIncidencias)) {
+					organismoInfo.setFormularioIncidencias(true);
+				} else {
+					organismoInfo.setFormularioIncidencias(false);
+				}
 				organismoInfo.setEmailSoporteIncidencias(getProperty("organismo.soporteTecnico.email"));
 				organismoInfo.setUrlCssCustom(getProperty("organismo.cssCustom"));
 				organismoInfo.setUrlLoginCssCustom(getProperty("organismo.cssLoginCustom"));

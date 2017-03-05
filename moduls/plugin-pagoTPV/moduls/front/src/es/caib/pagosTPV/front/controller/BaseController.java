@@ -47,12 +47,13 @@ public abstract class BaseController implements Controller {
 		String telefono = oi.getTelefonoIncidencias();
 		String email = oi.getEmailSoporteIncidencias();
 		String url = oi.getUrlSoporteIncidencias();
+		boolean formularioIncidencias = oi.getFormularioIncidencias();
 		String asunto = (java.lang.String) request.getSession().getAttribute(es.caib.pagosTPV.front.Constants.DATOS_SESION_NOMBRE_TRAMITE_KEY);
 		
 		String literalContacto;
 		try {
 			literalContacto = ContactoUtil.generarLiteralContacto(telefono, email, url,
-				asunto, lang);
+				asunto, formularioIncidencias, lang);
 		} catch (Exception e) {
 		       throw new ServletException(e);	    
 		}
