@@ -475,6 +475,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         anexoAsiento.setOrigenCiudadanoAdmin(origenDocumento);
         
         // La firma no se anexa para los formateados
+        anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
         if (!formatearDocumento) {
 	        // Solo se puede anexar 1 firma
 	        if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
@@ -486,9 +487,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	        	byte[] contentFirma = firma.getContenidoFirma();
 	        	anexoAsiento.setFirmaAnexada(contentFirma);        	
 	        	anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
-	        	anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));  
-	        } else {
-	        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
+	        	anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));  	        	
 	        }
         }
         
