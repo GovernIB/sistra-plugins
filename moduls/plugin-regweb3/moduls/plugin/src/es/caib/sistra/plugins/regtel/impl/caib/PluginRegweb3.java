@@ -221,7 +221,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 				ServicioDestinatario sd = new ServicioDestinatario();
 				sd.setCodigo(u.getCodigo());
 				sd.setDescripcion(u.getDenominacion());
-				if (StringUtils.isNotBlank(u.getCodUnidadSuperior())) {
+				if (StringUtils.isNotBlank(u.getCodUnidadSuperior()) && !u.getCodUnidadRaiz().equals(u.getCodigo())) {
 					sd.setCodigoPadre(u.getCodUnidadSuperior());
 				}
 				resultado.add(sd);
