@@ -13,6 +13,10 @@ public class ModeloPagosTPV implements Serializable
 {
 	private String localizador;
 	private String tipoPago;
+	
+	private String entidad;
+	private String identificadorProcedimiento;
+	
 	private String identificadorTramite;
 	private String modeloTramite;
 	private int versionTramite;	
@@ -71,6 +75,8 @@ public class ModeloPagosTPV implements Serializable
 	private void sesionCaibToModeloPagosTPV(SesionPagoCAIB sesionCAIB) {
 		this.localizador = sesionCAIB.getLocalizador();
 		this.tipoPago =  charToString(sesionCAIB.getDatosPago().getTipoPago());
+		this.entidad = sesionCAIB.getDatosPago().getEntidad();
+		this.identificadorProcedimiento = sesionCAIB.getDatosPago().getIdProcedimiento();
 		this.identificadorTramite = sesionCAIB.getDatosPago().getIdentificadorTramite();
 		this.modeloTramite = sesionCAIB.getDatosPago().getModeloTramite();
 		this.versionTramite = sesionCAIB.getDatosPago().getVersionTramite();
@@ -114,6 +120,8 @@ public class ModeloPagosTPV implements Serializable
 		sesionCAIB.setHistoricoPedidosKO(historicoPedidosKO);
 		sesionCAIB.setDatosPago(new DatosPago());
 		sesionCAIB.getDatosPago().setTipoPago(stringToChar(tipoPago));
+		sesionCAIB.getDatosPago().setEntidad(entidad);
+		sesionCAIB.getDatosPago().setIdProcedimiento(idProcedimiento);
 		sesionCAIB.getDatosPago().setIdentificadorTramite(identificadorTramite);
 		sesionCAIB.getDatosPago().setModeloTramite(modeloTramite);
 		sesionCAIB.getDatosPago().setVersionTramite(versionTramite);
@@ -486,6 +494,26 @@ public class ModeloPagosTPV implements Serializable
 
 	public void setIdProcedimiento(String idProcedimiento) {
 		this.idProcedimiento = idProcedimiento;
+	}
+
+
+	public String getEntidad() {
+		return entidad;
+	}
+
+
+	public void setEntidad(String entidad) {
+		this.entidad = entidad;
+	}
+
+
+	public String getIdentificadorProcedimiento() {
+		return identificadorProcedimiento;
+	}
+
+
+	public void setIdentificadorProcedimiento(String identificadorProcedimiento) {
+		this.identificadorProcedimiento = identificadorProcedimiento;
 	}
 	
 }

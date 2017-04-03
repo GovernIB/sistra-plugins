@@ -17,6 +17,7 @@ import es.caib.pagosTPV.front.Constants;
 import es.caib.pagosTPV.front.util.LangUtil;
 import es.caib.pagosTPV.front.util.PagosFrontRequestHelper;
 import es.caib.pagosTPV.model.OrganismoInfo;
+import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
 import es.caib.pagosTPV.persistence.delegate.SesionPagoDelegate;
 import es.caib.util.ContactoUtil;
 
@@ -38,10 +39,14 @@ public abstract class BaseController implements Controller {
     	
     	
     	// Obtenemos info organismo
-    	OrganismoInfo info = (OrganismoInfo) request.getSession().getServletContext().getAttribute(Constants.ORGANISMO_INFO_KEY);
+    	OrganismoInfo oi;
+		try {
+			oi = getOrganismoInfo(request);
+		} catch (Exception e1) {
+			throw new ServletException(e1);
+		}
     	
     	// Generamos literal de contacto
-		OrganismoInfo oi = (OrganismoInfo) servletContext.getAttribute(Constants.ORGANISMO_INFO_KEY);
 		
 		String lang = LangUtil.getLang(request);
 		String telefono = oi.getTelefonoIncidencias();
@@ -89,4 +94,24 @@ public abstract class BaseController implements Controller {
     	return  PagosFrontRequestHelper.getUrlRetornoSistra(request);
     }
        
+    
+    protected OrganismoInfo getOrganismoInfo(HttpServletRequest request) throws Exception {
+    	
+    	OrganismoInfo oi = null;
+    	
+    	// Obtenemos organismo info sesion
+    	oi = (OrganismoInfo) request.getSession().getAttribute(Constants.ORGANISMO_INFO_KEY);
+    	
+    	// Obtenemos organismo info generico
+    	if (oi == null) {
+    		oi = (OrganismoInfo) request.getSession().getServletContext().getAttribute(Constants.ORGANISMO_INFO_KEY);
+    	}
+    	
+    	if (oi == null) {
+    		oi = DelegateUtil.getConfiguracionDelegate().obtenerOrganismoInfo();
+    	}
+    	
+    	return oi;
+    	
+    }
 }

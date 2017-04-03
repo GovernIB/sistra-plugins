@@ -14,6 +14,10 @@
                                    
 	<property name="identificadorTramite"  column="TPV_IDETRA"/>
 	<property name="tipoPago"  column="TPV_TIPO" not-null="true" length="1"/>
+	
+	<property name="entidad"  column="TPV_ENTIDA"  not-null="true"/>
+	<property name="identificadorProcedimiento"  column="TPV_IDEPRO" />
+	
 	<property name="modeloTramite"  column="TPV_MODTRA"  not-null="true"/>
 	<property name="versionTramite"  column="TPV_VERTRA"  not-null="true"/>                                   
     <property name="nombreTramite"  column="TPV_NOMTRA"  not-null="true" length="200"/>

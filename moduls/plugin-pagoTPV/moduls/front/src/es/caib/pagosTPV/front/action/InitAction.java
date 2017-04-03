@@ -13,6 +13,7 @@ import org.apache.struts.action.ActionMapping;
 
 import es.caib.pagosTPV.front.Constants;
 import es.caib.pagosTPV.front.form.InitForm;
+import es.caib.pagosTPV.model.OrganismoInfo;
 import es.caib.pagosTPV.persistence.delegate.DelegateUtil;
 import es.caib.pagosTPV.persistence.delegate.SesionPagoDelegate;
 import es.caib.sistra.plugins.pagos.ConstantesPago;
@@ -71,6 +72,13 @@ public class InitAction extends BaseAction
 			request.getSession().setAttribute(Constants.DATOS_SESION_IDIOMA_KEY,dp.getIdioma());
 			request.getSession().setAttribute(Constants.DATOS_SESION_NOMBRE_TRAMITE_KEY,dp.getNombreTramite());
 		}
+		
+		// Establecemos info organismo por entidad (en sesion)
+		if (dp != null && dp.getEntidad() != null) {
+			OrganismoInfo oi = DelegateUtil.getConfiguracionDelegate().obtenerOrganismoInfo(dp.getEntidad());
+			request.getSession().setAttribute(Constants.ORGANISMO_INFO_KEY,oi);
+		}
+		
 		// Redirigimos a asistente pago segun estado y tipo del pago
 		EstadoSesionPago ep = dlg.obtenerEstadoSesionPago();
 		switch (ep.getEstado()){

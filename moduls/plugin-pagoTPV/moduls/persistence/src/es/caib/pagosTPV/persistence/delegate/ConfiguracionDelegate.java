@@ -34,6 +34,16 @@ public class ConfiguracionDelegate implements StatelessDelegate {
 	    }	 	 
 	 }
 	
+	public OrganismoInfo obtenerOrganismoInfo(String entidad) throws DelegateException
+	{
+		try
+		{			
+			return getFacade().obtenerOrganismoInfo(entidad);				
+		} catch (Exception e) {
+	        throw new DelegateException(e);
+	    }	 	 
+	 }
+	
     /* ========================================================= */
     /* ======================== REFERENCIA AL FACADE  ========== */
     /* ========================================================= */

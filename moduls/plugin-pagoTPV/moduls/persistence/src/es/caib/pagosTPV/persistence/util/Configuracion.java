@@ -9,6 +9,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.pagosTPV.model.OrganismoInfo;
+import es.caib.util.StringUtil;
 
 public class Configuracion {
 
@@ -157,39 +158,130 @@ public class Configuracion {
 	public OrganismoInfo obtenerOrganismoInfo() throws Exception{
 		// Creamos info para el organismo
 		if (organismoInfo == null){
-				organismoInfo = new  OrganismoInfo();
-				organismoInfo.setNombre(getProperty("organismo.nombre"));
-				organismoInfo.setUrlLogo(getProperty("organismo.logo"));
-				organismoInfo.setUrlLoginLogo(getProperty("organismo.logo.login"));
-				organismoInfo.setUrlPortal(getProperty("organismo.portal.url"));
-				organismoInfo.setPieContactoHTML(getProperty("organismo.footer.contacto"));
-				organismoInfo.setTelefonoIncidencias(getProperty("organismo.soporteTecnico.telefono"));
-				organismoInfo.setUrlSoporteIncidencias(getProperty("organismo.soporteTecnico.url"));
-				String formularioIncidencias = getProperty("organismo.soporteTecnico.formulario");
-				if (StringUtils.isNotBlank(formularioIncidencias) && "true".equals(formularioIncidencias)) {
-					organismoInfo.setFormularioIncidencias(true);
-				} else {
-					organismoInfo.setFormularioIncidencias(false);
-				}
-				organismoInfo.setEmailSoporteIncidencias(getProperty("organismo.soporteTecnico.email"));
-				organismoInfo.setUrlCssCustom(getProperty("organismo.cssCustom"));
-				organismoInfo.setUrlLoginCssCustom(getProperty("organismo.cssLoginCustom"));
-				
-				// Obtenemos titulo y referencia a la zona personal
-	    		for (Iterator it=props.keySet().iterator();it.hasNext();){
-	    			String key = (String) it.next();
-	    			if (key.startsWith("organismo.zonapersonal.titulo.")){
-	    				organismoInfo.getTituloPortal().put(key.substring(key.lastIndexOf(".") +1),props.get(key));
-	    			}
-	    			if (key.startsWith("organismo.zonapersonal.referencia.")){
-	    				organismoInfo.getReferenciaPortal().put(key.substring(key.lastIndexOf(".") +1),props.get(key));
-	    			}
-	    		}	    		
+			organismoInfo = obtenerOrganismoInfoImpl();	    		
 	    }         		
 		return organismoInfo;
 		
 	}
+
+	private OrganismoInfo obtenerOrganismoInfoImpl() {
+		OrganismoInfo oi = new  OrganismoInfo();
+		oi.setNombre(getProperty("organismo.nombre"));
+		oi.setUrlLogo(getProperty("organismo.logo"));
+		oi.setUrlLoginLogo(getProperty("organismo.logo.login"));
+		oi.setUrlPortal(getProperty("organismo.portal.url"));
+		oi.setPieContactoHTML(getProperty("organismo.footer.contacto"));
+		oi.setTelefonoIncidencias(getProperty("organismo.soporteTecnico.telefono"));
+		oi.setUrlSoporteIncidencias(getProperty("organismo.soporteTecnico.url"));
+		String formularioIncidencias = getProperty("organismo.soporteTecnico.formulario");
+		if (StringUtils.isNotBlank(formularioIncidencias) && "true".equals(formularioIncidencias)) {
+			oi.setFormularioIncidencias(true);
+		} else {
+			oi.setFormularioIncidencias(false);
+		}
+		oi.setEmailSoporteIncidencias(getProperty("organismo.soporteTecnico.email"));
+		oi.setUrlCssCustom(getProperty("organismo.cssCustom"));
+		oi.setUrlLoginCssCustom(getProperty("organismo.cssLoginCustom"));
+		
+		// Obtenemos titulo y referencia a la zona personal
+		for (Iterator it=props.keySet().iterator();it.hasNext();){
+			String key = (String) it.next();
+			if (key.startsWith("organismo.zonapersonal.titulo.")){
+				oi.getTituloPortal().put(key.substring(key.lastIndexOf(".") +1),props.get(key));
+			}
+			if (key.startsWith("organismo.zonapersonal.referencia.")){
+				oi.getReferenciaPortal().put(key.substring(key.lastIndexOf(".") +1),props.get(key));
+			}
+		}
+		return oi;
+	}
 	
+	
+
+	/**
+	 * Unifica las propiedades del organismo en un objeto
+	 * @return Propiedades configuracion
+	 * @throws Exception
+	 */
+	public OrganismoInfo obtenerOrganismoInfo(String entidad) throws Exception{
+		
+		// Obtenemos info por defecto
+		OrganismoInfo oi = obtenerOrganismoInfoImpl();
+		
+		// Sobreescribimos info por entidad
+		String valorPropEntidad = null;
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.nombre", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setNombre(valorPropEntidad);
+		}
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.logo", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setUrlLogo(valorPropEntidad);
+		}
+				
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.logo.login", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setUrlLoginLogo(valorPropEntidad);
+		}
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.portal.url", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setUrlPortal(valorPropEntidad);
+		}
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.footer.contacto", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setPieContactoHTML(valorPropEntidad);
+		}
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.soporteTecnico.telefono", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setTelefonoIncidencias(valorPropEntidad);
+		}
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.soporteTecnico.url", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setUrlSoporteIncidencias(valorPropEntidad);
+		}
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.soporteTecnico.formulario", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setFormularioIncidencias(StringUtils.isNotBlank(valorPropEntidad) && "true".equals(valorPropEntidad));
+			oi.setUrlLogo(valorPropEntidad);
+		}
+				
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.soporteTecnico.email", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setEmailSoporteIncidencias(valorPropEntidad);
+		}
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.cssCustom", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setUrlCssCustom(valorPropEntidad);
+		}
+		
+		valorPropEntidad = obtenerPropiedadEntidad("organismo.cssLoginCustom", entidad);
+		if (StringUtils.isNotBlank(valorPropEntidad)) {
+			oi.setUrlLoginCssCustom(valorPropEntidad);
+		}				
+		
+		return oi;
+		
+	}
+	
+	
+	private String obtenerPropiedadEntidad(String nomProp, String entidad) {
+		String res = null;
+		try {
+			String nomPropEntidad = StringUtil.replace(nomProp,  "organismo.", "organismo.entidad." + entidad + ".");
+			res = props.getProperty(nomPropEntidad);					
+		} catch (Exception ex) {
+			log.error("Error estableciendo propiedad entidad " + nomProp + ": " + ex.getMessage(), ex);
+		}
+		return res;
+	}
 	
 		
 }
