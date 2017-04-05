@@ -248,8 +248,7 @@ public class Configuracion {
 		
 		valorPropEntidad = obtenerPropiedadEntidad("organismo.soporteTecnico.formulario", entidad);
 		if (StringUtils.isNotBlank(valorPropEntidad)) {
-			oi.setFormularioIncidencias(StringUtils.isNotBlank(valorPropEntidad) && "true".equals(valorPropEntidad));
-			oi.setUrlLogo(valorPropEntidad);
+			oi.setFormularioIncidencias(StringUtils.isNotBlank(valorPropEntidad) && "true".equals(valorPropEntidad));	
 		}
 				
 		valorPropEntidad = obtenerPropiedadEntidad("organismo.soporteTecnico.email", entidad);
