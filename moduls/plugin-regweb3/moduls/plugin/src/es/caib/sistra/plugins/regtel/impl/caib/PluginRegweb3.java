@@ -467,6 +467,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	        } else {
 	        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
 	        }
+        } else {
+        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
         }
         
         anexoAsiento.setValidezDocumento(validezDocumento);
