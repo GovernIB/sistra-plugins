@@ -489,6 +489,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	        	anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
 	        	anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));  	        	
 	        }
+        }else {
+        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
         }
         
         anexoAsiento.setValidezDocumento(validezDocumento);
