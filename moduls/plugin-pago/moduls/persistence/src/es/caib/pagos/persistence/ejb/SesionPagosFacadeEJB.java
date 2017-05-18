@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Locale;
+import java.security.Principal;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -35,7 +36,9 @@ import es.caib.pagos.model.TokenAccesoCAIB;
 import es.caib.pagos.persistence.util.Configuracion;
 import es.caib.pagos.persistence.util.PasarelaPagos;
 import es.caib.pagos.util.Constants;
+import es.caib.sistra.plugins.PluginFactory;
 import es.caib.sistra.plugins.login.ConstantesLogin;
+import es.caib.sistra.plugins.login.PluginLoginIntf;
 import es.caib.sistra.plugins.pagos.ConstantesPago;
 import es.caib.sistra.plugins.pagos.DatosPago;
 import es.caib.sistra.plugins.pagos.EstadoSesionPago;
@@ -367,7 +370,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			evento.setClave(clave);
 			evento.setIdPersistencia(this.sesionPago.getDatosPago().getIdentificadorTramite());
 			
-			SeyconPrincipal p = (SeyconPrincipal) this.ctx.getCallerPrincipal();
+		/*	SeyconPrincipal p = (SeyconPrincipal) this.ctx.getCallerPrincipal();
 			String nivelAuth=null;
 			if (p.getCredentialType() == SeyconPrincipal.ANONYMOUS_CREDENTIAL){				
 				nivelAuth= Character.toString(ConstantesLogin.LOGIN_ANONIMO);
@@ -381,7 +384,21 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				evento.setUsuarioSeycon(p.getName());
 				evento.setNumeroDocumentoIdentificacion(p.getNif());
 				evento.setNombre(p.getFullName());
-			}						
+			}	*/
+			
+			Principal p = this.ctx.getCallerPrincipal();
+			
+			PluginLoginIntf plgLogin = PluginFactory.getInstance().getPluginLogin();
+			
+			char metodoAuth = plgLogin.getMetodoAutenticacion(p);
+			String nivelAuth = Character.toString(metodoAuth);
+			
+			evento.setNivelAutenticacion(nivelAuth);
+			if (metodoAuth != ConstantesLogin.LOGIN_ANONIMO){
+				evento.setUsuarioSeycon(p.getName());
+				evento.setNumeroDocumentoIdentificacion(plgLogin.getNif(p));
+				evento.setNombre(plgLogin.getNombreCompleto(p));
+			}
 
 			// Auditamos evento			
 			DelegateAUDUtil.getAuditaDelegate().logEvento(evento, false);			
