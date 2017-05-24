@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.xml.ws.soap.SOAPFaultException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +49,11 @@ import es.caib.xml.registro.factoria.impl.Justificante;
 public class PluginRegweb3 implements PluginRegistroIntf {
 
 	private static final Log logger = LogFactory.getLog(PluginRegweb3.class);
+	private static final String ERROR = "Caller unauthorized";
+	
+	private int getMaxReintentos() {
+        return new Integer(Integer.parseInt(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.reintentos"), "0")));
+	}
 	
 	/** {@inheritDoc} */   	
 	public ResultadoRegistro registroEntrada(
@@ -55,13 +61,27 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
 		
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
 		// Mapea parametros ws
 		RegistroEntradaWs paramEntrada = (RegistroEntradaWs) mapearParametrosRegistro(asiento, refAsiento, refAnexos);
-		
+	
+		IdentificadorWs result = new IdentificadorWs();
 		// Invoca a Regweb3
 		RegWebRegistroEntradaWs service = UtilsRegweb3.getRegistroEntradaService();
-		IdentificadorWs result = service.altaRegistroEntrada(paramEntrada);
-		
+		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+			try{
+				result = service.altaRegistroEntrada(paramEntrada);
+			}catch (SOAPFaultException e){
+				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+					logger.debug("Registro de entrada " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+					continue;
+				} else{
+					logger.error("Error realizando registro de entrada: " + e.getMessage(), e);
+				}
+			}
+		}
+	
 		// Devuelve resultado registro
 		ResultadoRegistro resReg = new ResultadoRegistro();
 		resReg.setFechaRegistro(result.getFecha());
@@ -75,12 +95,26 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
 		
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
 		// Mapea parametros ws		
 		RegistroSalidaWs paramEntrada = (RegistroSalidaWs) mapearParametrosRegistro(asiento, refAsiento, refAnexos);
+		IdentificadorWs result = new IdentificadorWs();
 		
 		// Invoca a Regweb3
 		RegWebRegistroSalidaWs service = UtilsRegweb3.getRegistroSalidaService();
-		IdentificadorWs result = service.altaRegistroSalida(paramEntrada);
+		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+			try{
+	            result = service.altaRegistroSalida(paramEntrada);
+			}catch (SOAPFaultException e){
+				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+					logger.debug("Registro de salida " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+		            continue;
+				} else{
+					logger.error("Error realizando registro de salida: " + e.getMessage(), e);
+				}
+			}
+		}
 		
 		// Devuelve resultado registro
 		ResultadoRegistro resReg = new ResultadoRegistro();
@@ -101,6 +135,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			ReferenciaRDS refAsiento,
 			Map refAnexos) throws Exception {
 		
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
 		// Obtenemos asiento
 		AsientoRegistral asientoRegistral = justificantePreregistro.getAsientoRegistral();
 
@@ -113,9 +149,21 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		// Establecemos como usuario que realiza el registro al usuario conectado
 		paramEntrada.setCodigoUsuario(usuario);
 		
+		IdentificadorWs result = new IdentificadorWs();
 		// Invoca a Regweb3
 		RegWebRegistroEntradaWs service = UtilsRegweb3.getRegistroEntradaService();
-		IdentificadorWs result = service.altaRegistroEntrada(paramEntrada);
+		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+			try{
+	            result = service.altaRegistroEntrada(paramEntrada);
+			}catch (SOAPFaultException e){
+				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+					logger.debug("Confirmación de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+		            continue;
+				} else{
+					logger.error("Error realizando confirmación de registro: " + e.getMessage(), e);
+				}
+			}
+		}
 		
 		// Devuelve resultado registro
 		ResultadoRegistro resReg = new ResultadoRegistro();
@@ -134,6 +182,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	/** {@inheritDoc} */   
 	public List obtenerOficinasRegistroUsuario(char tipoRegistro, String usuario) {
 		List resultado = new ArrayList();
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
 		try {
 			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService();
 			
@@ -148,11 +198,20 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			
 			
 			List<LibroOficinaWs> resWs = null;
-			
-			if (usuario != null) {
-				resWs = service.obtenerLibrosOficinaUsuario(UtilsRegweb3.getCodigoEntidad(), usuario, regType);
-			} else {
-				resWs = service.obtenerLibrosOficina(UtilsRegweb3.getCodigoEntidad(), regType);
+						
+			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+				try{
+					if (usuario != null) {
+						resWs = service.obtenerLibrosOficinaUsuario(UtilsRegweb3.getCodigoEntidad(), usuario, regType);
+					} else {
+						resWs = service.obtenerLibrosOficina(UtilsRegweb3.getCodigoEntidad(), regType);
+					}
+				}catch (SOAPFaultException e){
+					if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+						logger.debug("Consulta oficinas de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+			            continue;
+					}
+				}
 			}
 			
 			for (LibroOficinaWs lo : resWs) {
@@ -178,9 +237,21 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	/** {@inheritDoc} */   
 	public List obtenerTiposAsunto() {
 		List resultado = new ArrayList();
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
 		try {
 			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService();
-			List<TipoAsuntoWs> tiposAsunto = service.listarTipoAsunto(UtilsRegweb3.getCodigoEntidad());
+			List<TipoAsuntoWs> tiposAsunto = null;
+			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+				try{
+					tiposAsunto = tiposAsunto = service.listarTipoAsunto(UtilsRegweb3.getCodigoEntidad());
+				}catch (SOAPFaultException e){
+					if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+						logger.debug("Consulta tipos asunto de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+			            continue;
+					}
+				}
+			}
 			for (TipoAsuntoWs asuntoR : tiposAsunto) {
 				TipoAsunto asunto = new TipoAsunto();
 				asunto.setCodigo(asuntoR.getCodigo());
@@ -197,8 +268,20 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	/** {@inheritDoc} */   
 	public List obtenerServiciosDestino() {
 		List resultado = null;
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
 		try {
-			List<UnidadTF> res = UtilsRegweb3.getDir3UnidadesService().obtenerArbolUnidadesDestinatarias( UtilsRegweb3.getCodigoEntidad());
+			List<UnidadTF> res = new ArrayList<UnidadTF>();
+			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+				try{
+		            res = UtilsRegweb3.getDir3UnidadesService().obtenerArbolUnidadesDestinatarias( UtilsRegweb3.getCodigoEntidad());
+				}catch (SOAPFaultException e){
+					if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+						logger.debug("Consulta servicios destino " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+			            continue;
+					}
+				}
+			}
 			resultado = new ArrayList();
 			for (UnidadTF u : res) {
 				ServicioDestinatario sd = new ServicioDestinatario();
@@ -218,18 +301,43 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	
 	/** {@inheritDoc} */   
     public void anularRegistroEntrada(String numeroRegistro, Date fechaRegistro) throws Exception {
-    	String user = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario");
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
+		String user = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario");
     	UtilsRegweb3.getRegistroEntradaService().anularRegistroEntrada(numeroRegistro, user, UtilsRegweb3.getCodigoEntidad(), true);    	
+		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+			try{
+				UtilsRegweb3.getRegistroEntradaService().anularRegistroEntrada(numeroRegistro, user, UtilsRegweb3.getCodigoEntidad(), true); 
+			}catch (SOAPFaultException e){
+				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+					logger.debug("Anulación registro de entrada " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+		            continue;
+				}
+			}
+		}
 	}
 
     /** {@inheritDoc} */   
 	public void anularRegistroSalida(String numeroRegistro, Date fechaRegistro) throws Exception {
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
 		String user = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario");
-    	UtilsRegweb3.getRegistroSalidaService().anularRegistroSalida(numeroRegistro, user, UtilsRegweb3.getCodigoEntidad(), true);
+		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+			try{
+				UtilsRegweb3.getRegistroSalidaService().anularRegistroSalida(numeroRegistro, user, UtilsRegweb3.getCodigoEntidad(), true);
+			}catch (SOAPFaultException e){
+				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+					logger.debug("Anulación registro de salida " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+		            continue;
+				}
+			}
+		}
 	}
 
 	/** {@inheritDoc} */   
 	public String obtenerDescripcionSelloOficina(char tipoRegistro, String codigoOficinaAsiento) {
+		int maxIntentos = getMaxReintentos();
+		String id = "" + System.currentTimeMillis();
 		String resultado = "";
 		try {
 			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService();
@@ -243,9 +351,19 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 				throw new Exception("Tipo registro no soportado: " + tipoRegistro);
 			}
 			
-			
-			List<LibroOficinaWs> resWs = service.obtenerLibrosOficina(UtilsRegweb3.getCodigoEntidad(), regType);
-			
+			List<LibroOficinaWs> resWs = null;
+
+			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+				try{
+					resWs = service.obtenerLibrosOficina(UtilsRegweb3.getCodigoEntidad(), regType);
+				}catch (SOAPFaultException e){
+					if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+						logger.debug("Obtención descripción oficina sello de registro  " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+			            continue;
+					}
+				}
+			}
+						
 			boolean enc = false;
 			
 			for (LibroOficinaWs lo : resWs) {
