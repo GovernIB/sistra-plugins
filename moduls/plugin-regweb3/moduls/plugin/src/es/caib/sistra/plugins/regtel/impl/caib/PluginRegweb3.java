@@ -49,7 +49,7 @@ import es.caib.xml.registro.factoria.impl.Justificante;
 public class PluginRegweb3 implements PluginRegistroIntf {
 
 	private static final Log logger = LogFactory.getLog(PluginRegweb3.class);
-	private static final String ERROR = "Caller unauthorized";
+	private static final String ERROR = "javax.xml.ws.soap.SOAPFaultException: Caller unauthorized";
 	
 	private int getMaxReintentos() {
         return new Integer(Integer.parseInt(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.reintentos"), "0")));
@@ -73,7 +73,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			try{
 				result = service.altaRegistroEntrada(paramEntrada);
 			}catch (SOAPFaultException e){
-				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
 					logger.debug("Registro de entrada " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 					continue;
 				} else{
@@ -107,7 +108,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			try{
 	            result = service.altaRegistroSalida(paramEntrada);
 			}catch (SOAPFaultException e){
-				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
 					logger.debug("Registro de salida " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 		            continue;
 				} else{
@@ -156,7 +158,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			try{
 	            result = service.altaRegistroEntrada(paramEntrada);
 			}catch (SOAPFaultException e){
-				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
 					logger.debug("Confirmación de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 		            continue;
 				} else{
@@ -207,7 +210,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 						resWs = service.obtenerLibrosOficina(UtilsRegweb3.getCodigoEntidad(), regType);
 					}
 				}catch (SOAPFaultException e){
-					if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
 						logger.debug("Consulta oficinas de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 			            continue;
 					}
@@ -246,7 +250,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 				try{
 					tiposAsunto = tiposAsunto = service.listarTipoAsunto(UtilsRegweb3.getCodigoEntidad());
 				}catch (SOAPFaultException e){
-					if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
+					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
 						logger.debug("Consulta tipos asunto de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 			            continue;
 					}
@@ -276,6 +281,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 				try{
 		            res = UtilsRegweb3.getDir3UnidadesService().obtenerArbolUnidadesDestinatarias( UtilsRegweb3.getCodigoEntidad());
 				}catch (SOAPFaultException e){
+					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 					if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
 						logger.debug("Consulta servicios destino " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 			            continue;
@@ -309,6 +315,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			try{
 				UtilsRegweb3.getRegistroEntradaService().anularRegistroEntrada(numeroRegistro, user, UtilsRegweb3.getCodigoEntidad(), true); 
 			}catch (SOAPFaultException e){
+				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
 					logger.debug("Anulación registro de entrada " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 		            continue;
@@ -326,6 +333,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			try{
 				UtilsRegweb3.getRegistroSalidaService().anularRegistroSalida(numeroRegistro, user, UtilsRegweb3.getCodigoEntidad(), true);
 			}catch (SOAPFaultException e){
+				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 				if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
 					logger.debug("Anulación registro de salida " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 		            continue;
@@ -357,6 +365,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 				try{
 					resWs = service.obtenerLibrosOficina(UtilsRegweb3.getCodigoEntidad(), regType);
 				}catch (SOAPFaultException e){
+					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 					if(maxIntentos > 0 && e.getCause().toString().contains(ERROR)){
 						logger.debug("Obtención descripción oficina sello de registro  " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
 			            continue;
