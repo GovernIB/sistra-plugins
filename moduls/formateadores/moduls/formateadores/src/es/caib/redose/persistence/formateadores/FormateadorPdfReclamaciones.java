@@ -1,7 +1,9 @@
 package es.caib.redose.persistence.formateadores;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.util.List;
 
 import es.caib.redose.model.PlantillaIdioma;
@@ -23,6 +25,12 @@ public class FormateadorPdfReclamaciones extends FormateadorPdfFormularios{
 	protected final static String XPATH_ANYO = "/RECLAMACION/NUMERO_RECLAMACION/ANYO";
 	protected final static String XPATH_NUMCOPIAS = "/RECLAMACION/NUMERO_RECLAMACION/NUMERO_COPIAS";
 	protected final static String XPATH_NUMSECUENCIAINICIO = "/RECLAMACION/NUMERO_RECLAMACION/INICIO_SECUENCIA";
+	
+	private final static String PIE_EMPRESA = "Exemplar per a l'empresa reclamada o denunciada / Ejemplar para la empresa reclamada o denunciada";
+	
+	private final static String PIE_ADMINISTRACION = "Exemplar per a l'administraci\u00F3 / Ejemplar para la administraci\u00F3n";
+	
+	private final static String PIE_INTERESADO = "Exemplar per a la persona reclamant o denunciant / Ejemplar para la persona reclamante o denunciante";
 	
 	/**
 	 * Genera PDF a partir Xpath
@@ -51,46 +59,17 @@ public class FormateadorPdfReclamaciones extends FormateadorPdfFormularios{
 		ByteArrayOutputStream bos;
 		byte[] administracion,interesado,empresa;
 		int numIS = 0;
-		ByteArrayInputStream [] iss = new ByteArrayInputStream[3 * numCopias];
+		InputStream [] iss = new ByteArrayInputStream[3 * numCopias];
 		
 		for (int i=0;i<numCopias;i++){
 			
 			// Para cada copia generamos 3 copias: administracion, empresa e interesado y
 			// stampamos el num secuencial
-			ObjectStamp textos [] = new ObjectStamp[2];
-			textos[0] = new TextoStamp();
-			textos[0].setPage(0);
-			textos[0].setX(40);
-			textos[0].setY(20);		
-			textos[0].setRotation(0);		
-			textos[1] = new TextoStamp();
-			textos[1].setPage(1);
-			textos[1].setX(460);
-			textos[1].setY(756);		
-			textos[1].setRotation(0);
-			((TextoStamp) textos[1]).setTexto(anyo + "/" + Long.toString(numSecuenciaInicio + i));
+			String secuencia = anyo + "/" + Long.toString(numSecuenciaInicio + i);
 			
-			
-			// Ejemplar administracion
-			((TextoStamp) textos[0]).setTexto("Exemplar per a l'administració / Ejemplar para la administración");
-			bis = new ByteArrayInputStream(documentoF.getDatosFichero());
-			bos = new ByteArrayOutputStream(sizeBuffer);
-			UtilPDF.stamp(bos,bis,textos);
-			administracion = bos.toByteArray();
-			
-			// Ejemplar empresa
-			((TextoStamp) textos[0]).setTexto("Exemplar per a l'empresa reclamada o denunciada / Ejemplar para la empresa reclamada o denunciada");
-			bis = new ByteArrayInputStream(documentoF.getDatosFichero());
-			bos = new ByteArrayOutputStream(sizeBuffer);
-			UtilPDF.stamp(bos,bis,textos);
-			empresa = bos.toByteArray();
-			
-			// Ejemplar interesado
-			((TextoStamp) textos[0]).setTexto("Exemplar per a la persona reclamant o denunciant / Ejemplar para la persona reclamante o denunciante");
-			bis = new ByteArrayInputStream(documentoF.getDatosFichero());
-			bos = new ByteArrayOutputStream(sizeBuffer);
-			UtilPDF.stamp(bos,bis,textos);
-			interesado = bos.toByteArray();
+			administracion = generarPdfDestinarario(documentoF.getDatosFichero(), plantilla.getIdioma(), PIE_ADMINISTRACION, secuencia);
+			empresa = generarPdfDestinarario(documentoF.getDatosFichero(), plantilla.getIdioma(), PIE_EMPRESA, secuencia);
+			interesado = generarPdfDestinarario(documentoF.getDatosFichero(), plantilla.getIdioma(), PIE_INTERESADO, secuencia);
 			
 			// Creamos input streams
 			iss[numIS] = new ByteArrayInputStream(administracion);
@@ -109,6 +88,32 @@ public class FormateadorPdfReclamaciones extends FormateadorPdfFormularios{
 		// Devolvemos documento
 		documentoF.setDatosFichero(pdfFinal.toByteArray());
 		return documentoF;
+	}
+	
+	private byte[] generarPdfDestinarario(byte[] docPdf, String idioma, String texto, String secuencia)
+			throws Exception {
+		ByteArrayInputStream bis = new ByteArrayInputStream(docPdf);
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(docPdf.length + 2048);
+		ObjectStamp[] stamps = new ObjectStamp[2];
+		TextoStamp textoStamp = new TextoStamp();
+		textoStamp.setTexto(texto);
+		textoStamp.setX(40);
+		textoStamp.setY(20);
+		textoStamp.setRotation(0);
+		stamps[0] = textoStamp;
+		
+		TextoStamp textoStamp2 = new TextoStamp();
+		textoStamp2.setPage(1);
+		textoStamp2.setX(460);
+		textoStamp2.setY(756);
+		textoStamp2.setRotation(0);
+		textoStamp2.setTexto(secuencia);
+		stamps[1] = textoStamp2;
+		
+		UtilPDF.stamp(bos, bis, stamps );
+		
+		byte[] res = bos.toByteArray();
+		return res;
 	}
 
 		
