@@ -12,6 +12,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 
 import es.caib.loginModule.client.SeyconPrincipal;
+import es.caib.signatura.api.SMIMEParser;
 import es.caib.signatura.api.Signature;
 import es.caib.signatura.api.Signer;
 import es.caib.signatura.api.SignerFactory;
@@ -189,6 +190,7 @@ public class UtilFirmaCAIB
 	 */
 	public static String serializaFirmaToString(Signature signatureData) throws Exception
 	{	
+		
 		ByteArrayOutputStream o = new ByteArrayOutputStream();
         ObjectOutputStream oout = new ObjectOutputStream(o);
         oout.writeObject(signatureData);
@@ -205,6 +207,8 @@ public class UtilFirmaCAIB
             buffer.append(toHexChar(value % 16));
         }
         return buffer.toString();
+        
+		
 	}
 	
 	private static char toHexChar(int i)
@@ -270,7 +274,7 @@ public class UtilFirmaCAIB
 		return  o.toByteArray();
 	}
 	
-	public static Signature deserializaFirmaFromBytes( byte[] serialicedSignature ) throws Exception
+	public static Signature deserializaFirmaFromBytes( byte[] serialicedSignature) throws Exception
 	{
 		ByteArrayInputStream is = new ByteArrayInputStream( serialicedSignature );
 		ObjectInputStream ois = new ObjectInputStream(is);
@@ -493,5 +497,19 @@ public class UtilFirmaCAIB
 	{			
 		SeyconPrincipal sp = new SeyconPrincipal(signature.getCert());
 		return sp.getFullName();
+	}
+	
+	
+	public Signature smimeB64UrlSafeToSignature(String b64UrlSafe) throws Exception {
+		Signature result = null;
+		byte[] sign = base64UrlSafeToBytes(b64UrlSafe);
+		
+		ByteArrayInputStream bis = new ByteArrayInputStream(sign);
+		SMIMEParser parser=this.sigTradise.getSMIMEParser(bis);
+		Signature[] signatures = parser.getSignatures();
+		if (signatures != null && signatures.length > 0) {
+			result = signatures[0];
+		}
+		return result;
 	}
 }

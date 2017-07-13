@@ -11,10 +11,23 @@ public class FirmaCAIB implements FirmaIntf{
 
 	private static Log log = LogFactory.getLog(FirmaCAIB.class);
 	
+	public static final String FORMATO_FIRMA_SIGNATURE = "SIGNATURE";
+	public static final String FORMATO_FIRMA_SMIME = "SMIME";
+	
 	/**
 	 * Objeto signature del api de la CAIB
 	 */
 	private Signature signature;
+	
+	/**
+	 * SMIME cuando proviene firma de SMIME.
+	 */
+	private String smime;
+	
+	/**
+	 * Formato firma: SMIME o SIGNATURE.
+	 */
+	private String formatoFirma;
 	
 	/**
 	 * Obtiene el nif del certificado
@@ -45,10 +58,10 @@ public class FirmaCAIB implements FirmaIntf{
 	}
 
 	/**
-	 * Formato firma: no utilizado en CAIB
+	 * Formato firma: SMIME o SIGNATURE.
 	 */
 	public String getFormatoFirma() {
-		return null;
+		return formatoFirma;
 	}
 
 	/**
@@ -78,6 +91,18 @@ public class FirmaCAIB implements FirmaIntf{
 			log.error("Error al obtener contenido firma",e);
 			return null;
 		}
+	}
+
+	public String getSmime() {
+		return smime;
+	}
+
+	public void setSmime(String smime) {
+		this.smime = smime;
+	}
+
+	public void setFormatoFirma(String formatoFirma) {
+		this.formatoFirma = formatoFirma;
 	}
 
 }
