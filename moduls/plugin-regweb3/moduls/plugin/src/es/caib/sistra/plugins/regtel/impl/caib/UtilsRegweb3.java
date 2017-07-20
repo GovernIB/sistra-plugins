@@ -199,7 +199,39 @@ public class UtilsRegweb3 {
 	 */
 	public static String getVersionAplicacion() {
 		return ConfiguracionRegweb3.getInstance().getProperty("regweb3.aplicacion.version");
-	}		
+	}
+	
+	public static Integer getLongMaxDomicilio() {
+		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.domicilio")));
+	}
+	
+	public static Integer getLongMaxCp() {
+		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.codigoPostal")));
+	}
+	
+	public static Integer getLongMaxTelefono() {
+		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.telefono")));
+	}
+	
+	public static Integer getLongMaxEmail() {
+		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.email")));
+	}
+	
+	public static Integer getLongMaxNombre() {
+		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.nombre")));
+	}
+	
+	public static Integer getLongMaxRazonSocial() {
+		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.razonSocial")));
+	}
+	
+	public static Integer getLongMaxApellido1() {
+		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.apellido1")));
+	}
+	
+	public static Integer getLongMaxApellido2() {
+		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.apellido2")));
+	}
 	
 	/**
 	 * Obtiene tipo interesado.
@@ -359,35 +391,47 @@ public class UtilsRegweb3 {
 		}
 		if (interesado.getTipoInteresado().longValue() == Long
 				.parseLong(ConstantesRegweb3.TIPO_INTERESADO_PERSONA_JURIDICA)) {
-			interesado.setRazonSocial(interesadoAsiento
-					.getIdentificacionInteresado());
+			interesado.setRazonSocial((interesadoAsiento.getIdentificacionInteresado() != null)?truncaCampo(interesadoAsiento
+					.getIdentificacionInteresado(),getLongMaxRazonSocial()):interesadoAsiento.getIdentificacionInteresado());
 		} else {
 			if (interesadoAsiento.getIdentificacionInteresadoDesglosada() == null) {
 				throw new Exception(
 						"Se requiere la identificacion del interesado de forma desglosada");
 			}
-			interesado.setNombre(interesadoAsiento
-					.getIdentificacionInteresadoDesglosada().getNombre());
-			interesado.setApellido1(interesadoAsiento
-					.getIdentificacionInteresadoDesglosada().getApellido1());
-			interesado.setApellido2(interesadoAsiento
-					.getIdentificacionInteresadoDesglosada().getApellido2());
+			interesado.setNombre((interesadoAsiento.getIdentificacionInteresadoDesglosada().getNombre() != null)?truncaCampo(interesadoAsiento
+					.getIdentificacionInteresadoDesglosada().getNombre(),getLongMaxNombre()):interesadoAsiento.getIdentificacionInteresadoDesglosada().getNombre());
+			interesado.setApellido1((interesadoAsiento.getIdentificacionInteresadoDesglosada().getApellido1() != null)?truncaCampo(interesadoAsiento
+					.getIdentificacionInteresadoDesglosada().getApellido1(),getLongMaxApellido1()):interesadoAsiento.getIdentificacionInteresadoDesglosada().getApellido1());
+			interesado.setApellido2((interesadoAsiento.getIdentificacionInteresadoDesglosada().getApellido2() != null)?truncaCampo(interesadoAsiento
+					.getIdentificacionInteresadoDesglosada().getApellido2(),getLongMaxApellido2()):interesadoAsiento.getIdentificacionInteresadoDesglosada().getApellido2());
 		}
 		
 		if (interesadoAsiento.getDireccionCodificada() != null) {
 			interesado.setPais(convertirCodigoPaisIsoAlfaToNum(interesadoAsiento.getDireccionCodificada().getPaisOrigen()));
 			interesado.setProvincia(convertirLong(interesadoAsiento.getDireccionCodificada().getCodigoProvincia()));
 			interesado.setLocalidad(convertirCodigoMunicipio(interesadoAsiento.getDireccionCodificada().getCodigoProvincia(), interesadoAsiento.getDireccionCodificada().getCodigoMunicipio()));
-			interesado.setDireccion(interesadoAsiento.getDireccionCodificada().getDomicilio());
-			interesado.setCp(interesadoAsiento.getDireccionCodificada().getCodigoPostal());
-			interesado.setEmail(interesadoAsiento.getDireccionCodificada().getEmail());		
-			interesado.setTelefono(interesadoAsiento.getDireccionCodificada().getTelefono());
+			interesado.setDireccion((interesadoAsiento.getDireccionCodificada().getDomicilio() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getDomicilio(), getLongMaxDomicilio()):interesadoAsiento.getDireccionCodificada().getDomicilio());
+			interesado.setCp((interesadoAsiento.getDireccionCodificada().getCodigoPostal() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getCodigoPostal(), getLongMaxCp()):interesadoAsiento.getDireccionCodificada().getCodigoPostal());
+			interesado.setEmail((interesadoAsiento.getDireccionCodificada().getEmail() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getEmail(), getLongMaxEmail()):interesadoAsiento.getDireccionCodificada().getEmail());		
+			interesado.setTelefono((interesadoAsiento.getDireccionCodificada().getTelefono() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getTelefono(), getLongMaxTelefono()):interesadoAsiento.getDireccionCodificada().getTelefono());
 		}
 		
 		return interesado;
 	}
 	
 	// --------- Funciones auxiliares
+	/**
+	 * Trunca los campos del interesado a los valores máximos del REGWEB3.
+	 * @param campo valor campo
+	 * @param maximaLongitudCampo longitud maxima
+	 * @return campo valor truncado
+	 */
+	private static String truncaCampo(String campo, int maximaLongitudCampo){
+		if (campo.length() > maximaLongitudCampo){
+			campo = campo.substring(0, maximaLongitudCampo);
+		}
+		return campo;
+	}
 	
 	/**
 	 * Configura service.

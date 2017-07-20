@@ -631,7 +631,9 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_DETACHED);
 	        	FirmaIntf firma = docRDS.getFirmas()[0];
 	        	byte[] contentFirma = firma.getContenidoFirma();
-	        	anexoAsiento.setFirmaAnexada(contentFirma);        	
+	        	logger.info("CONTENIDO DE FIRMA DE DOCUMENTO " + docRDS.getNombreFichero() + ": "+ contentFirma);
+	        	anexoAsiento.setFirmaAnexada(contentFirma);
+	        	logger.info("CONTENIDO FIRMA EN OBJETO anexoAsiento EN DOCUMENTO " + docRDS.getNombreFichero() + ": " + anexoAsiento.getFirmaAnexada());
 	        	anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
 	        	anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));  	        	
 	        }
