@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
@@ -16,6 +17,7 @@ import es.caib.signatura.api.SMIMEParser;
 import es.caib.signatura.api.Signature;
 import es.caib.signatura.api.Signer;
 import es.caib.signatura.api.SignerFactory;
+import es.caib.sistra.plugins.firma.FirmaIntf;
 import es.caib.util.FirmaUtil;
 
 /**
@@ -511,5 +513,15 @@ public class UtilFirmaCAIB
 			result = signatures[0];
 		}
 		return result;
+	}
+	
+	public static byte[] parseFirmaToBytes(FirmaIntf firma)	throws Exception {
+		byte[] firmaContent = null;
+		if (FirmaCAIB.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma())) {
+			firmaContent =  ((FirmaCAIB) firma).getSmime().getBytes("UTF-8");
+		} else {
+			firmaContent =  UtilFirmaCAIB.serializaFirmaToBytes(  ((FirmaCAIB) firma).getSignature() );
+		}
+		return firmaContent;
 	}
 }

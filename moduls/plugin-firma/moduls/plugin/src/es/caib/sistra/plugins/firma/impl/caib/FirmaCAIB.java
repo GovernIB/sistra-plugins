@@ -86,7 +86,7 @@ public class FirmaCAIB implements FirmaIntf{
 	 */
 	public byte[] getContenidoFirma() {		
 		try {
-			return UtilFirmaCAIB.serializaFirmaToBytes(signature);
+			return UtilFirmaCAIB.parseFirmaToBytes(this);
 		} catch (Exception e) {
 			log.error("Error al obtener contenido firma",e);
 			return null;

@@ -3,6 +3,7 @@ package es.caib.sistra.plugins.firma.impl.caib;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -127,14 +128,10 @@ public class PluginFirmaCAIB implements PluginFirmaIntf{
 	 * Serializa firma para ser almacenada como un conjunto de bytes
 	 */
 	public byte[] parseFirmaToBytes(FirmaIntf firma)  throws Exception {
-		byte[] firmaContent = null;
-		if (FirmaCAIB.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma())) {
-			firmaContent =  ((FirmaCAIB) firma).getSmime().getBytes("UTF-8");
-		} else {
-			firmaContent =  UtilFirmaCAIB.serializaFirmaToBytes(  ((FirmaCAIB) firma).getSignature() );
-		}
-		return firmaContent;		
+		return UtilFirmaCAIB.parseFirmaToBytes(firma);		
 	}
+
+	
 
 	/**
 	 * Genera fichero con la firma (SMIME)
