@@ -80,6 +80,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 			try{
 	            result = service.altaRegistroEntrada(paramEntrada);
+	            break;
 			}catch (SOAPFaultException e){
 				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
@@ -123,6 +124,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 			try{
 	            result = service.altaRegistroSalida(paramEntrada);
+	            break;
 			}catch (SOAPFaultException e){
 				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
@@ -182,6 +184,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 			try{
 	            result = service.altaRegistroEntrada(paramEntrada);
+	            break;
 			}catch (SOAPFaultException e){
 				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
@@ -237,6 +240,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 					} else {
 						resWs = service.obtenerLibrosOficina(entidad, regType);
 					}
+					break;
 				}catch (SOAPFaultException e){
 					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
@@ -280,6 +284,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 				try{
 					tiposAsunto = service.listarTipoAsunto(entidad);
+					break;
 				}catch (SOAPFaultException e){
 					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
@@ -316,6 +321,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 				try{
 		            res = UtilsRegweb3.getDir3UnidadesService().obtenerArbolUnidadesDestinatarias(entidad);
+		            break;
 				}catch (SOAPFaultException e){
 					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
@@ -350,7 +356,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
     	String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
     	for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 			try{
-				UtilsRegweb3.getRegistroEntradaService(entidad).anularRegistroEntrada(numeroRegistro, user, entidad, true); 
+				UtilsRegweb3.getRegistroEntradaService(entidad).anularRegistroEntrada(numeroRegistro, user, entidad, true);
+				break;
 			}catch (SOAPFaultException e){
 				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
@@ -370,6 +377,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
     	for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 			try{
 		    	UtilsRegweb3.getRegistroSalidaService(entidad).anularRegistroSalida(numeroRegistro, user, entidad, true);
+		    	break;
 			}catch (SOAPFaultException e){
 				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
@@ -406,6 +414,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 				try{
 					resWs = service.obtenerLibrosOficina(entidad, regType);
+					break;
 				}catch (SOAPFaultException e){
 					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
 					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
