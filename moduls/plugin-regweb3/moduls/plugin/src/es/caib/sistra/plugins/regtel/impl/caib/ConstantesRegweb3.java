@@ -25,6 +25,8 @@ public class ConstantesRegweb3 {
 	public final static String TIPO_DOCID_CIF = "C";
 	/** Tipo documento identificacion: NIE. */
 	public final static String TIPO_DOCID_NIE = "E";
+	/** Tipo documento identificacion: Pasaporte. */
+	public final static String TIPO_DOCID_PSP = "P";
 	
 	/** Documetacion fisica: Acompaña documentación física (u otros soportes) requerida.*/
 	public final static String DOC_FISICA_REQUERIDA = "01"; 		
