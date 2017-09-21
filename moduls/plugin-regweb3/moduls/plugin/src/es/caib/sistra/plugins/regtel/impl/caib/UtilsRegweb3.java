@@ -251,6 +251,9 @@ public class UtilsRegweb3 {
 		case 3: // NIE
 			result = ConstantesRegweb3.TIPO_INTERESADO_PERSONA_FISICA;
 			break;
+		case 5: // Pasaporte
+			result = ConstantesRegweb3.TIPO_INTERESADO_PERSONA_FISICA;
+			break;
 		default:
 			result = null;
 			break;
@@ -275,6 +278,9 @@ public class UtilsRegweb3 {
 			break;
 		case 3: // NIE
 			result = ConstantesRegweb3.TIPO_DOCID_NIE;
+			break;
+		case 5: // Pasaporte
+			result = ConstantesRegweb3.TIPO_DOCID_PSP;
 			break;
 		default:
 			result = null;
@@ -381,7 +387,8 @@ public class UtilsRegweb3 {
 					.getTipoInteresado(interesadoAsiento
 							.getNumeroIdentificacion())));
 			interesado
-					.setDocumento(interesadoAsiento.getNumeroIdentificacion());
+					.setDocumento(UtilsRegweb3.normalizaNumDoc(interesadoAsiento
+							.getNumeroIdentificacion()));
 			interesado.setTipoDocumentoIdentificacion(UtilsRegweb3
 					.getTipoDocumentoIdentificacion(interesadoAsiento
 							.getNumeroIdentificacion()));
@@ -578,6 +585,17 @@ public class UtilsRegweb3 {
 			res = new Long(num);
 		}
 		return res;
+	}
+	
+	private static String normalizaNumDoc(String numDoc){
+		String doc = null;
+		int validacion = NifCif.validaDocumento(numDoc);
+		if (validacion == 5){
+			doc = numDoc.substring(4);
+		} else {
+			doc = numDoc;
+		}
+		return doc;
 	}
 	
 }
