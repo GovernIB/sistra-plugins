@@ -88,7 +88,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		
 		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 			try{
-	            result = service.altaRegistroEntrada(paramEntrada);
+	            result = service.nuevoRegistroEntrada(entidad, paramEntrada);
 	            break;
 			}catch (SOAPFaultException e){
 				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
@@ -184,7 +184,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		
 		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 			try{
-	            result = service.altaRegistroSalida(paramEntrada);
+	            result = service.nuevoRegistroSalida(entidad, paramEntrada);
 	            break;
 			}catch (SOAPFaultException e){
 				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
@@ -296,7 +296,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 
 		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 			try{
-	            result = service.altaRegistroEntrada(paramEntrada);
+	            result = service.nuevoRegistroEntrada(entidad,paramEntrada);
 	            break;
 			}catch (SOAPFaultException e){
 				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
