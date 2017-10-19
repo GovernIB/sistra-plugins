@@ -1,5 +1,8 @@
 package es.caib.sistra.plugins.regtel.impl.caib;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -21,6 +24,7 @@ import es.caib.regweb3.ws.api.v3.AnexoWs;
 import es.caib.regweb3.ws.api.v3.DatosInteresadoWs;
 import es.caib.regweb3.ws.api.v3.IdentificadorWs;
 import es.caib.regweb3.ws.api.v3.InteresadoWs;
+import es.caib.regweb3.ws.api.v3.JustificanteWs;
 import es.caib.regweb3.ws.api.v3.LibroOficinaWs;
 import es.caib.regweb3.ws.api.v3.RegWebInfoWs;
 import es.caib.regweb3.ws.api.v3.RegWebRegistroEntradaWs;
@@ -29,6 +33,7 @@ import es.caib.regweb3.ws.api.v3.RegistroEntradaWs;
 import es.caib.regweb3.ws.api.v3.RegistroSalidaWs;
 import es.caib.regweb3.ws.api.v3.RegistroWs;
 import es.caib.regweb3.ws.api.v3.TipoAsuntoWs;
+import es.caib.regweb3.ws.api.v3.WsI18NException;
 import es.caib.sistra.plugins.firma.FirmaIntf;
 import es.caib.sistra.plugins.firma.PluginFirmaIntf;
 import es.caib.sistra.plugins.regtel.ConstantesPluginRegistro;
@@ -55,6 +60,10 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	
 	private int getMaxReintentos() {
         return new Integer(Integer.parseInt(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.reintentos"), "0")));
+	}
+	
+	private String getFechaInicioJustificante() {
+        return new String(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.justificante.fechaInicio"), ""));
 	}
 	
 	/** {@inheritDoc} */   	
@@ -98,7 +107,59 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
 		return resReg;			
 	}
+	
 
+	/** {@inheritDoc} */ 
+	public byte[] obtenerJustificanteRegistroEntrada(String entidad, String numeroRegistro,
+			Date fechaRegistro) throws Exception {
+		
+		byte[] resultado = null;
+		Date fechaInicioFormateada = null;
+				
+		int maxIntentos = getMaxReintentos();
+		String fechaInicio = getFechaInicioJustificante();
+		
+		DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+		
+		if (!StringUtils.isEmpty(fechaInicio)){
+			try {
+				fechaInicioFormateada = formatoFecha.parse(getFechaInicioJustificante());
+			} catch (ParseException e) {
+				logger.error("Error al formatear fecha inicio de justificante de registro: " + e.getMessage(), e);
+			}
+			
+			if (!fechaRegistro.before(fechaInicioFormateada)){
+				// Invoca a Regweb3
+				RegWebRegistroEntradaWs service = UtilsRegweb3.getRegistroEntradaService(entidad);
+				
+				JustificanteWs result = new JustificanteWs();
+						
+				for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+					try{
+						result = service.obtenerJustificante(entidad, numeroRegistro);
+					    break;
+					}catch (SOAPFaultException e){
+						String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+						if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+							logger.debug("Obtención de justificante de registro de entrada " + numeroRegistro + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+					        continue;
+						} else{
+							logger.error("Error obteniendo justificante de registro de entrada: " + e.getMessage(), e);
+						}
+					}catch (WsI18NException ex){
+						logger.error("Error obteniendo justificante de registro de entrada: " + ex.getMessage(), ex);
+						throw new Exception ("S'ha produit un error al descarregar el justificant de registre. Per favor, tornau a provar-ho passats uns minuts.");
+					}
+				}
+				
+				resultado = result.getJustificante();
+			}
+			
+		}
+		
+		
+		return resultado;
+	}
 	
 	
 	/** {@inheritDoc} */   
@@ -142,6 +203,58 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		resReg.setFechaRegistro(result.getFecha());
 		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
 		return resReg;		
+	}
+	
+
+	/** {@inheritDoc} */ 
+	public byte[] obtenerJustificanteRegistroSalida(String entidad, String numeroRegistro,
+			Date fechaRegistro) throws Exception {
+		
+		byte[] resultado = null;
+		Date fechaInicioFormateada = null;
+		
+		int maxIntentos = getMaxReintentos();
+		String fechaInicio = getFechaInicioJustificante();
+		
+		DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+		
+		if (!StringUtils.isEmpty(fechaInicio)){
+			try {
+				fechaInicioFormateada = formatoFecha.parse(getFechaInicioJustificante());
+			} catch (ParseException e) {
+				logger.error("Error al formatear fecha inicio de justificante de registro: " + e.getMessage(), e);
+			}
+			
+			if (!fechaRegistro.before(fechaInicioFormateada)){
+				// Invoca a Regweb3
+				RegWebRegistroSalidaWs service = UtilsRegweb3.getRegistroSalidaService(entidad);
+				
+				JustificanteWs result = new JustificanteWs();
+						
+				for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+					try{
+						result = service.obtenerJustificante(entidad, numeroRegistro);
+					    break;
+					}catch (SOAPFaultException e){
+						String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+						if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+							logger.debug("Obtención de justificante de registro de salida " + numeroRegistro + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+					        continue;
+						} else{
+							logger.error("Error obteniendo justificante de registro de salida: " + e.getMessage(), e);
+						}
+					}catch (WsI18NException ex){
+						logger.error("Error obteniendo justificante de registro de entrada: " + ex.getMessage(), ex);
+						throw new Exception ("S'ha produit un error al descarregar el justificant de registre de sortida. Per favor, tornau a provar-ho passats uns minuts.");
+					}
+				}
+				
+				resultado = result.getJustificante();
+			}
+			
+		}
+				
+		return resultado;
 	}
 
 	/** {@inheritDoc} */   
