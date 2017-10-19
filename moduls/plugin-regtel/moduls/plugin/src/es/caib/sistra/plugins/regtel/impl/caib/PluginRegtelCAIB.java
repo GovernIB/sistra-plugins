@@ -107,4 +107,14 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		}
 	}
 
+	public byte[] obtenerJustificanteRegistroEntrada(String entidad, String numeroRegistro,
+			Date fechaRegistro) throws Exception {
+		return null;
+	}
+
+	public byte[] obtenerJustificanteRegistroSalida(String entidad, String numeroRegistro,
+			Date fechaRegistro) throws Exception {
+		return null;
+	}
+
 }
