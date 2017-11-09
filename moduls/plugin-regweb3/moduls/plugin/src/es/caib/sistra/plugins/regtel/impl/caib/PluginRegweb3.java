@@ -30,6 +30,7 @@ import es.caib.regweb3.ws.api.v3.RegistroSalidaWs;
 import es.caib.regweb3.ws.api.v3.RegistroWs;
 import es.caib.regweb3.ws.api.v3.TipoAsuntoWs;
 import es.caib.sistra.plugins.firma.FirmaIntf;
+import es.caib.sistra.plugins.firma.PluginFirmaIntf;
 import es.caib.sistra.plugins.regtel.ConstantesPluginRegistro;
 import es.caib.sistra.plugins.regtel.OficinaRegistro;
 import es.caib.sistra.plugins.regtel.PluginRegistroIntf;
@@ -512,7 +513,9 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         // Anexos
         if ("true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs"))) {
 	        
-        	boolean anexarInternos = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos"));
+        	boolean anexarInternoAsiento = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.asiento"));
+        	boolean anexarInternoFormulario = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.formulario"));
+        	boolean anexarInternoPago = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.pago"));
         	boolean anexarFormateados = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.formateados"));
         	
         	Integer origenDocumento;
@@ -527,8 +530,8 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			
 	        // - Asiento registral
 	        // 		- Xml de asiento
-			if (anexarInternos) {				
-				AnexoWs anexoAsientoWs = generarAnexoWs(refAsiento, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
+			if (anexarInternoAsiento) {				
+				AnexoWs anexoAsientoWs = generarAnexoWs(refAsiento, false, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
 						tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
 		        registroWs.getAnexos().add(anexoAsientoWs);
 			}
@@ -540,26 +543,41 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	        
 	        // - Ficheros asiento
 	        for (Iterator it = asiento.getDatosAnexoDocumentacion().iterator();it.hasNext();) {
+	        	
 	        	AnexoWs anexoWs = null;
 	        	String tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO;
 	        	String validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA;
+	        	boolean anexarInterno = false;
 	        	
 	        	DatosAnexoDocumentacion da = (DatosAnexoDocumentacion) it.next();
 	        	ReferenciaRDS refRDS = (ReferenciaRDS) refAnexos.get(da.getIdentificadorDocumento());
 	        	
-	        	// Fichero tecnico: datos propios, aviso notificacion, formularios, pagos
+	        	// Fichero asociados asiento 
 	        	if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_DATOS_PROPIOS) ||
 	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_AVISO_NOTIFICACION) || 
-	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_OFICIO_REMISION) || 
-	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO) || 
-	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_PAGO)) {
+	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_OFICIO_REMISION)) {
 	        			tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
 	        			validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
+	        			anexarInterno = anexarInternoAsiento;
 	        	} 
 	        	
-	        	// Generamos anexo ws y añadimos a lista
-	        	if (anexarInternos || tipoDocumento != ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO) {
-	        		anexoWs = generarAnexoWs(refRDS, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
+	        	// Fichero asociado a formulario
+	        	if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO)) {
+	        		tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
+	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
+	        		anexarInterno = anexarInternoFormulario;
+	        	}
+	        	
+	        	// Fichero asociado a pago
+	        	if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_PAGO)) {
+	        		tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
+	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
+	        		anexarInterno = anexarInternoPago;
+	        	}
+	        	
+	        	// Generamos anexo ws y añadimos a lista: si tenemos que anexar fichero interno o no es un fichero interno (anexo)
+	        	if (anexarInterno || tipoDocumento != ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO) {
+	        		anexoWs = generarAnexoWs(refRDS, false, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
 	        		registroWs.getAnexos().add(anexoWs);
 	        	}
 	        	
@@ -604,60 +622,92 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			Integer origenDocumento, String validezDocumento) throws Exception {
 		RdsDelegate rdsDelegate = DelegateRDSUtil.getRdsDelegate();
 		DocumentoRDS docRDS = null;
+		DocumentoRDS docRDSFormateado = null;
 		
-		if (formatearDocumento) {
-			docRDS = rdsDelegate.consultarDocumentoFormateadoRegistro(refRDS);
-		} else {
-			docRDS = rdsDelegate.consultarDocumento(refRDS);
+		docRDS = rdsDelegate.consultarDocumento(refRDS);
+		
+		if (docRDS.isEstructurado() && formatearDocumento) {
+			docRDSFormateado = rdsDelegate.consultarDocumentoFormateadoRegistro(refRDS);			
 		}
+		
 		
 		AnexoWs anexoAsiento = new AnexoWs();
         anexoAsiento.setTitulo(docRDS.getTitulo());
-        anexoAsiento.setNombreFicheroAnexado(docRDS.getNombreFichero());
-        anexoAsiento.setFicheroAnexado(docRDS.getDatosFichero());        
-        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDS.getNombreFichero())));
+        
+        if (docRDSFormateado != null) {
+	        anexoAsiento.setNombreFicheroAnexado(docRDSFormateado.getNombreFichero());
+	        anexoAsiento.setFicheroAnexado(docRDSFormateado.getDatosFichero());        
+	        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDSFormateado.getNombreFichero())));
+        } else {
+        	anexoAsiento.setNombreFicheroAnexado(docRDS.getNombreFichero());
+	        anexoAsiento.setFicheroAnexado(docRDS.getDatosFichero());        
+	        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDS.getNombreFichero())));
+        }
         anexoAsiento.setTipoDocumental(tipoDocumental);
         anexoAsiento.setTipoDocumento(tipoDocumento);     
         anexoAsiento.setOrigenCiudadanoAdmin(origenDocumento);
         
-        // La firma no se anexa para los formateados
-        anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
-        if (!formatearDocumento) {
-	        // Solo se puede anexar 1 firma
-	        if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
+        // Insertamos firma
+        boolean insertarFirma = false;
+        if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
+        	// Si documento no es estructurado
+        	if (!docRDS.isEstructurado()) {
+        		insertarFirma = true;
+        	} 
+        	// Si el documento es estructurado, no hay que formatearlo y no tiene documento formateado consolidado
+        	if (docRDS.isEstructurado() && !formatearDocumento && docRDS.getReferenciaRDSFormateado() == null) {
+        		insertarFirma = true;
+        	} 
+        	// Si el documento es formateado y tiene documento formateado consolidado, la firma es referente al documento formateado
+        	if (docRDS.isEstructurado() && formatearDocumento && docRDS.getReferenciaRDSFormateado() != null) {
+        		insertarFirma = true;
+        	}	        	
+        }
+        
+        
+        // Insertamos firma
+        if (insertarFirma) {
+	    
+        		// Solo se puede anexar 1 firma
+	        	if (docRDS.getFirmas().length > 1) {
+	        		throw new Exception("El documento " + docRDS.getReferenciaRDS().getCodigo() + " tiene más de 1 firma. Solo se puede anexar 1 firma.");
+	        	}
+	        	
 	        	if (tipoDocumento.equals(ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO)){
 	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA_COMPULSADA;
 	        	}
-	        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_DETACHED);
+	        		        	
 	        	FirmaIntf firma = docRDS.getFirmas()[0];
-	        	byte[] contentFirma = firma.getContenidoFirma();
-	        	logger.info("CONTENIDO DE FIRMA DE DOCUMENTO " + docRDS.getNombreFichero() + ": "+ contentFirma);
-	        	anexoAsiento.setFirmaAnexada(contentFirma);
-	        	logger.info("CONTENIDO FIRMA EN OBJETO anexoAsiento EN DOCUMENTO " + docRDS.getNombreFichero() + ": " + anexoAsiento.getFirmaAnexada());
-	        	anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
-	        	anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));  	        	
-	        }
-        }else {
+	        	
+	        	// Tipo firma
+	        	Integer modoFirma = null;
+	        	if (PluginFirmaIntf.FORMATO_FIRMA_CADES_DETACHED.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_CADES_DETACHED.equals(firma.getFormatoFirma()) ) {
+	        		modoFirma = ConstantesRegweb3.MODO_FIRMA_DETACHED;
+	        	} else if (PluginFirmaIntf.FORMATO_FIRMA_PADES.equals(firma.getFormatoFirma())) {
+	        		modoFirma = ConstantesRegweb3.MODO_FIRMA_ATTACHED;
+	        	} else {
+	        		throw new Exception("Formato firma no soportado: " + firma.getFormatoFirma());
+	        	}
+	        	
+	        	anexoAsiento.setModoFirma(modoFirma);
+	        	
+	        	if (modoFirma.equals(ConstantesRegweb3.MODO_FIRMA_ATTACHED)) {
+	        		// Se pasa directamente la firma como datos del fichero
+	        		anexoAsiento.setFicheroAnexado(firma.getContenidoFirma());	        		
+	        	} else {
+	        		anexoAsiento.setFirmaAnexada(firma.getContenidoFirma());
+	        		anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
+	        		anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));
+	        	}
+	        	  	        		        
+        } else {
         	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
         }
         
         anexoAsiento.setValidezDocumento(validezDocumento);
         
-		return anexoAsiento;
-	}
-
-	/**
-	 * Genera AnexoWS en funcion documento REDOSE
-	 * @param refRDS
-	 * @param tipoDocumento
-	 * @param tipoDocumental
-	 * @param origenDocumento
-	 * @return
-	 */
-	private AnexoWs generarAnexoWs(ReferenciaRDS refRDS, String tipoDocumento, String tipoDocumental,
-			Integer origenDocumento, String validezDocumento) throws Exception {
-		return generarAnexoWs(refRDS, false, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
-	}
+    	return anexoAsiento;
+	}	
 	
 	/**
      * Obtiene extension fichero.
@@ -677,6 +727,16 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		if (!UtilsRegweb3.verificarEntidad(entidad)) {
 			throw new Exception("Entidad " + entidad + " no soportada");
 		}
+	}
+
+	public byte[] obtenerJustificanteRegistroEntrada(String arg0, String arg1,
+			Date arg2) throws Exception {
+		return null;
+	}
+
+	public byte[] obtenerJustificanteRegistroSalida(String arg0, String arg1,
+			Date arg2) throws Exception {
+		return null;
 	}
 	
 	

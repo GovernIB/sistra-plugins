@@ -105,4 +105,12 @@ public class FirmaCAIB implements FirmaIntf{
 		this.formatoFirma = formatoFirma;
 	}
 
+	public String getNifRepresentante() {
+		return null;
+	}
+
+	public String getNombreApellidosRepresentante() {
+		return null;
+	}
+
 }

@@ -70,5 +70,21 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 		return nombre;
 		
 	}
+
+	public String getRepresentanteApellido1(Principal arg0) {
+		return null;
+	}
+
+	public String getRepresentanteApellido2(Principal arg0) {
+		return null;
+	}
+
+	public String getRepresentanteNif(Principal arg0) {
+		return null;
+	}
+
+	public String getRepresentanteNombre(Principal arg0) {
+		return null;
+	}
 	
 }

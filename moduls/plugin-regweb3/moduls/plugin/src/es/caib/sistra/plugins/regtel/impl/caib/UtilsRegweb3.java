@@ -349,7 +349,7 @@ public class UtilsRegweb3 {
 				extension = "xades";
 			}
 			if (firma.getFormatoFirma().toLowerCase().indexOf("pades") != -1) {
-				extension = "pades";
+				extension = "pdf";
 			}
 		}
 		return "firma." + extension;
