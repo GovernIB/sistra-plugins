@@ -687,6 +687,16 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			throw new Exception("Entidad " + entidad + " no soportada");
 		}
 	}
+
+	public byte[] obtenerJustificanteRegistroEntrada(String arg0, String arg1,
+			Date arg2) throws Exception {
+		return null;
+	}
+
+	public byte[] obtenerJustificanteRegistroSalida(String arg0, String arg1,
+			Date arg2) throws Exception {
+		return null;
+	}
 	
 	
 
