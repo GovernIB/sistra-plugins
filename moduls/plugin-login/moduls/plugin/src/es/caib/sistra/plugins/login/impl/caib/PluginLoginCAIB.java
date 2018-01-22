@@ -70,24 +70,7 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 		return nombre;
 		
 	}
-
-<<<<<<< sistra-plugins-3.5
-	public String getRepresentanteApellido1(Principal arg0) {
-		return null;
-	}
-
-	public String getRepresentanteApellido2(Principal arg0) {
-		return null;
-	}
-
-	public String getRepresentanteNif(Principal arg0) {
-		return null;
-	}
-
-	public String getRepresentanteNombre(Principal arg0) {
-		return null;
-	}
-=======
+	
 	public String getRepresentanteApellido1(Principal principal) {
 		return null;
 	}
@@ -104,7 +87,5 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 		return null;
 	}
 	
-	
->>>>>>> 3ce15e0 Mejora de tratamiento en certificados de representación para la recuperación de datos del representante #499
 	
 }
