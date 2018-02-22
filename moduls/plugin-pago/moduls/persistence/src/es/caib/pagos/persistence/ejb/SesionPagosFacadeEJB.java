@@ -351,6 +351,21 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	}
 	
 	/**
+	 * Obtiene nivel de autenticación de sesión
+	 * @ejb.interface-method
+     * @ejb.permission role-name="${role.todos}"
+	 */
+	public String obtenerNivelAutenticacion(){
+		try{
+			log.debug("Obtener nivel de autenticación de sesión");
+			return sesionPago.getSesionSistra().getNivelAutenticacion();
+		}catch (Exception ex){
+			log.error("Exception obteniendo univel de autenticación de sesión",ex);
+			throw new EJBException("Exception obteniendo nivel de autenticación de sesión",ex);
+		}
+	}
+	
+	/**
 	 * Genera un log en la auditoria
 	 * @param tipoEvento
 	 * @param resultado
@@ -386,18 +401,14 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				evento.setNombre(p.getFullName());
 			}	*/
 			
-			Principal p = this.ctx.getCallerPrincipal();
 			
-			PluginLoginIntf plgLogin = PluginFactory.getInstance().getPluginLogin();
+			String metodoAuth = this.sesionPago.getSesionSistra().getNivelAutenticacion();
 			
-			char metodoAuth = plgLogin.getMetodoAutenticacion(p);
-			String nivelAuth = Character.toString(metodoAuth);
-			
-			evento.setNivelAutenticacion(nivelAuth);
-			if (metodoAuth != ConstantesLogin.LOGIN_ANONIMO){
-				evento.setUsuarioSeycon(p.getName());
-				evento.setNumeroDocumentoIdentificacion(plgLogin.getNif(p));
-				evento.setNombre(plgLogin.getNombreCompleto(p));
+			evento.setNivelAutenticacion(metodoAuth);
+			if (metodoAuth.charAt(0) != ConstantesLogin.LOGIN_ANONIMO){
+				evento.setUsuarioSeycon(this.sesionPago.getSesionSistra().getCodigoUsuario());
+				evento.setNumeroDocumentoIdentificacion(this.sesionPago.getSesionSistra().getNifUsuario());
+				evento.setNombre(this.sesionPago.getSesionSistra().getNombreCompletoUsuario());
 			}
 
 			// Auditamos evento			

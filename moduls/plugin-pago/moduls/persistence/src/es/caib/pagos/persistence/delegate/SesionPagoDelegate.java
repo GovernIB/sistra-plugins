@@ -88,6 +88,17 @@ public class SesionPagoDelegate implements Delegate
         }
 	}
 	
+	public String obtenerNivelAutenticacion() throws DelegateException
+	{
+		try 
+        {
+        	return local.obtenerNivelAutenticacion();
+        } catch (EJBException e) 
+        {
+            throw new DelegateException(e);
+        }
+	}
+	
 
 	public synchronized int confirmarPago() throws DelegateException
 	{

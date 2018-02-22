@@ -49,9 +49,8 @@ public class ModeloPagosTPV implements Serializable
 	private String mensajeTiempoMaximoPago;
 	
 	private String nivelAutenticacion;
-	private String usuarioSeycon;
-	private String nifUsuarioSeycon;
-	private String nombreUsuarioSeycon;
+	private String codigoUsuario;
+	private String nifUsuario;
 	
 	private Date fechaInicioTramite;
 	private String idProcedimiento;
@@ -104,10 +103,9 @@ public class ModeloPagosTPV implements Serializable
 		this.fechaMaximaPago = sesionCAIB.getDatosPago().getFechaMaximaPago();
 		this.mensajeTiempoMaximoPago = sesionCAIB.getDatosPago().getMensajeTiempoMaximoPago();
 		
-		this.nivelAutenticacion = sesionCAIB.getNivelAutenticacion();
-		this.usuarioSeycon = sesionCAIB.getUsuarioSeycon();
-		this.nifUsuarioSeycon = sesionCAIB.getNifUsuarioSeycon();
-		this.nombreUsuarioSeycon = sesionCAIB.getNombreUsuarioSeycon();
+		this.nivelAutenticacion = sesionCAIB.getSesionSistra().getNivelAutenticacion();
+		this.codigoUsuario = sesionCAIB.getSesionSistra().getCodigoUsuario();
+		this.nifUsuario = sesionCAIB.getSesionSistra().getNifUsuario();
 		
 		this.fechaInicioTramite = sesionCAIB.getDatosPago().getFechaInicioTramite();
 		this.idProcedimiento = sesionCAIB.getDatosPago().getIdProcedimiento();
@@ -145,15 +143,19 @@ public class ModeloPagosTPV implements Serializable
 		sesionCAIB.getEstadoPago().setReciboB64PagoTelematico(reciboB64PagoTelematico);
 		sesionCAIB.setSesionSistra(new SesionSistra());
 		sesionCAIB.getSesionSistra().setUrlRetornoSistra(urlRetornoSistra);
-		sesionCAIB.getSesionSistra().setUrlMantenimientoSesionSistra(urlMantenimientoSesionSistra);	
+		sesionCAIB.getSesionSistra().setUrlMantenimientoSesionSistra(urlMantenimientoSesionSistra);
+		sesionCAIB.getSesionSistra().setNivelAutenticacion(nivelAutenticacion);
+		sesionCAIB.getSesionSistra().setCodigoUsuario(codigoUsuario);
+		sesionCAIB.getSesionSistra().setNifUsuario(nifUsuario);
+		sesionCAIB.setNombreUsuarioSeycon(nombreUsuario);
 		sesionCAIB.setFechaInicioSesion(fechaInicioSesion);
 		sesionCAIB.getDatosPago().setFechaMaximaPago(fechaMaximaPago);
 		sesionCAIB.getDatosPago().setMensajeTiempoMaximoPago(mensajeTiempoMaximoPago);
 		
 		sesionCAIB.setNivelAutenticacion(nivelAutenticacion);
-		sesionCAIB.setUsuarioSeycon(usuarioSeycon);
-		sesionCAIB.setNifUsuarioSeycon(nifUsuarioSeycon);
-		sesionCAIB.setNombreUsuarioSeycon(nombreUsuarioSeycon);
+		sesionCAIB.setUsuarioSeycon(codigoUsuario);
+		sesionCAIB.setNifUsuarioSeycon(nifUsuario);
+		sesionCAIB.setNombreUsuarioSeycon(nombreUsuario);
 		
 		sesionCAIB.getDatosPago().setFechaInicioTramite(fechaInicioTramite);
 		sesionCAIB.getDatosPago().setIdProcedimiento(idProcedimiento);
@@ -447,33 +449,23 @@ public class ModeloPagosTPV implements Serializable
 	}
 
 
-	public String getUsuarioSeycon() {
-		return usuarioSeycon;
+	public String getCodigoUsuario() {
+		return codigoUsuario;
 	}
 
 
-	public void setUsuarioSeycon(String usuarioSeycon) {
-		this.usuarioSeycon = usuarioSeycon;
+	public void setCodigoUsuario(String codigoUsuario) {
+		this.codigoUsuario = codigoUsuario;
 	}
 
 
-	public String getNifUsuarioSeycon() {
-		return nifUsuarioSeycon;
+	public String getNifUsuario() {
+		return nifUsuario;
 	}
 
 
-	public void setNifUsuarioSeycon(String nifUsuarioSeycon) {
-		this.nifUsuarioSeycon = nifUsuarioSeycon;
-	}
-
-
-	public String getNombreUsuarioSeycon() {
-		return nombreUsuarioSeycon;
-	}
-
-
-	public void setNombreUsuarioSeycon(String nombreUsuarioSeycon) {
-		this.nombreUsuarioSeycon = nombreUsuarioSeycon;
+	public void setNifUsuario(String nifUsuario) {
+		this.nifUsuario = nifUsuario;
 	}
 
 

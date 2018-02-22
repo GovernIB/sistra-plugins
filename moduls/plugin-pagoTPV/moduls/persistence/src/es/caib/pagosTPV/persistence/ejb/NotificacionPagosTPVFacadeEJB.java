@@ -262,9 +262,9 @@ public class NotificacionPagosTPVFacadeEJB extends HibernateEJB  {
 			evento.setIdPersistencia(mp.getIdentificadorTramite());
 			evento.setNivelAutenticacion(mp.getNivelAutenticacion());
 			if (!String.valueOf(ConstantesLogin.LOGIN_ANONIMO).equals(mp.getNivelAutenticacion())){
-				evento.setUsuarioSeycon(mp.getUsuarioSeycon());
-				evento.setNumeroDocumentoIdentificacion(mp.getNifUsuarioSeycon());
-				evento.setNombre(mp.getNombreUsuarioSeycon());
+				evento.setUsuarioSeycon(mp.getCodigoUsuario());
+				evento.setNumeroDocumentoIdentificacion(mp.getNifUsuario());
+				evento.setNombre(mp.getNombreUsuario());
 			}						
 
 			// Auditamos evento			
