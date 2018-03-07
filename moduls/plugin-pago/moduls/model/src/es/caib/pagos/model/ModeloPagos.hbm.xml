@@ -34,8 +34,11 @@
     <property name="urlRetornoSistra"  column="PAG_URLSTR" not-null="false" length="400"/>    
     <property name="urlMantenimientoSesionSistra"  column="PAG_URLMNT" not-null="false" length="400"/>        	
 	<property name="token"  column="PAG_TOKEN" not-null="false" length="100"/>    
-    <property name="tiempoLimiteToken"  column="PAG_DATALI" not-null="false"/>     
-    <property name="nombreUsuario"  column="PAG_NOMUSU" not-null="false" length="200"/>        	
+    <property name="tiempoLimiteToken"  column="PAG_DATALI" not-null="false"/>
+    <property name="nivelAutenticacion"  column="PAG_NIVAUT" length="1"/>
+    <property name="nifUsuario"  column="PAG_NIFUSU" not-null="false" length="50"/>
+    <property name="nombreUsuario"  column="PAG_NOMUSU" not-null="false" length="200"/>     
+    <property name="codigoUsuario"  column="PAG_CODUSU" not-null="false" length="1536"/>        	
 	<property name="tipoPago"  column="PAG_TIPOPG" not-null="false" length="1"/>    
     <property name="idioma"  column="PAG_IDIOMA" not-null="false" length="100"/>     
 	<property name="pagoFinalizado"  column="PAG_FINAL" not-null="false" length="1"/>    

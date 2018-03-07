@@ -44,12 +44,7 @@ public class MostrarFormularioIncidenciasAction extends BaseAction
 		final SesionPagoDelegate dlg = getSesionPago(request);
 		DatosPago datosPago = dlg.obtenerDatosPago();
 		
-		Principal p = request.getUserPrincipal();
-		
-		PluginLoginIntf plgLogin = PluginFactory.getInstance().getPluginLogin();
-		
-		char metodoAuth = plgLogin.getMetodoAutenticacion(p);
-		String nivelAuth = Character.toString(metodoAuth);
+		String nivelAuth = dlg.obtenerNivelAutenticacion();
 		
 		lang = datosPago.getIdioma();
 		idPersistencia = datosPago.getIdentificadorTramite();

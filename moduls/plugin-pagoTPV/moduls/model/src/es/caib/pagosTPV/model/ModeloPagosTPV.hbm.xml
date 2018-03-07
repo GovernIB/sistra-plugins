@@ -40,7 +40,11 @@
     <property name="urlMantenimientoSesionSistra"  column="TPV_URLMNT" not-null="false" length="400"/>        	
 	<property name="token"  column="TPV_TOKEN" not-null="false" length="100"/>    
     <property name="tiempoLimiteToken"  column="TPV_DATALI" not-null="false"/>     
-    <property name="nombreUsuario"  column="TPV_NOMUSU" not-null="false" length="200"/>        		   
+    <property name="nivelAutenticacion"  column="TPV_NIVAUT" not-null="false" length="1"/>
+    <property name="nifUsuario"  column="TPV_NIFUSU" not-null="false" length="50"/>
+    <property name="nombreUsuario"  column="TPV_NOMUSU" not-null="false" length="200"/>     
+    <property name="codigoUsuario"  column="TPV_CODUSU" not-null="false" length="1536"/>
+      		   
     <property name="pagoFinalizado"  column="TPV_FINAL" not-null="false" length="1"/>    
     <property name="historicoPedidosKO"  column="TPV_HISPED"  not-null="false"/>
     

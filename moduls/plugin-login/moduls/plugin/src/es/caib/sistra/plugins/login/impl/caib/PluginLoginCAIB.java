@@ -70,7 +70,7 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 		return nombre;
 		
 	}
-	
+
 	public String getRepresentanteApellido1(Principal principal) {
 		return null;
 	}

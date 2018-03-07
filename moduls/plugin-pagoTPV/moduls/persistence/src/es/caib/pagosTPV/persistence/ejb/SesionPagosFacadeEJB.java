@@ -96,19 +96,6 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				throw new CreateException("Se ha sobrepasado el tiempo limite para el token de acceso");
 			}
 			
-			// Actualizamos datos de usuario
-			Principal p = this.ctx.getCallerPrincipal();
-			PluginLoginIntf plgLogin = PluginFactory.getInstance().getPluginLogin();
-			char metodoAuth = plgLogin.getMetodoAutenticacion(p);
-			String nivelAuth = Character.toString(metodoAuth);
-			mp.setNivelAutenticacion(nivelAuth);			
-			if (metodoAuth != ConstantesLogin.LOGIN_ANONIMO){
-				mp.setUsuarioSeycon(p.getName());
-				mp.setNifUsuarioSeycon(plgLogin.getNif(p));
-				mp.setNombreUsuarioSeycon(plgLogin.getNombreCompleto(p));
-			}	
-			session.update(mp);
-			
 			// Obtenemos sesion de pago para cachearla en la instancia
 			sesionPago = mp.getSessionPagoCAIB();
 			if (sesionPago == null){
@@ -314,6 +301,21 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	}
 	
 	/**
+	 * Obtiene nivel de autenticación de sesión
+	 * @ejb.interface-method
+     * @ejb.permission role-name="${role.todos}"
+	 */
+	public String obtenerNivelAutenticacion(){
+		try{
+			log.debug("Obtener nivel de autenticación de sesión");
+			return sesionPago.getSesionSistra().getNivelAutenticacion();
+		}catch (Exception ex){
+			log.error("Exception obteniendo univel de autenticación de sesión",ex);
+			throw new EJBException("Exception obteniendo nivel de autenticación de sesión",ex);
+		}
+	}
+	
+	/**
 	 * Genera un log en la auditoria
 	 * @param tipoEvento
 	 * @param resultado
@@ -333,19 +335,14 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			evento.setClave(clave);
 			evento.setIdPersistencia(this.sesionPago.getDatosPago().getIdentificadorTramite());
 			
-			Principal p = this.ctx.getCallerPrincipal();
+			String metodoAuth = this.sesionPago.getNivelAutenticacion();
 			
-			PluginLoginIntf plgLogin = PluginFactory.getInstance().getPluginLogin();
-			
-			char metodoAuth = plgLogin.getMetodoAutenticacion(p);
-			String nivelAuth = Character.toString(metodoAuth);
-			
-			evento.setNivelAutenticacion(nivelAuth);
-			if (metodoAuth != ConstantesLogin.LOGIN_ANONIMO){
-				evento.setUsuarioSeycon(p.getName());
-				evento.setNumeroDocumentoIdentificacion(plgLogin.getNif(p));
-				evento.setNombre(plgLogin.getNombreCompleto(p));
-			}						
+			evento.setNivelAutenticacion(metodoAuth);
+			if (metodoAuth.charAt(0) != ConstantesLogin.LOGIN_ANONIMO){
+				evento.setUsuarioSeycon(this.sesionPago.getUsuarioSeycon());
+				evento.setNumeroDocumentoIdentificacion(this.sesionPago.getNifUsuarioSeycon());
+				evento.setNombre(this.sesionPago.getNombreUsuarioSeycon());
+			}
 
 			// Auditamos evento			
 			DelegateAUDUtil.getAuditaDelegate().logEvento(evento, false);			
