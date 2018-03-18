@@ -803,9 +803,9 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	        	
 	        	// Tipo firma
 	        	Integer modoFirma = null;
-	        	if (PluginFirmaIntf.FORMATO_FIRMA_CADES_DETACHED.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_CADES_DETACHED.equals(firma.getFormatoFirma()) ) {
+	        	if (PluginFirmaIntf.FORMATO_FIRMA_CADES_DETACHED.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_XADES_DETACHED.equals(firma.getFormatoFirma()) ) {
 	        		modoFirma = ConstantesRegweb3.MODO_FIRMA_DETACHED;
-	        	} else if (PluginFirmaIntf.FORMATO_FIRMA_PADES.equals(firma.getFormatoFirma())) {
+	        	} else if (PluginFirmaIntf.FORMATO_FIRMA_PADES.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma())) {
 	        		modoFirma = ConstantesRegweb3.MODO_FIRMA_ATTACHED;
 	        	} else {
 	        		throw new Exception("Formato firma no soportado: " + firma.getFormatoFirma());
@@ -813,10 +813,11 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	        	
 	        	anexoAsiento.setModoFirma(modoFirma);
 	        	
-	        	if (modoFirma.equals(ConstantesRegweb3.MODO_FIRMA_ATTACHED)) {
+	        	if (PluginFirmaIntf.FORMATO_FIRMA_PADES.equals(firma.getFormatoFirma())) {
 	        		// Se pasa directamente la firma como datos del fichero
 	        		anexoAsiento.setFicheroAnexado(firma.getContenidoFirma());	        		
 	        	} else {
+	        		
 	        		anexoAsiento.setFirmaAnexada(firma.getContenidoFirma());
 	        		anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
 	        		anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));
