@@ -85,5 +85,8 @@
     <!-- REGWEB3 CAIB -->
 	<module><java>lib/regweb3-ws-api-3.0.9.jar</java></module>
 	<module><java>lib/dir3caib-ws-api-1.0.7.jar</java></module>
+	
+	<!-- FIRMACAIB: PLUGINS-API -->
+	<module><java>lib/plugins-api-1.0.0.jar</java></module>
 
 </application>

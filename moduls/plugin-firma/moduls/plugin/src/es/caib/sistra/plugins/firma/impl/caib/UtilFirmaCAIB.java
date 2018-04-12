@@ -20,6 +20,8 @@ import es.caib.signatura.api.SignerFactory;
 import es.caib.sistra.plugins.firma.FirmaIntf;
 import es.caib.util.FirmaUtil;
 
+import org.fundaciobit.plugins.utils.CertificateUtils;
+
 /**
  * Utilidad para manejo de firma CAIB
  */
@@ -486,8 +488,14 @@ public class UtilFirmaCAIB
 	 */
 	public static String getDNI(Signature signature) throws Exception
 	{			
-		SeyconPrincipal sp = new SeyconPrincipal(signature.getCert());
-		return sp.getNif();
+		String nif = null;
+		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(signature.getCert());
+		if (infoEmpresa != null){
+			nif = infoEmpresa[0];
+		} else {
+			nif = CertificateUtils.getDNI(signature.getCert()); 
+		}
+		return nif;
 	}
 	
 	/**
@@ -496,9 +504,41 @@ public class UtilFirmaCAIB
 	 * @return
 	 */
 	public static String getNombreApellidos(Signature signature) throws Exception
+	{				
+		String nombre = null;
+		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(signature.getCert());
+		nombre = CertificateUtils.getSubjectCorrectName(signature.getCert());
+		return nombre;
+	}
+	
+	/**
+	 * Obtiene DNI del representante, si lo hay (certificados de representación)
+	 * @param cert certificado
+	 * @return	 dni
+	 */
+	public static String getNifRepresentante(Signature signature) throws Exception
 	{			
-		SeyconPrincipal sp = new SeyconPrincipal(signature.getCert());
-		return sp.getFullName();
+		String nifRep = null;
+		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(signature.getCert());
+		if (infoEmpresa != null){
+			nifRep = CertificateUtils.getDNI(signature.getCert());
+		}
+		return nifRep;
+	}
+	
+	/**
+	 * Obtiene nombre y apellidos del representante, si lo hay (certificados de representación)
+	 * @param cert
+	 * @return
+	 */
+	public static String getNombreApellidosRepresentante(Signature signature) throws Exception
+	{		
+		String nombreRep = null;
+		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(signature.getCert());
+		if (infoEmpresa != null){
+			nombreRep = CertificateUtils.getSubjectCorrectName(signature.getCert());
+		}
+		return nombreRep;
 	}
 	
 	
