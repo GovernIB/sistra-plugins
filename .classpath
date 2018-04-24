@@ -47,6 +47,7 @@
 	<classpathentry kind="lib" path="lib/servlet.jar"/>
 	<classpathentry kind="lib" path="lib/seyconsession-common.jar"/>
 	<classpathentry kind="lib" path="lib/signaturaapi-2.5.2.jar"/>
+	<classpathentry kind="lib" path="lib/plugins-api-1.0.0.jar"/>
 	<classpathentry kind="lib" path="lib/struts.jar"/>
 	<classpathentry kind="lib" path="lib/as400/jt400.jar"/>
 	<classpathentry kind="lib" path="lib/axis14/axis.jar"/>

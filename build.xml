@@ -116,6 +116,10 @@
 		<zipfileset dir="${lib}/tpv" prefix="lib">
 			<include name="org.json.jar"/>
 		</zipfileset>
+		<zipfileset dir="${lib}" prefix="lib">
+			<include name="plugins-api-1.0.0.jar"/>
+		</zipfileset>
+		
 	<!--	<zipfileset dir="${libregweb}" prefix="lib">
 			<include if="isOtherVersion" name="plugin-regweb3_${regweb3.version}.jar" />
 		</zipfileset>

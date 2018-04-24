@@ -106,11 +106,25 @@ public class FirmaCAIB implements FirmaIntf{
 	}
 
 	public String getNifRepresentante() {
-		return null;
+		try {
+			String nifRep = UtilFirmaCAIB.getNifRepresentante(signature);
+			if (nifRep != null) {
+				nifRep = NifCif.normalizarDocumento(nifRep);
+			}			
+			return nifRep;
+		} catch (Exception e) {
+			log.error("Error al obtener nif del representante de la firma",e);
+			return null;
+		}
 	}
 
 	public String getNombreApellidosRepresentante() {
-		return null;
+		try {
+			return UtilFirmaCAIB.getNombreApellidosRepresentante(signature);
+		} catch (Exception e) {
+			log.error("Error al obtener nombre y apellidos del representante de la firma",e);
+			return null;
+		}
 	}
 
 }
