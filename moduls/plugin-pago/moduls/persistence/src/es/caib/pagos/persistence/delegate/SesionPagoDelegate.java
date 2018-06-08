@@ -99,6 +99,27 @@ public class SesionPagoDelegate implements Delegate
         }
 	}
 	
+	public String obtenerNifUsuario() throws DelegateException
+	{
+		try 
+        {
+        	return local.obtenerNifUsuario();
+        } catch (EJBException e) 
+        {
+            throw new DelegateException(e);
+        }
+	}
+	
+	public String obtenerNombreUsuario() throws DelegateException
+	{
+		try 
+        {
+        	return local.obtenerNombreUsuario();
+        } catch (EJBException e) 
+        {
+            throw new DelegateException(e);
+        }
+	}	
 
 	public synchronized int confirmarPago() throws DelegateException
 	{

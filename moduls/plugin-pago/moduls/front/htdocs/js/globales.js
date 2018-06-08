@@ -561,6 +561,6 @@ function mostrarFormularioIncidencias(url) {
 	mostrarCapaSoporte('contactoAdministradorSoporte', false);
 	var capaI = document.getElementById('contactoAdministradorContent');	
 	capaI.innerHTML = 
-		'<iframe src="' + url + '" style="border: 0pt none; width: 500px; height: 370px;" scrolling="no"></iframe>';
+		'<iframe src="' + url + '" style="border: 0pt none; width: 500px; height: 420px;" scrolling="no"></iframe>';
 	mostrarContacto();	
 }
