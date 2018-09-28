@@ -1,4 +1,0 @@
-- Empaquetar proyecto para que coja de output/product el appletFirma.jar
-- Revisar path en Firmar.bat
-- Ejecutar Firmar.bat
-- Se generara en signApplet el appletFirma.jar firmado
