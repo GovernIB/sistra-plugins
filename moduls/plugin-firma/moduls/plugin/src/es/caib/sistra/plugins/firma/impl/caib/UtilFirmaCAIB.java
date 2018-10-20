@@ -2,7 +2,9 @@ package es.caib.sistra.plugins.firma.impl.caib;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -20,6 +22,8 @@ import es.caib.signatura.api.SignerFactory;
 import es.caib.sistra.plugins.firma.FirmaIntf;
 import es.caib.util.FirmaUtil;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.fundaciobit.plugins.utils.CertificateUtils;
 
 /**
@@ -35,7 +39,7 @@ public class UtilFirmaCAIB
 	
 	public final static String CHARSET = "UTF-8";
 	
-	// private static Log log = LogFactory.getLog(Firma.class);
+	private static Log log = LogFactory.getLog(UtilFirmaCAIB.class);
 	
 	public UtilFirmaCAIB( boolean useAlwaysDefaultContentType )
 	{
@@ -489,12 +493,18 @@ public class UtilFirmaCAIB
 	public static String getDNI(Signature signature) throws Exception
 	{			
 		String nif = null;
-		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(signature.getCert());
+		X509Certificate certificate;
+		
+		InputStream certstream = new ByteArrayInputStream(signature.getCert().getEncoded());
+        certificate = CertificateUtils.decodeCertificate(certstream);
+        
+        String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(certificate);
 		if (infoEmpresa != null){
 			nif = infoEmpresa[0];
 		} else {
-			nif = CertificateUtils.getDNI(signature.getCert()); 
+			nif = CertificateUtils.getDNI(certificate); 
 		}
+		log.info("NIF DEVUELTO POR getDNI " + nif);
 		return nif;
 	}
 	
@@ -506,8 +516,16 @@ public class UtilFirmaCAIB
 	public static String getNombreApellidos(Signature signature) throws Exception
 	{				
 		String nombre = null;
-		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(signature.getCert());
-		nombre = CertificateUtils.getSubjectCorrectName(signature.getCert());
+		X509Certificate certificate;
+		
+		InputStream certstream = new ByteArrayInputStream(signature.getCert().getEncoded());
+        certificate = CertificateUtils.decodeCertificate(certstream);
+		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(certificate);
+		if (infoEmpresa != null){
+			nombre = infoEmpresa[1];
+		} else {
+			nombre = CertificateUtils.getSubjectCorrectName(certificate);
+		}
 		return nombre;
 	}
 	
@@ -519,9 +537,13 @@ public class UtilFirmaCAIB
 	public static String getNifRepresentante(Signature signature) throws Exception
 	{			
 		String nifRep = null;
-		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(signature.getCert());
+		X509Certificate certificate;
+		
+		InputStream certstream = new ByteArrayInputStream(signature.getCert().getEncoded());
+        certificate = CertificateUtils.decodeCertificate(certstream);
+		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(certificate);
 		if (infoEmpresa != null){
-			nifRep = CertificateUtils.getDNI(signature.getCert());
+			nifRep = CertificateUtils.getDNI(certificate);
 		}
 		return nifRep;
 	}
@@ -534,9 +556,13 @@ public class UtilFirmaCAIB
 	public static String getNombreApellidosRepresentante(Signature signature) throws Exception
 	{		
 		String nombreRep = null;
-		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(signature.getCert());
+		X509Certificate certificate;
+		
+		InputStream certstream = new ByteArrayInputStream(signature.getCert().getEncoded());
+        certificate = CertificateUtils.decodeCertificate(certstream);
+		String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(certificate);
 		if (infoEmpresa != null){
-			nombreRep = CertificateUtils.getSubjectCorrectName(signature.getCert());
+			nombreRep = CertificateUtils.getSubjectCorrectName(certificate);
 		}
 		return nombreRep;
 	}

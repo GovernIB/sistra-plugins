@@ -16,6 +16,7 @@ import es.caib.pagosTPV.persistence.delegate.SesionPagoDelegate;
 import es.caib.sistra.plugins.pagos.DatosPago;
 import es.caib.sistra.plugins.PluginFactory;
 import es.caib.sistra.plugins.login.PluginLoginIntf;
+import es.caib.sistra.plugins.login.ConstantesLogin;
 import es.caib.util.StringUtil;
 
 /**
@@ -45,14 +46,16 @@ public class MostrarFormularioIncidenciasAction extends BaseAction
 		DatosPago datosPago = dlg.obtenerDatosPago();
 		
 		String nivelAuth = dlg.obtenerNivelAutenticacion();
+		if (nivelAuth.charAt(0) != ConstantesLogin.LOGIN_ANONIMO){
+			nif = dlg.obtenerNifUsuario();
+			nombre = dlg.obtenerNombreUsuario();
+		}
 		
 		lang = datosPago.getIdioma();
 		idPersistencia = datosPago.getIdentificadorTramite();
 		tramiteDesc = datosPago.getNombreTramite();		
 		tramiteId = datosPago.getModeloTramite();
 		procedimientoId = datosPago.getIdProcedimiento();
-		nif = datosPago.getNifDeclarante();
-		nombre = datosPago.getNombreDeclarante();
 		fechaCreacion = StringUtil.fechaACadena(datosPago.getFechaInicioTramite(), StringUtil.FORMATO_TIMESTAMP);
 		
 		

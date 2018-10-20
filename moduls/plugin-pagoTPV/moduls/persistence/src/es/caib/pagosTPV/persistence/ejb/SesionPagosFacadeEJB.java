@@ -316,6 +316,36 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	}
 	
 	/**
+	 * Obtiene el nif del usuario de la sesión
+	 * @ejb.interface-method
+     * @ejb.permission role-name="${role.todos}"
+	 */
+	public String obtenerNifUsuario(){
+		try{
+			log.debug("Obtener NIF del usuario de sesión");
+			return sesionPago.getSesionSistra().getNifUsuario();
+		}catch (Exception ex){
+			log.error("Exception obteniendo NIF del usuario de sesión",ex);
+			throw new EJBException("Exception obteniendo NIF del usuario de sesión",ex);
+		}
+	}
+	
+	/**
+	 * Obtiene el nombre completo del usuario de la sesión
+	 * @ejb.interface-method
+     * @ejb.permission role-name="${role.todos}"
+	 */
+	public String obtenerNombreUsuario(){
+		try{
+			log.debug("Obtener nombre completo del usuario de sesión");
+			return sesionPago.getDatosPago().getNombreUsuario();
+		}catch (Exception ex){
+			log.error("Exception obteniendo nombre completo del usuario de sesión",ex);
+			throw new EJBException("Exception obteniendo nombre completo del usuario de sesión",ex);
+		}
+	}
+	
+	/**
 	 * Genera un log en la auditoria
 	 * @param tipoEvento
 	 * @param resultado
