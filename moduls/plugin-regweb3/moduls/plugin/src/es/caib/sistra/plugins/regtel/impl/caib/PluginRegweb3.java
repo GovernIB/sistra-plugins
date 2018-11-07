@@ -1,5 +1,6 @@
 package es.caib.sistra.plugins.regtel.impl.caib;
 
+import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,6 +47,10 @@ import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.DatosAnexoDocumentacion;
 import es.caib.xml.registro.factoria.impl.DatosInteresado;
 import es.caib.xml.registro.factoria.impl.Justificante;
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 /**
  * Implementacio del plugin de registre que empra la interfi­cie
@@ -56,6 +61,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 
 	private static final Log logger = LogFactory.getLog(PluginRegweb3.class);
 	private static final String ERROR = "javax.xml.ws.soap.SOAPFaultException: Caller unauthorized";
+	private static final String ORGANOS_DESTINO = "ORGANOS_DESTINO";
 	
 	private int getMaxReintentos() {
         return new Integer(Integer.parseInt(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.reintentos"), "0")));
@@ -426,6 +432,19 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 
 		String id = "" + System.currentTimeMillis();
 		
+		String cacheKey = ORGANOS_DESTINO;
+        
+        try {
+        	resultado = ( List ) getFromCache(cacheKey);
+        } catch (CacheException ex){
+        	logger.error("Error recuperando servicios destino de cache: " + ex.getMessage(), ex);
+        }
+        
+        if (resultado != null){
+        	logger.debug(cacheKey + " - obtenido de cache");
+        	return resultado;
+        }
+		
 		try {
 			verificarEntidad(entidad);
 			List<UnidadTF> res = new ArrayList<UnidadTF>();
@@ -452,13 +471,16 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 					sd.setCodigoPadre(u.getCodUnidadSuperior());
 				}
 				resultado.add(sd);
-			}			
+			}
+			
+			this.saveToCache( cacheKey, (Serializable) resultado );
 		} catch (Exception ex) {
 			logger.error("Error consultando servicios destino: " + ex.getMessage(), ex);
 			resultado = new ArrayList();
 		}		
 		return resultado;						
 	}
+	
 	
 	/** {@inheritDoc} */   
     public void anularRegistroEntrada(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
@@ -800,6 +822,34 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			throw new Exception("Entidad " + entidad + " no soportada");
 		}
 	}
+	
+	private static Cache getCache() throws CacheException {
+        String cacheName = PluginRegweb3.class.getName();
+        CacheManager cacheManager = CacheManager.getInstance();
+        Cache cache;
+        if (cacheManager.cacheExists(cacheName)) {
+            cache = cacheManager.getCache(cacheName);
+        } else {
+            cache = new Cache(cacheName, 1000, false, false, ConstantesRegweb3.TIEMPO_EN_CACHE, 300);
+            cacheManager.addCache(cache);
+        }
+        return cache;
+    }
+
+    protected Serializable getFromCache(Serializable key) throws CacheException {
+        Cache cache = getCache();
+        Element element = cache.get(key);
+        if (element != null && !cache.isExpired(element)) {
+            return element.getValue();
+        } else {
+            return null;
+        }
+    }
+
+    protected void saveToCache(Serializable key, Serializable value) throws CacheException {
+        Cache cache = getCache();
+        cache.put(new Element(key, value));
+    }
 	
 	
 

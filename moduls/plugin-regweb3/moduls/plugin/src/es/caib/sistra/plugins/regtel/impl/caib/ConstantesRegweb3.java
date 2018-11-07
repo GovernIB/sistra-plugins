@@ -76,4 +76,6 @@ public class ConstantesRegweb3 {
 	/** Validez documento: Copia original (documento adjunto es el original electrónico).*/
 	public final static String VALIDEZ_DOCUMENTO_ORIGINAL = "04";
 	
+	public static int TIEMPO_EN_CACHE = 60 * 60 * 24;
+	
 }
