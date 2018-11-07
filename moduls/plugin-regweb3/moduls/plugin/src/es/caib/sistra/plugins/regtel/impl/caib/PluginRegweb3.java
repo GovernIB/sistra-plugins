@@ -480,7 +480,37 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		}		
 		return resultado;						
 	}
-	
+
+	/** {@inheritDoc} */  
+	public String obtenerDescServiciosDestino(String servicioDestino) {
+		String result = null;
+		int maxIntentos = getMaxReintentos();
+		
+		String id = "" + System.currentTimeMillis();
+		
+		try {
+			
+			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+				try{
+		            final UnidadTF res = UtilsRegweb3.getDir3UnidadesService().obtenerUnidad(servicioDestino, null, null);
+		            result = res.getDenominacion();
+		            break;
+				}catch (SOAPFaultException e){
+					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+						logger.debug("Consulta descripcion servicio destino " + servicioDestino + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+			            continue;
+					}
+				}
+			}
+			
+		} catch (Exception ex) {
+			logger.error("Error consultando descripcion del servicio destino: " + servicioDestino + " " + ex.getMessage(), ex);
+		}
+		
+		return result;		
+		
+	}
 	
 	/** {@inheritDoc} */   
     public void anularRegistroEntrada(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
