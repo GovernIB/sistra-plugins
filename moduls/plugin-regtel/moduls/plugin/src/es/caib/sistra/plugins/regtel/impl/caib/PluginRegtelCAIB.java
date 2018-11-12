@@ -118,4 +118,8 @@ public class PluginRegtelCAIB implements PluginRegistroIntf {
 		return null;
 	}
 
+	public String obtenerDescServiciosDestino(String servicioDestino) {
+		return null;
+	}
+
 }
