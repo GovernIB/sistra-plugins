@@ -13,6 +13,9 @@ import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
 import es.caib.loginModule.client.SeyconPrincipal;
 import es.caib.signatura.api.SMIMEParser;
@@ -25,6 +28,12 @@ import es.caib.util.FirmaUtil;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.fundaciobit.plugins.utils.CertificateUtils;
+import org.fundaciobit.plugins.certificate.ICertificatePlugin;
+import org.fundaciobit.plugins.certificate.InformacioCertificat;
+import org.fundaciobit.plugins.certificate.ResultatValidacio;
+import org.fundaciobit.plugins.certificate.afirmacxf.AfirmaCxfCertificatePlugin;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.type.TypeReference;
 
 /**
  * Utilidad para manejo de firma CAIB
@@ -35,6 +44,7 @@ public class UtilFirmaCAIB
 	private Signer sigTradise;
 	public static String DEFAULT_CONTENT_TYPE = "application/x-caib-authentication";	
 	public static String USEALWAYSDEFAULTCONTENTTYPE_APPLET_PARAM = "useAlwaysDefaultContentType";
+	public static String PLUGIN_PREFIX = "es.caib.";
 	public boolean useAlwaysDefaultContentType = false; 
 	
 	public final static String CHARSET = "UTF-8";
@@ -272,23 +282,78 @@ public class UtilFirmaCAIB
 	        throw new RuntimeException("Invalid hex character " + c);
 	}
 	
-	public static byte[] serializaFirmaToBytes( Signature signatureData )  throws Exception
+	public static byte[] serializaFirmaToBytes( FirmaIntf firma )  throws Exception
 	{
 		ByteArrayOutputStream o = new ByteArrayOutputStream();
 		ObjectOutputStream oout = new ObjectOutputStream(o);
-		oout.writeObject (signatureData);
+		oout.writeObject (((FirmaCAIB) firma).getSignature());
 		oout.close();
 		o.close();
 		return  o.toByteArray();
 	}
 	
-	public static Signature deserializaFirmaFromBytes( byte[] serialicedSignature) throws Exception
+	public static byte[] serializaFirmaExtendedToBytes( FirmaExtendedCAIB firma )  throws Exception
+	{
+		final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+        final Map<String, String> datos = new HashMap<String, String>();
+        datos.put("formatoFirma", firma.getFormatoFirma());
+        datos.put("smime", firma.getSmime());
+        datos.put("nif", firma.getNif());
+        datos.put("nombreApellidos", firma.getNombreApellidos());
+        datos.put("nifRepresentante", firma.getNifRepresentante());
+        datos.put("nombreApellidosRepresentante",
+        		firma.getNombreApellidosRepresentante());
+
+        final ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.writeValue(bos, datos);
+
+        final byte[] serialized = bos.toByteArray();
+        bos.close();
+
+        return serialized;
+	}
+	
+	public static Signature deserializaFirmaFromBytes( byte[] serialicedSignature, String formatoFirma) throws Exception
 	{
 		ByteArrayInputStream is = new ByteArrayInputStream( serialicedSignature );
 		ObjectInputStream ois = new ObjectInputStream(is);
 		Signature firma = (Signature) ois.readObject();
 		ois.close();
 		return firma;
+	}
+
+/*    public static FirmaExtendedCAIB deserializaFirmaExtendedFromBytes(
+            final byte[] serialicedSignature) throws Exception {
+    	ByteArrayInputStream is = new ByteArrayInputStream( serialicedSignature );
+		ObjectInputStream ois = new ObjectInputStream(is);
+		FirmaExtendedCAIB firma = (FirmaExtendedCAIB) ois.readObject();
+		ois.close();
+		return firma;
+    }*/
+	
+	public static FirmaExtendedCAIB deserializaFirmaExtendedFromBytes(
+	            final byte[] serialicedSignature) throws Exception {
+        final ObjectMapper objectMapper = new ObjectMapper();
+        final ByteArrayInputStream bis = new ByteArrayInputStream(
+                serialicedSignature);
+        final TypeReference<HashMap<String, String>> typeRef = new TypeReference<HashMap<String, String>>() {
+        };
+        final Map<String, String> datos = objectMapper.readValue(bis, typeRef);
+        
+        final String nif = datos.get("nif");
+        final String smime = datos.get("smime");
+        final String nombreApellidos = datos.get("nombreApellidos");
+        final String nifRepresentante = datos.get("nifRepresentante");
+        final String nombreApellidosRepresentante = datos
+                .get("nombreApellidosRepresentante");
+        
+		// Devolvemos firma extended
+		FirmaExtendedCAIB firmaEx = new FirmaExtendedCAIB(null, smime,
+				FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED, nif,
+				nombreApellidos, nifRepresentante, nombreApellidosRepresentante);
+
+        return firmaEx;
 	}
 	
     /**
@@ -496,7 +561,7 @@ public class UtilFirmaCAIB
 		X509Certificate certificate;
 		
 		InputStream certstream = new ByteArrayInputStream(signature.getCert().getEncoded());
-        certificate = CertificateUtils.decodeCertificate(certstream);
+        certificate = CertificateUtils.decodeCertificate(certstream);        
         
         String[] infoEmpresa = CertificateUtils.getEmpresaNIFNom(certificate);
 		if (infoEmpresa != null){
@@ -583,11 +648,56 @@ public class UtilFirmaCAIB
 	
 	public static byte[] parseFirmaToBytes(FirmaIntf firma)	throws Exception {
 		byte[] firmaContent = null;
-		if (FirmaCAIB.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma())) {
+		if (FirmaExtendedCAIB.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma())) {
 			firmaContent =  ((FirmaCAIB) firma).getSmime().getBytes("UTF-8");
+		} else if (FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED.equals(firma.getFormatoFirma())){
+			firmaContent = UtilFirmaCAIB.serializaFirmaExtendedToBytes((FirmaExtendedCAIB) firma);
 		} else {
-			firmaContent =  UtilFirmaCAIB.serializaFirmaToBytes(  ((FirmaCAIB) firma).getSignature() );
+			firmaContent =  UtilFirmaCAIB.serializaFirmaToBytes(firma);
 		}
 		return firmaContent;
+	}
+	
+	
+	public DatosCertificado getCertInfoFromSign(Signature signature, Properties props) throws Exception{
+		
+		X509Certificate certificate;
+		DatosCertificado datosCert = new DatosCertificado();
+		
+		try{
+			
+			final ICertificatePlugin plugin = new AfirmaCxfCertificatePlugin(PLUGIN_PREFIX,props);
+			
+			InputStream certstream = new ByteArrayInputStream(signature.getCert().getEncoded());
+	        certificate = CertificateUtils.decodeCertificate(certstream);
+	        
+	        final ResultatValidacio infoCert = plugin.getInfoCertificate(certificate);
+	        
+	        final InformacioCertificat info = infoCert.getInformacioCertificat();
+	        
+	        final String clasificacion = Integer.toString(info.getClassificacio());
+	        
+	        if ("0".equals(clasificacion) || "5".equals(clasificacion)) {
+	            // - Persona fisica (0) / Empleado publico (5)
+	        	datosCert.setNif(info.getNifResponsable());
+	        	datosCert.setNombreApellidos(info.getNomCompletResponsable());
+	        } else if ("1".equals(clasificacion)) {
+	            // Persona juridica (1)
+	        	datosCert.setNif(info.getUnitatOrganitzativaNifCif());
+	        	datosCert.setNombreApellidos(info.getRaoSocial());
+	        } else if ("11".equals(clasificacion) || "12".equals(clasificacion)) {
+	            // - Representante Entidad (11) / Representante Entidad sin
+	            // personalidad juridica (12)
+	        	datosCert.setNif(info.getUnitatOrganitzativaNifCif());
+	        	datosCert.setNombreApellidos(info.getRaoSocial());
+	        	datosCert.setNifRepresentante(info.getNifResponsable());
+	        	datosCert.setNombreApellidosRepresentante(info.getNomCompletResponsable());
+	        }
+			
+		}catch(Exception e){
+			throw new Exception("Excepcion recuperando datos del firmante: ", e);
+        }
+		
+		return datosCert;
 	}
 }

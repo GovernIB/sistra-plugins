@@ -55,6 +55,9 @@
 	<classpathentry kind="lib" path="lib/firma/bcprov.jar"/>
 	<classpathentry kind="lib" path="lib/firma/bctsp.jar"/>
 	<classpathentry kind="lib" path="lib/firma/ideas36rc1_Java1.4.jar"/>
+	<classpathentry kind="lib" path="lib/firma/plugin-certificate-afirmacxf-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/firma/jackson-core-asl-1.7.1.jar"/>
+	<classpathentry kind="lib" path="lib/firma/jackson-mapper-asl-1.7.1.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/jbossall-client.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/jboss-client.jar"/>
 	<classpathentry kind="lib" path="lib/jboss/jboss-jaxrpc.jar"/>
