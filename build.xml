@@ -119,6 +119,11 @@
 		<zipfileset dir="${lib}" prefix="lib">
 			<include name="plugins-api-1.0.0.jar"/>
 		</zipfileset>
+		<zipfileset dir="${lib}/firma" prefix="lib">
+			<include name="plugin-certificate-afirmacxf-1.0.1.jar"/>
+			<include name="jackson-core-asl-1.7.1.jar"/>
+			<include name="jackson-mapper-asl-1.7.1.jar"/>
+		</zipfileset>
 		
 	<!--	<zipfileset dir="${libregweb}" prefix="lib">
 			<include if="isOtherVersion" name="plugin-regweb3_${regweb3.version}.jar" />

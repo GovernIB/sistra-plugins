@@ -11,6 +11,7 @@ import java.util.Properties;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.fundaciobit.plugins.certificate.InformacioCertificat;
 
 import es.caib.signatura.api.Signature;
 import es.caib.sistra.plugins.firma.FicheroFirma;
@@ -70,8 +71,14 @@ public class PluginFirmaCAIB implements PluginFirmaIntf{
 	public boolean verificarFirma(InputStream datos, FirmaIntf firma) throws Exception {
 		try{
 		 	UtilFirmaCAIB f = new UtilFirmaCAIB();
-			f.iniciarDispositivo();		
-			return f.verificarFirma( datos, ((FirmaCAIB) firma).getSignature(), true );
+		 	Signature signature = null;
+			f.iniciarDispositivo();
+			if (FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED.equals(firma.getFormatoFirma())){
+				signature = ((FirmaExtendedCAIB) firma).getSignature();
+			} else {
+				signature = ((FirmaCAIB) firma).getSignature();
+			}
+			return f.verificarFirma( datos, signature, true );
 		}catch (Exception e){
 			log.error ("Error al verificar firma: " + e.getMessage(),e);
 			return false;
@@ -82,11 +89,43 @@ public class PluginFirmaCAIB implements PluginFirmaIntf{
 	 * Parsea la firma proveniente del html
 	 */
 	public FirmaIntf parseFirmaFromHtmlForm(String signatureHtmlForm) throws Exception {
-		// Convertimos firma a objeto signature
-		Signature signature = null;
+		return parseFirmaFromHtmlForm(signatureHtmlForm, FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED, null);
+	}
 	
+	private FirmaIntf parseFirmaFromHtmlForm(String signatureHtmlForm, String formatoFirma, DatosCertificado datosCert) throws Exception{
+		
+		UtilFirmaCAIB f = new UtilFirmaCAIB();
+		Properties props = readProperties();
+
+		// Convertimos firma a objeto signature
+		Signature signature =  smimeToSignature(signatureHtmlForm, f);
+		
+		if (FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED.equals(formatoFirma)){
+			
+			if (datosCert == null){
+				datosCert = f.getCertInfoFromSign(signature, props);
+			}
+			
+			// Devolvemos firma extended
+			FirmaExtendedCAIB firmaEx = new FirmaExtendedCAIB(signature, signatureHtmlForm,
+					FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED, datosCert.getNif(),
+					datosCert.getNombreApellidos(), datosCert.getNifRepresentante(),
+						datosCert.getNombreApellidosRepresentante());
+			return firmaEx;
+		} else {
+			// Devolvemos firma
+			FirmaCAIB firmaCa = new FirmaCAIB();
+			firmaCa.setSignature(signature);
+			firmaCa.setSmime(signatureHtmlForm);
+			firmaCa.setFormatoFirma(FirmaCAIB.FORMATO_FIRMA_SMIME);
+			return firmaCa;
+		}
+		
+	}
+	
+	private Signature smimeToSignature(String signatureHtmlForm, UtilFirmaCAIB f) throws Exception{
+		Signature signature = null;
 		try {
-			UtilFirmaCAIB f = new UtilFirmaCAIB();
 			f.iniciarDispositivo();
 			signature = f.smimeB64UrlSafeToSignature(signatureHtmlForm);
 			if (signature == null) {
@@ -95,15 +134,8 @@ public class PluginFirmaCAIB implements PluginFirmaIntf{
 		} catch (Exception ex) {
 			log.error("Excepcion interpretando firma como SMIME: " + ex.getMessage(), ex);
 			throw new Exception("Error interpretando firma");			
-		}			
-		
-		// Devolvemos firma
-		FirmaCAIB firma = new FirmaCAIB();
-		firma.setSignature(signature);
-		firma.setSmime(signatureHtmlForm);
-		firma.setFormatoFirma(FirmaCAIB.FORMATO_FIRMA_SMIME);
-		
-		return firma;
+		}
+		return signature;
 	}
 
 	/**
@@ -111,36 +143,47 @@ public class PluginFirmaCAIB implements PluginFirmaIntf{
 	 */
 	public FirmaIntf parseFirmaFromBytes(byte[] firmaBytes, String formatoFirma) throws Exception {
 		// Convertimos firma a objeto signature
-		FirmaCAIB firma = null;
-		if (FirmaCAIB.FORMATO_FIRMA_SMIME.equals(formatoFirma)) {
-			firma = (FirmaCAIB) parseFirmaFromHtmlForm(new String(firmaBytes, "UTF-8"));
-		} else {
-			Signature signature = UtilFirmaCAIB.deserializaFirmaFromBytes(firmaBytes);
-			firma = new FirmaCAIB();
-			firma.setSignature(signature);
-			firma.setSmime(null);
-			firma.setFormatoFirma(FirmaCAIB.FORMATO_FIRMA_SIGNATURE);
+		
+		if (FirmaExtendedCAIB.FORMATO_FIRMA_SMIME.equals(formatoFirma)) {
+			FirmaCAIB firmaSm = (FirmaCAIB) parseFirmaFromHtmlForm(new String(firmaBytes, "UTF-8"), formatoFirma, null);
+			return firmaSm;
+		} else if (FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED.equals(formatoFirma)){
+			final FirmaExtendedCAIB firmaEx = (FirmaExtendedCAIB) UtilFirmaCAIB.deserializaFirmaExtendedFromBytes(firmaBytes);
+			UtilFirmaCAIB f = new UtilFirmaCAIB();
+			// Convertimos firma a objeto signature
+			Signature signature =  smimeToSignature(firmaEx.getSmime(), f);
+			firmaEx.setSignature(signature);
+			return firmaEx;
+		}	 
+		else {
+			Signature signature = UtilFirmaCAIB.deserializaFirmaFromBytes(firmaBytes, formatoFirma);
+			FirmaCAIB firmaSc = new FirmaCAIB();
+			firmaSc.setSignature(signature);
+			firmaSc.setSmime(null);
+			firmaSc.setFormatoFirma(FirmaCAIB.FORMATO_FIRMA_SIGNATURE);
+			return firmaSc;
 		}
-		return firma;
 	}
 
 	/**
 	 * Serializa firma para ser almacenada como un conjunto de bytes
 	 */
 	public byte[] parseFirmaToBytes(FirmaIntf firma)  throws Exception {
-		return UtilFirmaCAIB.parseFirmaToBytes(firma);		
+		return UtilFirmaCAIB.parseFirmaToBytes(firma);	
 	}
-
-	
 
 	/**
 	 * Genera fichero con la firma (SMIME)
 	 */
 	public FicheroFirma parseFirmaToFile(InputStream datosFirmados,FirmaIntf firma)  throws Exception {
 		
+		Signature signature = null;
 		byte[] smime = null;
-		if (FirmaCAIB.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma())) {
+		
+		if (FirmaExtendedCAIB.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma())) {
 			smime = ((FirmaCAIB) firma).getSmime().getBytes("UTF-8");
+		} else if (FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED.equals(firma.getFormatoFirma())){
+			smime = ((FirmaExtendedCAIB) firma).getSmime().getBytes("UTF-8");
 		} else {
 			// Generamos smime
 			UtilFirmaCAIB f = new UtilFirmaCAIB();

@@ -36,7 +36,12 @@
     	<fileset dir="${lib.dir}/sistra">
     		<include name="sistra-plugins.jar"/>
     		<include name="sistra-util.jar"/>	    	
-   		</fileset>	
+   		</fileset>
+    	<fileset dir="${lib.dir}/firma">
+    	    <include name="plugin-certificate-afirmacxf-1.0.1.jar"/>
+    		<include name="jackson-core-asl-1.7.1.jar"/>
+    	    <include name="jackson-mapper-asl-1.7.1.jar"/>
+    	</fileset>
     </path>	
 
 	<target name="clean" description="Destruye los directorios de trabajo">
