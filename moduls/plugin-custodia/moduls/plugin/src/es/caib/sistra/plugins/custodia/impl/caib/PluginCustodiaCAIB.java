@@ -15,6 +15,7 @@ import es.caib.sistra.plugins.custodia.PluginCustodiaIntf;
 import es.caib.sistra.plugins.custodia.util.Configuracion;
 import es.caib.sistra.plugins.firma.FirmaIntf;
 import es.caib.sistra.plugins.firma.impl.caib.FirmaCAIB;
+import es.caib.sistra.plugins.firma.impl.caib.FirmaExtendedCAIB;
 import es.caib.sistra.plugins.firma.impl.caib.UtilFirmaCAIB;
 import es.caib.xml.registro.factoria.ConstantesAsientoXML;
 import es.caib.xml.registro.factoria.FactoriaObjetosXMLRegistro;
@@ -42,12 +43,17 @@ public class PluginCustodiaCAIB implements PluginCustodiaIntf{
 				
 				// Empaquetamos documento y firmas en SMIME
 				UtilFirmaCAIB firmaCaib = new UtilFirmaCAIB();
+				firmaCaib.iniciarDispositivo();
 				ByteArrayOutputStream baos = new ByteArrayOutputStream();
 				Signature[] signs = new Signature[firmas.length];
 				for(int i=0;i<firmas.length;i++){
-					signs[i] = ((FirmaCAIB)firmas[i]).getSignature();
+					if (FirmaExtendedCAIB.FORMATO_FIRMA_EXTENDED.equals(firmas[i].getFormatoFirma())){
+						signs[i] = ((FirmaExtendedCAIB)firmas[i]).getSignature();
+					} else {
+						signs[i] = ((FirmaCAIB)firmas[i]).getSignature();
+					}
 				}
-				firmaCaib.iniciarDispositivo();				
+				
 				firmaCaib.generarSMIME(new ByteArrayInputStream(documento.getDatosFichero()),signs,baos);
 				
 				//Generamos idreserva para custodiar y reservamos documento en custodia
