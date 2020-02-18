@@ -34,14 +34,15 @@ public class UtilsRegweb3 {
 
 	/** Codigos paises INE. */
 	private static final Map<String, String> CODIGOS_INE_PAIS = null;
-	
+
 	/**
 	 * Obtiene service registro entrada.
+	 * @param timeoutSeconds
 	 * @return service registro entrada
 	 * @throws Exception
 	 */
 	public static RegWebRegistroEntradaWs getRegistroEntradaService(String entidad) throws Exception  {
-	       
+
 		final String endpoint = ConfiguracionRegweb3.getInstance().getProperty("regweb3.endpoint.entrada");
 		String user = obtenerUsuarioEntidad(entidad);
 		String pass = obtenerPasswordEntidad(entidad);
@@ -50,20 +51,20 @@ public class UtilsRegweb3 {
 		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebRegistroEntrada");
         RegWebRegistroEntradaWsService service = new RegWebRegistroEntradaWsService(wsdl);
 
-        RegWebRegistroEntradaWs api = service.getRegWebRegistroEntradaWs();      
-               
+        RegWebRegistroEntradaWs api = service.getRegWebRegistroEntradaWs();
+
         configurarService((BindingProvider) api, endpoint, user, pass);
-        
+
        return api;
     }
-	
+
 	/**
 	 * Obtiene service registro salida.
 	 * @return service registro salida
 	 * @throws Exception
 	 */
 	public static RegWebRegistroSalidaWs getRegistroSalidaService(String entidad) throws Exception  {
-	       
+
 		final String endpoint = ConfiguracionRegweb3.getInstance().getProperty("regweb3.endpoint.salida");
 		String user = obtenerUsuarioEntidad(entidad);
 		String pass = obtenerPasswordEntidad(entidad);
@@ -72,20 +73,20 @@ public class UtilsRegweb3 {
 		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebRegistroSalida");
         RegWebRegistroSalidaWsService service = new RegWebRegistroSalidaWsService(wsdl);
 
-        RegWebRegistroSalidaWs api = service.getRegWebRegistroSalidaWs();      
-               
+        RegWebRegistroSalidaWs api = service.getRegWebRegistroSalidaWs();
+
         configurarService((BindingProvider) api, endpoint, user, pass);
-        
+
        return api;
     }
-	
+
 	/**
 	 * Obtiene service registro salida.
 	 * @return service registro salida
 	 * @throws Exception
 	 */
 	public static RegWebInfoWs getRegistroInfoService(String entidad) throws Exception  {
-	       
+
 		final String endpoint = ConfiguracionRegweb3.getInstance().getProperty("regweb3.endpoint.info");
 		String user = obtenerUsuarioEntidad(entidad);
 		String pass = obtenerPasswordEntidad(entidad);
@@ -94,10 +95,10 @@ public class UtilsRegweb3 {
 		URL wsdl = obtenerUrlWsdl(endpoint, "RegWebInfo");
         RegWebInfoWsService service = new RegWebInfoWsService(wsdl);
 
-        RegWebInfoWs api = service.getRegWebInfoWs();      
-               
+        RegWebInfoWs api = service.getRegWebInfoWs();
+
         configurarService((BindingProvider) api, endpoint, user, pass);
-        
+
        return api;
     }
 
@@ -107,7 +108,7 @@ public class UtilsRegweb3 {
 	 * @throws Exception
 	 */
 	public static Dir3CaibObtenerUnidadesWs getDir3UnidadesService() throws Exception  {
-	       
+
 		final String endpoint = ConfiguracionRegweb3.getInstance().getProperty("regweb3.dir3.endpoint");
 		String user = ConfiguracionRegweb3.getInstance().getProperty("regweb3.dir3.usuario");
 		String pass = ConfiguracionRegweb3.getInstance().getProperty("regweb3.dir3.password");
@@ -115,11 +116,11 @@ public class UtilsRegweb3 {
 		// Url WSDL: local o remoto segun haya proxy
 		URL wsdl = obtenerUrlWsdl(endpoint, "Dir3CaibObtenerUnidades");
 
-        Dir3CaibObtenerUnidadesWsService service = new Dir3CaibObtenerUnidadesWsService(wsdl);           
-        Dir3CaibObtenerUnidadesWs api = service.getDir3CaibObtenerUnidadesWs();      
-               
+        Dir3CaibObtenerUnidadesWsService service = new Dir3CaibObtenerUnidadesWsService(wsdl);
+        Dir3CaibObtenerUnidadesWs api = service.getDir3CaibObtenerUnidadesWs();
+
         configurarService((BindingProvider) api, endpoint, user, pass);
-        
+
        return api;
     }
 
@@ -140,7 +141,7 @@ public class UtilsRegweb3 {
 		}
 		return wsdl;
 	}
-	
+
 	/**
 	 * Verifica si esta soportada la entidad.
 	 * @param entidad entidad
@@ -157,34 +158,34 @@ public class UtilsRegweb3 {
 		}
 		return existe;
 	}
-	
+
 	/**
-	 * Obtiene usuario entidad.	
+	 * Obtiene usuario entidad.
 	 * @return usuario
 	 */
 	public static String obtenerUsuarioEntidad(String entidad) {
-		String usuario = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario." + entidad);		
+		String usuario = ConfiguracionRegweb3.getInstance().getProperty("regweb3.usuario." + entidad);
 		return usuario;
 	}
-	
+
 	/**
-	 * Obtiene password entidad.	
+	 * Obtiene password entidad.
 	 * @return password
 	 */
 	public static String obtenerPasswordEntidad(String entidad) {
-		String password = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password." + entidad);		
+		String password = ConfiguracionRegweb3.getInstance().getProperty("regweb3.password." + entidad);
 		return password;
 	}
-	
+
 	/**
-	 * Obtiene entidades soportadas.	
+	 * Obtiene entidades soportadas.
 	 * @return entidades soportadas
 	 */
 	public static String[] obtenerEntidades() {
-		String[] entidades = ConfiguracionRegweb3.getInstance().getProperty("regweb3.entidad").split(";");		
+		String[] entidades = ConfiguracionRegweb3.getInstance().getProperty("regweb3.entidad").split(";");
 		return entidades;
 	}
-	
+
 	/**
 	 * Obtiene codigo aplicacion.
 	 * @return codigo aplicacion
@@ -200,39 +201,39 @@ public class UtilsRegweb3 {
 	public static String getVersionAplicacion() {
 		return ConfiguracionRegweb3.getInstance().getProperty("regweb3.aplicacion.version");
 	}
-	
+
 	public static Integer getLongMaxDomicilio() {
 		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.domicilio")));
 	}
-	
+
 	public static Integer getLongMaxCp() {
 		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.codigoPostal")));
 	}
-	
+
 	public static Integer getLongMaxTelefono() {
 		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.telefono")));
 	}
-	
+
 	public static Integer getLongMaxEmail() {
 		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.email")));
 	}
-	
+
 	public static Integer getLongMaxNombre() {
 		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.nombre")));
 	}
-	
+
 	public static Integer getLongMaxRazonSocial() {
 		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.razonSocial")));
 	}
-	
+
 	public static Integer getLongMaxApellido1() {
 		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.apellido1")));
 	}
-	
+
 	public static Integer getLongMaxApellido2() {
 		return new Integer(Integer.parseInt(ConfiguracionRegweb3.getInstance().getProperty("regweb3.longMax.apellido2")));
 	}
-	
+
 	/**
 	 * Obtiene tipo interesado.
 	 * @param documentoIdentificacion documento identicacion
@@ -260,7 +261,7 @@ public class UtilsRegweb3 {
 		}
 		return result;
 	}
-	
+
 	/**
 	 * Obtiene tipo documento identificacion.
 	 * @param documentoIdentificacion documento identicacion
@@ -293,7 +294,7 @@ public class UtilsRegweb3 {
 	 * Obtener datos interesado asiento.
 	 * @param asiento asiento
 	 * @param tipoInteresado tipo interesado (RPT/RPD).
-	 * 
+	 *
 	 * @return interesado
 	 */
 	public static DatosInteresado obtenerDatosInteresadoAsiento(
@@ -307,9 +308,9 @@ public class UtilsRegweb3 {
 			}
 		}
 		return result;
-	}		
-	
-	
+	}
+
+
 	/**
 	 * Obtener libro.
 	 * @param asiento asiento
@@ -318,9 +319,9 @@ public class UtilsRegweb3 {
 	public static String getLibro(String oficinaAsientoRegistral) {
 		String [] codigos = oficinaAsientoRegistral.split("\\.");
 		return codigos[0];
-	}	
-	
-	
+	}
+
+
 	/**
 	 * Obtener interesado.
 	 * @param asiento asiento
@@ -329,17 +330,17 @@ public class UtilsRegweb3 {
 	public static String getOficina(String oficinaAsientoRegistral) {
 		String [] codigos = oficinaAsientoRegistral.split("\\.");
 		return codigos[1];
-	}	
-	
+	}
+
 	/**
 	 * Obtener interesado.
 	 * @param asiento asiento
 	 * @return interesado
 	 */
-	public static String getOficinaAsiento(String codigoLibro, String codigoOficina) { 		
+	public static String getOficinaAsiento(String codigoLibro, String codigoOficina) {
 		return codigoLibro + "." + codigoOficina;
 	}
-	
+
 	/**
 	 * Obtiene nombre firma.
 	 * @param firma
@@ -360,7 +361,7 @@ public class UtilsRegweb3 {
 		}
 		return "firma." + extension;
 	}
-	
+
 	/**
      * Obtiene extension fichero.
      */
@@ -371,10 +372,10 @@ public class UtilsRegweb3 {
 			return "";
 		}
 	}
-    
+
 	/**
 	 * Crear interesado a partir datos asiento.
-	 * 
+	 *
 	 * @param interesadoAsiento
 	 * @return
 	 * @throws Exception
@@ -412,20 +413,20 @@ public class UtilsRegweb3 {
 			interesado.setApellido2((interesadoAsiento.getIdentificacionInteresadoDesglosada().getApellido2() != null)?truncaCampo(interesadoAsiento
 					.getIdentificacionInteresadoDesglosada().getApellido2(),getLongMaxApellido2()):interesadoAsiento.getIdentificacionInteresadoDesglosada().getApellido2());
 		}
-		
+
 		if (interesadoAsiento.getDireccionCodificada() != null) {
 			interesado.setPais(convertirCodigoPaisIsoAlfaToNum(interesadoAsiento.getDireccionCodificada().getPaisOrigen()));
 			interesado.setProvincia(convertirLong(interesadoAsiento.getDireccionCodificada().getCodigoProvincia()));
 			interesado.setLocalidad(convertirCodigoMunicipio(interesadoAsiento.getDireccionCodificada().getCodigoProvincia(), interesadoAsiento.getDireccionCodificada().getCodigoMunicipio()));
 			interesado.setDireccion((interesadoAsiento.getDireccionCodificada().getDomicilio() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getDomicilio(), getLongMaxDomicilio()):interesadoAsiento.getDireccionCodificada().getDomicilio());
 			interesado.setCp((interesadoAsiento.getDireccionCodificada().getCodigoPostal() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getCodigoPostal(), getLongMaxCp()):interesadoAsiento.getDireccionCodificada().getCodigoPostal());
-			interesado.setEmail((interesadoAsiento.getDireccionCodificada().getEmail() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getEmail(), getLongMaxEmail()):interesadoAsiento.getDireccionCodificada().getEmail());		
+			interesado.setEmail((interesadoAsiento.getDireccionCodificada().getEmail() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getEmail(), getLongMaxEmail()):interesadoAsiento.getDireccionCodificada().getEmail());
 			interesado.setTelefono((interesadoAsiento.getDireccionCodificada().getTelefono() != null)?truncaCampo(interesadoAsiento.getDireccionCodificada().getTelefono(), getLongMaxTelefono()):interesadoAsiento.getDireccionCodificada().getTelefono());
 		}
-		
+
 		return interesado;
 	}
-	
+
 	// --------- Funciones auxiliares
 	/**
 	 * Trunca los campos del interesado a los valores máximos del REGWEB3.
@@ -439,29 +440,32 @@ public class UtilsRegweb3 {
 		}
 		return campo;
 	}
-	
+
 	/**
 	 * Configura service.
 	 * @param bp Binding Provider
 	 * @param endpoint Endpoint ws
 	 * @param user usuario
 	 * @param pass password
+	 * @param timeoutSeconds
 	 */
 	private static void configurarService(BindingProvider bp, String endpoint,
 			String user, String pass) throws Exception {
-		 
+
+		Integer timeout = new Integer(Integer.parseInt(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.timeout"), "180")));
+
 		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
-	    
-		WsClientSistraUtil.configurePort(bp, endpoint, user, pass);
-	    
+
+		WsClientSistraUtil.configurePort(bp, endpoint, user, null, pass, timeout);
+
 		// PARA PRUEBAS DESDE MAIN
 		//WsClientUtil.configurePort(bp, endpoint, null, user, pass, "BASIC", true, true, true, true);
-	    
+
 	}
 
 	/**
-	 * Calcula codigo ISO numerico pais a partir de de codigo ISO alfanumerico. 
-	 * @param codPaisIsoAlf codigo ISO pais alfanumerico. 
+	 * Calcula codigo ISO numerico pais a partir de de codigo ISO alfanumerico.
+	 * @param codPaisIsoAlf codigo ISO pais alfanumerico.
 	 * @return codigo codigo ISO pais numerico
 	 */
 	private static Long convertirCodigoPaisIsoAlfaToNum(String codPaisIsoAlf) {
@@ -474,7 +478,7 @@ public class UtilsRegweb3 {
 		}
 		return res;
 	}
-	
+
 	/**
 	 * Convierte a cod municipio en formato regweb (codprov + codmuni + dc).
 	 * @param codProv cod provincia
@@ -489,9 +493,9 @@ public class UtilsRegweb3 {
 			String codIne = cm + calcularMunicipioDC(cp, cm);
 			res = new Long (codIne);
 		}
-		return res;		
+		return res;
 	}
-	
+
 	public static String obtenerEntidadAsiento(AsientoRegistral asiento)
 			throws Exception {
 		// Entidad: por compatibilidad con versiones anteriores si no existe entidad y el plugin solo soporta una entidad, se coge esa entidad
@@ -507,40 +511,40 @@ public class UtilsRegweb3 {
 		}
 		return entidad;
 	}
-	
+
 	/**
-	 * 
+	 *
 	  	De izquierda a derecha se etiquetan las columnas como C, B, A, C, B, A…
-	 
+
 		Los números de cada columna se sustituyen por otros de acuerdo a la columna a la que pertenezcan. De 0 a 9:
-		
+
 		A | 0 1 2 3 4 5 6 7 8 9 (se queda igual)
 		B | 0 3 8 2 7 4 1 5 9 6
 		C | 0 2 4 6 8 1 3 5 7 9
-		
+
 		Se suman los números así obtenidos y el dígito de control es lo que falta para alcanzar el siguiente múltiplo de 10 (0 si es múltiplo de 10, 10 – [suma de los dígitos mod. 10] en otro caso)
-		
+
 		Ejemplos (Verificados con el INE):
-		
+
 		17141
 		CBACB
 		25183
-		
+
 		2+5+1+8+3 = 19, el siguiente múltiplo de 10 es 20, luego el dígito de control es 20-19 = 1.
-	  
+
 	 * @param prov codigo provincia
 	 * @param municipio codigo municipio
 	 * @return  codigo control
 	 */
 	private static int calcularMunicipioDC(String prov, String municipio) {
-		
+
 		String colA[] = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
 		String colB[] = {"0", "3", "8", "2", "7", "4", "1", "5", "9", "6"};
 		String colC[] = {"0", "2", "4", "6", "8", "1", "3", "5", "7", "9"};
-		
+
 		String codMunicipio = prov + municipio;
-		
-		
+
+
 		String encodeStr = "";
 		for (int i=0; i < codMunicipio.length(); i++) {
 			int col = i%3;
@@ -559,21 +563,21 @@ public class UtilsRegweb3 {
 				break;
 			}
 		}
-		
+
 		int sum = 0;
 		for (int i=0; i < encodeStr.length(); i++) {
 			sum += Integer.parseInt(""+ encodeStr.charAt(i));
 		}
-		
+
 		int resto = sum % 10;
 	    int dc = 0;
 	    if (resto != 0)  {
 	      dc = 10 - resto;
 	    }
- 
+
 		return dc;
 	}
-	
+
 	/**
 	 * Convierte a long.
 	 * @param num numero
@@ -586,7 +590,7 @@ public class UtilsRegweb3 {
 		}
 		return res;
 	}
-	
+
 	private static String normalizaNumDoc(String numDoc){
 		String doc = null;
 		int validacion = NifCif.validaDocumento(numDoc);
@@ -597,5 +601,5 @@ public class UtilsRegweb3 {
 		}
 		return doc;
 	}
-	
+
 }
