@@ -456,7 +456,7 @@ public class UtilsRegweb3 {
 
 		bp.getRequestContext().put(BindingProvider.ENDPOINT_ADDRESS_PROPERTY, endpoint);
 
-		WsClientSistraUtil.configurePort(bp, endpoint, user, null, pass, timeout);
+		WsClientSistraUtil.configurePort(bp, endpoint, null, user, pass, timeout);
 
 		// PARA PRUEBAS DESDE MAIN
 		//WsClientUtil.configurePort(bp, endpoint, null, user, pass, "BASIC", true, true, true, true);
