@@ -848,7 +848,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	        	}
 
 	        	if (tipoDocumento.equals(ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO)){
-	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA_COMPULSADA;
+	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA;
 	        	}
 
 	        	FirmaIntf firma = docRDS.getFirmas()[0];
