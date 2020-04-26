@@ -71,9 +71,9 @@
     </target>
 
     <target name="jar.jar" depends="jar.compile">
-        <delete file="${jar.product}/plugin-regweb3-v${regweb3.version.plugin}.jar" quiet="yes"/>
+        <delete file="${jar.product}/plugin-regweb3-v${regweb3.version.plugin}-lib-${regweb3.version.lib}.jar" quiet="yes"/>
         <jar
-            jarfile="${jar.product}/plugin-regweb3-v${regweb3.version.plugin}.jar"
+            jarfile="${jar.product}/plugin-regweb3-v${regweb3.version.plugin}-lib-${regweb3.version.lib}.jar"
             basedir="${jar.classes}">
             <manifest>
                 <attribute name="Created-By" value="${indra}"/>
@@ -99,7 +99,7 @@
         </javadoc>
     </target>
 	<target name="distribute" description="Distribucion">
-		<copy file="${output.dir}/moduls/plugin-regweb3-v${regweb3.version.plugin}.jar" todir="${distribucion.dir}"/>
+		<copy file="${output.dir}/moduls/plugin-regweb3-v${regweb3.version.plugin}-lib-${regweb3.version.lib}.jar" todir="${distribucion.dir}"/>
 	</target>
     <target name="doc" depends="jar.javadoc" description="Realiza las tareas de documentación"/>
     <target name="main" depends="jar.jar,distribute" description="Construye el jar"/>

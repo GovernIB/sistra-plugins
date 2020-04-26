@@ -73,9 +73,9 @@
     </target>
 
     <target name="jar.jar" depends="jar.compile">
-        <delete file="${jar.product}/plugin-regweb3-v${regweb3.version.plugin}.jar" quiet="yes"/>
+        <delete file="${jar.product}/plugin-regweb3-v${regweb3.version.plugin}-lib-${regweb3.version.lib}.jar" quiet="yes"/>
         <jar
-            jarfile="${jar.product}/plugin-regweb3-v${regweb3.version.plugin}.jar"
+            jarfile="${jar.product}/plugin-regweb3-v${regweb3.version.plugin}-lib-${regweb3.version.lib}.jar"
             basedir="${jar.classes}">
             <manifest>
                 <attribute name="Created-By" value="${indra}"/>

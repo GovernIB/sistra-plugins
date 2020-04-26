@@ -47,7 +47,7 @@
 	</target>
 
 	<target name="distribute" description="Distribucion">
-		<copy file="${output.dir}/moduls/plugin-regweb3-v${regweb3.version.plugin}.jar" todir="${distribucion.dir}"/>
+		<copy file="${output.dir}/moduls/plugin-regweb3-v${regweb3.version.plugin}-lib-${regweb3.version.lib}.jar" todir="${distribucion.dir}"/>
 	</target>
 
 	<target name="doc" depends="prepare" description="Genera la documentación">

@@ -63,6 +63,7 @@
 	     <replacefilter token="@contextoRaizFront@" value="${contextoRaiz.front}"/>
 		 <replacefilter token="@contextoRaizBack@" value="${contextoRaiz.back}"/>
 		 <replacefilter token="@regweb3.version.plugin@" value="${regweb3.version.plugin}"/>
+		 <replacefilter token="@regweb3.version.lib@" value="${regweb3.version.lib}"/>
 		 <replacefilter token="${comment.init} plugin-regweb3-v${regweb3.version.plugin}" value=""/>
 		 <replacefilter token="plugin-regweb3-v${regweb3.version.plugin} ${comment.end}" value=""/>
 	</replace>
@@ -114,7 +115,7 @@
 			<include name="plugin-smsBIT.jar"/>
 			<include name="plugin-emailCAIB.jar"/>
 			<include name="libreria-formateadoresCAIB.jar"/>
-			<include name="plugin-regweb3-v${regweb3.version.plugin}.jar"/>
+			<include name="plugin-regweb3-v${regweb3.version.plugin}-lib-${regweb3.version.lib}.jar"/>
 		</zipfileset>
 
 		<zipfileset dir="${output.dir}/moduls">
