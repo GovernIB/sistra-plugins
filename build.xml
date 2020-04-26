@@ -7,11 +7,9 @@
 <property name="moduls.dir" location="${basedir}/moduls"/>
 <property name="etc.dir" location="${basedir}/etc"/>
 <property name="lib" value="lib"/>
-<property name="libregweb" value="libregweb"/>
 
 
-<target name="main" depends="clean,checkJbossVersion,checkRegwebVersion,prepare,assemble"/>
-
+<target name="main" depends="clean,checkJbossVersion,prepare,assemble"/>
 
 <target name="checkJbossVersion">
 	<condition property="isJboss5">
@@ -20,23 +18,6 @@
 	<condition property="isJboss3">
 		<equals arg1="${jboss.version}" arg2="3.2"/>
 	</condition>
-</target>
-
-<target name="checkRegwebVersion">
-	<condition property="isCurrentVersion">
-		<equals arg1="${regweb3.version}" arg2=""/>
-	</condition>
-	<condition property="isOtherVersion">
-		<not>
-			<equals arg1="${regweb3.version}" arg2=""/>
-		</not>
-	</condition>
-</target>
-	
-<target name="replacePluginRegweb"  if="isOtherVersion">
-	<copy file="${libregweb}/plugin-regweb3_${regweb3.version}.jar" tofile="${output.dir}/moduls/plugin-regweb3.jar"/>
-	<copy file="${libregweb}/plugin-regweb3_${regweb3.version}.jar" tofile="${output.dir}/moduls/plugin-regweb3.jar"/>
-	<echo message="Se sustituye plugin Regweb por la version ${regweb3.version}"/>
 </target>
 
 
@@ -59,7 +40,6 @@
 	<ant dir="${moduls.dir}/plugin-login/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-pago/moduls" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-pagoTPV/moduls" target="${task}" inheritall="false"/>
-	<ant dir="${moduls.dir}/plugin-regtel/moduls" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-sms/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-smsbit/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-email/moduls/plugin" target="${task}" inheritall="false"/>
@@ -67,7 +47,9 @@
 	<ant dir="${moduls.dir}/plugin-custodia/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/sistraportal/moduls/portal" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/formateadores/moduls/formateadores" target="${task}" inheritall="false"/>
-	<ant dir="${moduls.dir}/plugin-regweb3/moduls" target="${task}" inheritall="false"/>
+
+	<ant dir="${moduls.dir}/plugin-regweb3-v${regweb3.version.plugin}/moduls" target="${task}" inheritall="false"/>
+
 </target>
 
 
@@ -75,13 +57,14 @@
 	<antcall target="propagate">
 		<param name="task" value="main"/>
 	</antcall>
-	
-	<antcall target="replacePluginRegweb"/>
 
 	<copy file="${etc.dir}/jboss-${jboss.version}/application.xml" todir="${output.dir}/etc" overwrite="true"/>
 	<replace file="${output.dir}/etc/application.xml">
 	     <replacefilter token="@contextoRaizFront@" value="${contextoRaiz.front}"/>
 		 <replacefilter token="@contextoRaizBack@" value="${contextoRaiz.back}"/>
+		 <replacefilter token="@regweb3.version.plugin@" value="${regweb3.version.plugin}"/>
+		 <replacefilter token="${comment.init} plugin-regweb3-v${regweb3.version.plugin}" value=""/>
+		 <replacefilter token="plugin-regweb3-v${regweb3.version.plugin} ${comment.end}" value=""/>
 	</replace>
 
 	<delete file="${output.dir}/product/2-pluginsCAIB.ear" quiet="yes"/>
@@ -108,10 +91,7 @@
 		<zipfileset dir="${lib}/firma" prefix="lib">
 			<include name="ideas36rc1_Java1.4.jar"/>
 		</zipfileset>
-		<zipfileset dir="${lib}/regweblib" prefix="lib">
-			<include name="logic-1.0.5-client.jar"/>
-		</zipfileset>
-		<zipfileset dir="${lib}/regweb3/${regweb3.version}" prefix="lib">
+		<zipfileset dir="${lib}/regweb3/${regweb3.version.lib}" prefix="lib">
 		</zipfileset>
 		<zipfileset dir="${lib}/tpv" prefix="lib">
 			<include name="org.json.jar"/>
@@ -124,25 +104,19 @@
 			<include name="jackson-core-asl-1.7.1.jar"/>
 			<include name="jackson-mapper-asl-1.7.1.jar"/>
 		</zipfileset>
-		
-	<!--	<zipfileset dir="${libregweb}" prefix="lib">
-			<include if="isOtherVersion" name="plugin-regweb3_${regweb3.version}.jar" />
-		</zipfileset>
-		<zipfileset dir="${output.dir}/moduls" prefix="lib">
-			<include if="isCurrentVersion" name="plugin-regweb3.jar"/>
-		</zipfileset> -->
+
 		<zipfileset dir="${output.dir}/moduls" prefix="lib">
 			<include name="plugin-custodiaCAIB.jar"/>
 			<include name="plugin-firmaCAIB.jar"/>
 			<include name="plugin-loginCAIB.jar"/>
 			<include name="plugin-pagosCAIB.jar"/>
 			<include name="plugin-pagosTPV.jar"/>
-			<include name="plugin-regtelCAIB.jar"/>
-			<include name="plugin-regweb3.jar"/>
 			<include name="plugin-smsBIT.jar"/>
 			<include name="plugin-emailCAIB.jar"/>
 			<include name="libreria-formateadoresCAIB.jar"/>
+			<include name="plugin-regweb3-v${regweb3.version.plugin}.jar"/>
 		</zipfileset>
+
 		<zipfileset dir="${output.dir}/moduls">
 			<include name="pagosCAIB-model.jar"/>
 			<include name="pagosCAIB-persistence.jar"/>
@@ -187,7 +161,7 @@
 		<!-- Directorio donde estan los ficheros de configuracion -->
 		<arg value="${basedir}/config"/>
 		<!-- Nombre ficheros propiedades a tratar separados por coma -->
-		<arg value="plugin-login,plugin-firma,plugin-pagos,plugin-pagosTPV,plugin-regweb3,plugin-sms,plugin-smsbit,plugin-custodia"/>
+		<arg value="plugin-login,plugin-firma,plugin-pagos,plugin-pagosTPV,plugin-regweb3-v${regweb3.version.plugin},plugin-sms,plugin-smsbit,plugin-custodia"/>
 		<!-- Nombre ficheros propiedades a tratar separados por coma (se incluye tal cual, sin prefijo) -->
 		<arg value="custodia"/>
 
@@ -198,7 +172,7 @@
     <jar jarfile="${output.dir}/product/2-pluginsCAIB.sar">
         <metainf dir="${output.dir}/etc" includes="*.xml"/>
     </jar>
-</target>
 
+</target>
 
 </project>

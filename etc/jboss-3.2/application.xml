@@ -8,8 +8,7 @@
     <description><![CDATA[Proyecto IBCEGE]]></description>
 
 	<!--  Libs plugins -->
-	<module><java>lib/plugin-regtelCAIB.jar</java></module>
-	<module><java>lib/plugin-regweb3.jar</java></module>
+	<module><java>lib/plugin-regweb3-v@regweb3.version.plugin@.jar</java></module>
     <module><java>lib/plugin-smsBIT.jar</java></module>
     <module><java>lib/plugin-emailCAIB.jar</java></module>
    	<module><java>lib/plugin-loginCAIB.jar</java></module>
@@ -17,6 +16,29 @@
 	<module><java>lib/plugin-pagosCAIB.jar</java></module>
 	<module><java>lib/plugin-pagosTPV.jar</java></module>
 	<module><java>lib/plugin-custodiaCAIB.jar</java></module>
+
+	<!--  Versiones RW3 -->
+
+	<!-- Regweb v1.0 -->
+	<!-- plugin-regweb3-v1.0
+	<module><java>lib/logic-1.0.5-client.jar</java></module>
+	<module><java>regtelCAIB-model.jar</java></module>
+	<module><java>regtelCAIB-wsclient.jar</java></module>
+	<module><ejb>regtelCAIB-persistence.jar</ejb></module>
+	plugin-regweb3-v1.0 -->
+
+	<!-- Regweb v3.0 -->
+	<!-- plugin-regweb3-v3.0
+	<module><java>lib/regweb3-ws-api-3.0.9.jar</java></module>
+	<module><java>lib/dir3caib-ws-api-1.0.7.jar</java></module>
+	plugin-regweb3-v3.0 -->
+
+    <!-- Regweb v3.1 -->
+    <!-- plugin-regweb3-v3.1
+	<module><java>lib/regweb3-ws-api-3.1.2.jar</java></module>
+	<module><java>lib/dir3caib-ws-api-1.0.7.jar</java></module>
+	plugin-regweb3-v3.1 -->
+
 
     <!--  Asistente pagos -->
     <module><java>pagosCAIB-model.jar</java></module>
@@ -44,11 +66,6 @@
         </web>
     </module>
 
-   <!-- Registro CAIB -->
-	<module><java>regtelCAIB-model.jar</java></module>
-	<module><java>regtelCAIB-wsclient.jar</java></module>
-	<module><ejb>regtelCAIB-persistence.jar</ejb></module>
-
    <!-- Iframe portal -->
    <module>
         <web>
@@ -74,15 +91,8 @@
     <!-- VALCERT: NECESARIO PARA EL PLUGIN DE CUSTODIA CAIB -->
     <module><java>lib/sistra-valcert-axis-1.6.6.jar</java></module>
 
-     <!-- REGWEB EJB: NECESARIO PARA PLUGIN-REGTEL -->
-    <module><java>lib/logic-1.0.5-client.jar</java></module>
-
      <!-- TPV: JSON -->
     <module><java>lib/org.json.jar</java></module>
-    
-    <!-- REGWEB3 CAIB -->
-	<module><java>lib/regweb3-ws-api-3.0.7.jar</java></module>
-	<module><java>lib/dir3caib-ws-api-1.0.4.jar</java></module>
 
 
 </application>
