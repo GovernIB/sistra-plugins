@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="src" path="moduls/plugin-custodia/moduls/plugin/src"/>
-	<classpathentry kind="src" path="moduls/plugin-regweb3/moduls/plugin/src"/>
+	<classpathentry kind="src" path="moduls/plugin-regweb3-v3.1/moduls/plugin/src"/>
 	<classpathentry kind="src" path="moduls/formateadores/moduls/formateadores/src"/>
 	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/back/src"/>
 	<classpathentry kind="src" path="moduls/plugin-pagoTPV/output/persistence/gen-src"/>
@@ -10,9 +10,6 @@
 	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/persistence/src"/>
 	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/plugin/src"/>
 	<classpathentry kind="src" path="moduls/plugin-pagoTPV/moduls/model/src"/>
-	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/webservicesClient/src"/>
-	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/persistence/src"/>
-	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/model/src"/>
 	<classpathentry kind="src" path="moduls/plugin-email/moduls/checkEmail/src"/>
 	<classpathentry kind="src" path="moduls/plugin-email/moduls/plugin/src"/>
 	<classpathentry kind="src" path="moduls/plugin-firma/moduls/plugin/src"/>
@@ -22,7 +19,6 @@
 	<classpathentry kind="src" path="moduls/plugin-pago/moduls/persistence/src"/>
 	<classpathentry kind="src" path="moduls/plugin-pago/moduls/plugin/src"/>
 	<classpathentry kind="src" path="moduls/plugin-pago/output/persistence/gen-src"/>
-	<classpathentry kind="src" path="moduls/plugin-regtel/moduls/plugin/src"/>
 	<classpathentry kind="src" path="moduls/plugin-sms/moduls/plugin/src"/>
 	<classpathentry kind="lib" path="lib/axis-ant.jar"/>
 	<classpathentry kind="lib" path="lib/cglib-asm.jar"/>
@@ -77,7 +73,6 @@
 	<classpathentry kind="lib" path="lib/client/2-redose-persistence.jar"/>
 	<classpathentry kind="lib" path="lib/client/5-sistra-model.jar"/>
 	<classpathentry kind="lib" path="lib/client/5-sistra-persistence.jar"/>
-	<classpathentry kind="lib" path="lib/regweblib/logic-1.0.5-client.jar"/>
 	<classpathentry kind="lib" path="lib/activation.jar"/>
 	<classpathentry kind="lib" path="lib/commons-collections-3.1.jar"/>
 	<classpathentry kind="lib" path="lib/commons-discovery-1.0.jar"/>
