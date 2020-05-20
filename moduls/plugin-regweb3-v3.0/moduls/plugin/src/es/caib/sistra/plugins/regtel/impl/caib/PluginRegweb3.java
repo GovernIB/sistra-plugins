@@ -494,7 +494,9 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
 				try{
 		            final UnidadTF res = UtilsRegweb3.getDir3UnidadesService().obtenerUnidad(servicioDestino, null, null);
-		            result = res.getDenominacion();
+		            if (res != null) {
+		            	result = res.getDenominacion();
+		            }
 		            break;
 				}catch (SOAPFaultException e){
 					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
