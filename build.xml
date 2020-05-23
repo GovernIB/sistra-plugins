@@ -38,6 +38,7 @@
 <target name="propagate">
 	<ant dir="${moduls.dir}/plugin-firma/moduls/plugin" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-login/moduls/plugin" target="${task}" inheritall="false"/>
+	<ant dir="${moduls.dir}/plugin-login/moduls/loginmodule" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-pago/moduls" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-pagoTPV/moduls" target="${task}" inheritall="false"/>
 	<ant dir="${moduls.dir}/plugin-sms/moduls/plugin" target="${task}" inheritall="false"/>

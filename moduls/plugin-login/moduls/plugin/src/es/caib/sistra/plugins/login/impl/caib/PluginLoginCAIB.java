@@ -1,20 +1,24 @@
 package es.caib.sistra.plugins.login.impl.caib;
 
 import java.security.Principal;
+import java.util.List;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 import es.caib.loginModule.client.SeyconPrincipal;
 import es.caib.sistra.plugins.login.ConstantesLogin;
+import es.caib.sistra.plugins.login.EvidenciasAutenticacion;
+import es.caib.sistra.plugins.login.PeticionInicioSesionAutenticacion;
 import es.caib.sistra.plugins.login.PluginLoginIntf;
+import es.caib.sistra.plugins.login.PropiedadAutenticacion;
 import es.caib.util.NifCif;
 import es.caib.util.StringUtil;
 
 public class PluginLoginCAIB implements PluginLoginIntf {
 
 	private static Log log = LogFactory.getLog(PluginLoginCAIB.class);
-	
+
 	/**
 	 * Obtiene metodo de autenticacion
 	 */
@@ -27,27 +31,27 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 			return ConstantesLogin.LOGIN_USUARIO;
 		else if (credentialType == SeyconPrincipal.SIGNATURE_CREDENTIAL)
 			return ConstantesLogin.LOGIN_CERTIFICADO;
-		else {			 
+		else {
 				log.error("Atención: nivel de autenticacion no reconocido: '" +sp.getCredentialType() + "'. Autenticamos como anonimo." );
-				return ConstantesLogin.LOGIN_ANONIMO;			
+				return ConstantesLogin.LOGIN_ANONIMO;
 		}
 	}
-	
+
 	/**
 	 * Obtiene nif
 	 */
 	public String getNif(Principal principal) {
-		SeyconPrincipal sp = (SeyconPrincipal) principal;		
-		return (sp.getNif()!=null?NifCif.normalizarDocumento(sp.getNif()):null);		
+		SeyconPrincipal sp = (SeyconPrincipal) principal;
+		return (sp.getNif()!=null?NifCif.normalizarDocumento(sp.getNif()):null);
 	}
 
 	/**
 	 * Obtiene nombre y apellidos
 	 */
 	public String getNombreCompleto(Principal principal) {
-		SeyconPrincipal sp = (SeyconPrincipal) principal;		
+		SeyconPrincipal sp = (SeyconPrincipal) principal;
 		String nombre = sp.getFullName();
-		
+
 		// Quitamos palabra (AUTENTICACION), parche para DNIe
 		if (nombre != null) {
 			try  {
@@ -66,9 +70,9 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 				log.error("Error al intentar reemplazar literal (AUTENTICACION) y (FIRMA) en nombre del certificado");
 			}
 		}
-		
+
 		return nombre;
-		
+
 	}
 
 	public String getRepresentanteApellido1(Principal principal) {
@@ -86,6 +90,19 @@ public class PluginLoginCAIB implements PluginLoginIntf {
 	public String getRepresentanteNombre(Principal principal) {
 		return null;
 	}
-	
-	
+
+	public EvidenciasAutenticacion getEvidenciasAutenticacion(
+			String paramString) {
+		return null;
+	}
+
+	public String getIdSesionAutenticacion(Principal paramPrincipal) {
+		return null;
+	}
+
+	public String iniciarSesionAutenticacion(
+			PeticionInicioSesionAutenticacion paramPeticionInicioSesion) {
+		return null;
+	}
+
 }

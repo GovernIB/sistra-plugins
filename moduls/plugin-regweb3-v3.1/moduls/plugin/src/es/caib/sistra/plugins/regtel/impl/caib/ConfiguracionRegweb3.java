@@ -12,6 +12,7 @@ public class ConfiguracionRegweb3 {
 	private static Log log = LogFactory.getLog(ConfiguracionRegweb3.class);
 	private static final String PREFIX_SAR_PLUGINS = "es.caib.sistra.configuracion.plugins.";
 	private static final String PREFIX_SAR_SISTRA = "es.caib.sistra.configuracion.sistra.";
+	private static final String PROPERTIES_NAME = "plugin-regweb3-v3.1";
 	private static ConfiguracionRegweb3 configuracion = null;
 	private Properties props = null;
 
@@ -40,8 +41,8 @@ public class ConfiguracionRegweb3 {
 		for (Iterator it = propSystem.keySet().iterator(); it.hasNext();) {
 			String key = (String) it.next();
 			String value = propSystem.getProperty(key);
-			if (key.startsWith(PREFIX_SAR_PLUGINS + "plugin-regweb3")) {
-				props.put(key.substring((PREFIX_SAR_PLUGINS + "plugin-regweb3").length() + 1), value);
+			if (key.startsWith(PREFIX_SAR_PLUGINS + PROPERTIES_NAME)) {
+				props.put(key.substring((PREFIX_SAR_PLUGINS + PROPERTIES_NAME).length() + 1), value);
 			}
 		}
 	}
@@ -49,7 +50,7 @@ public class ConfiguracionRegweb3 {
 
 	private void readPropertiesFromFilesystem() throws Exception {
 		props = new Properties();
-		props.load(new FileInputStream(System.getProperty("ad.path.properties") + "sistra/plugins/plugin-regweb3-v3.1.properties"));
+		props.load(new FileInputStream(System.getProperty("ad.path.properties") + "sistra/plugins/" + PROPERTIES_NAME + ".properties"));
 	}
 
 	public static ConfiguracionRegweb3 getInstance(){
