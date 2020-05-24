@@ -39,59 +39,59 @@ import es.caib.zonaper.persistence.delegate.PadDelegate;
  *
  * @struts.action-forward
  *  name="success" path="/enlacePortal.jsp"
- *  
+ *
  *  @struts.action-forward
  *  name="autenticar" path="/protected/autenticar.do"
- * 
+ *
  */
 public class EnlacePortalAction extends Action{
-	
+
 	private static Log log = LogFactory.getLog( EnlacePortalAction.class );
-	
+
 	public ActionForward execute(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception 
+            HttpServletResponse response) throws Exception
     {
-    	boolean autenticado = false,conAutenticacion=false,anonimo=false,error=false,continuarAnonimo=false;	
+    	boolean autenticado = false,conAutenticacion=false,anonimo=false,error=false,continuarAnonimo=false;
     	String modelo="",language="";
 		int version=0;
     	List tramitesInacabados = new ArrayList();
-    	
+
     	try{
-    		// Recogemos parámetros: modelo / version / idioma
+    		// Recogemos parametros: modelo / version / idioma
     		modelo = request.getParameter("modelo");
     		version = Integer.parseInt(request.getParameter("version"));
     		language = request.getParameter("language");
-    		
+
     		// Cambiamos idioma si es necesario
     		if (language == null) language = Constants.DEFAULT_LANG_KEY;
-            request.getSession(true).setAttribute(Globals.LOCALE_KEY, new Locale(language));                           
-    		
+            request.getSession(true).setAttribute(Globals.LOCALE_KEY, new Locale(language));
+
     		// Obtenemos niveles de autenticacion soportados
     		TramiteVersionDelegate tvd = DelegateUtil.getTramiteVersionDelegate();
     		TramiteVersion tv = tvd.obtenerTramiteVersionCompleto(modelo,version);
     		String niveles="";
-    		for (Iterator it = tv.getNiveles().iterator();it.hasNext();){    			
+    		for (Iterator it = tv.getNiveles().iterator();it.hasNext();){
     			niveles += ((TramiteNivel) it.next()).getNivelAutenticacion();
     		}
-    		conAutenticacion = niveles.indexOf('C') >= 0 || niveles.indexOf('U') >= 0; 
+    		conAutenticacion = niveles.indexOf('C') >= 0 || niveles.indexOf('U') >= 0;
     		anonimo = niveles.indexOf('A') >= 0;
     		continuarAnonimo=(tv.getReducido() != 'S');
-    		    		    		                	
+
     		// En caso de estar autenticado obtenemos tramites pendientes
-    		if (request.getUserPrincipal() != null){			
+    		if (request.getUserPrincipal() != null){
     			SeyconPrincipal user = (SeyconPrincipal) request.getUserPrincipal();
-    			
+
     			 log.debug("EnlacePortal - Existe usuario autenticado: " + user.getName());
-    			
+
     			if (user.getCredentialType() !=  SeyconPrincipal.ANONYMOUS_CREDENTIAL){
     				// Indicamos que esta autenticado
     				autenticado = true;
-    				// Obtenemos los trámites en persistencia para el usuario (tenemos en cuenta flujo)
+    				// Obtenemos los tramites en persistencia para el usuario (tenemos en cuenta flujo)
     	    		PadDelegate pad = DelegatePADUtil.getPadDelegate();
-    	    		List tramitesPersistentes = pad.obtenerTramitesPersistentesUsuario(modelo,version);			    	    		
+    	    		List tramitesPersistentes = pad.obtenerTramitesPersistentesUsuario(modelo,version);
     	    		for (Iterator it=tramitesPersistentes.iterator();it.hasNext();){
     	    			TramitePersistentePAD t = (TramitePersistentePAD) it.next();
-    	    			
+
     	    			TramiteInacabado ti = new TramiteInacabado();
     	    			ti.setUltimaModificacion(t.getFechaModificacion());
     	    			ti.setDiasPersistencia(DataUtil.distancia(
@@ -99,14 +99,14 @@ public class EnlacePortalAction extends Action{
     	    								StringUtil.fechaACadena(t.getFechaCaducidad(),"dd/MM/yyyy"))
     	    								);
     	    			ti.setIdPersistencia(t.getIdPersistencia());
-    	    			
+
     	    			// Controlamos flujo
     	    			//  - Se ha remitido el tramite a otra persona
     	    			ConsultaPADDelegate consultaPAD = DelegateUtil.getConsultaPADDelegate();
-    	    			if (!t.getUsuarioFlujoTramitacion().equals(user.getName())){    	    					
+    	    			if (!t.getUsuarioFlujoTramitacion().equals(user.getName())){
      	    				PersonaPAD userPAD = consultaPAD.obtenerDatosPADporUsuarioSeycon(t.getUsuarioFlujoTramitacion());
      	    				if (userPAD != null) ti.setRemitidoA(userPAD.getNombreCompleto());
-    	    					else ti.setRemitidoA("Usuario no registrado");    	    				
+    	    					else ti.setRemitidoA("Usuario no registrado");
     	    			}
     	    			//  - Otra persona le ha remitido el tramite
     	    			if (t.getUsuarioFlujoTramitacion().equals(user.getName()) && !t.getUsuario().equals(user.getName())){
@@ -114,22 +114,22 @@ public class EnlacePortalAction extends Action{
      	    				if (userPAD != null) ti.setRemitidoPor(userPAD.getNombreCompleto());
     	    					else ti.setRemitidoPor("Usuario no registrado");
     	    			}
-    	    			   
-    	    			tramitesInacabados.add(ti);    	    			
+
+    	    			tramitesInacabados.add(ti);
     	    		}
-    			}		
+    			}
     		}
-    		
+
     	}catch(Exception ex){
     		ex.printStackTrace();
     		// Controlar error
     		error = true;
-    	}    	    	
-    	
+    	}
+
     	request.setAttribute("error",Boolean.toString(error));
     	request.setAttribute("modelo",modelo);
     	request.setAttribute("version",Integer.toString(version));
-    	request.setAttribute("idioma",language);    	
+    	request.setAttribute("idioma",language);
     	request.setAttribute("autenticado",Boolean.toString(autenticado));
     	request.setAttribute("conAutenticacion",Boolean.toString(conAutenticacion));
     	request.setAttribute("anonimo",Boolean.toString(anonimo));
