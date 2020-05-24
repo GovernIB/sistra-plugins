@@ -8,7 +8,6 @@
     <description><![CDATA[Proyecto IBCEGE]]></description>
 
 	<!--  Libs plugins -->
-	<module><java>lib/plugin-regtelCAIB.jar</java></module>
 	<module><java>lib/plugin-regweb3-v@regweb3.version.plugin@-lib-@regweb3.version.lib@.jar</java></module>
     <module><java>lib/plugin-smsBIT.jar</java></module>
     <module><java>lib/plugin-emailCAIB.jar</java></module>
