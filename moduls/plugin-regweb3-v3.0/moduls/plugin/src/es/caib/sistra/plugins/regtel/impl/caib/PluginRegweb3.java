@@ -43,6 +43,7 @@ import es.caib.sistra.plugins.regtel.PluginRegistroIntf;
 import es.caib.sistra.plugins.regtel.ResultadoRegistro;
 import es.caib.sistra.plugins.regtel.ServicioDestinatario;
 import es.caib.sistra.plugins.regtel.TipoAsunto;
+import es.caib.sistra.plugins.regtel.impl.caib.ConfiguracionRegweb3;
 import es.caib.xml.registro.factoria.ConstantesAsientoXML;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.DatosAnexoDocumentacion;
@@ -687,7 +688,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 
 
         // Anexos
-        if ("true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs"))) {
+        if ("true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs")) && verificarFiltrosAnexadoDocumentacion(asiento)) {
 
         	boolean anexarInternoAsiento = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.asiento"));
         	boolean anexarInternoFormulario = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.formulario"));
@@ -782,6 +783,40 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 
         return registroWs;
 
+	}
+
+	/**
+	 * Verifica filtros anexado documentacion.
+	 * @param asiento asiento
+	 * @return si se debe anexar
+	 */
+	private boolean verificarFiltrosAnexadoDocumentacion(
+			AsientoRegistral asiento) {
+		boolean res = true;
+		String filtro = ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.filtro.tipo");
+		String listaTramites = ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.filtro.listaTramites");
+
+		Boolean incluir = null;
+		if ("INCLUIR".equals(filtro)) {
+			incluir = true;
+		}
+		if ("EXCLUIR".equals(filtro)) {
+			incluir = false;
+		}
+
+		if (incluir != null && StringUtils.isBlank(listaTramites)) {
+			boolean encontrado = false;
+			String [] listaTramitesStr = listaTramites.split(";");
+			for (int i = 0; i < listaTramites.length(); i++) {
+				if (asiento.getDatosAsunto().getIdentificadorTramite().equals(listaTramitesStr[i])) {
+					encontrado = true;
+					break;
+				}
+			}
+			res = (incluir && encontrado) || (!incluir && !encontrado);
+		}
+
+		return res;
 	}
 
 

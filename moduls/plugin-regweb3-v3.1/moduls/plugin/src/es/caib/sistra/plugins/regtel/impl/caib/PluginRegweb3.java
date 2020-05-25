@@ -1,7 +1,6 @@
 package es.caib.sistra.plugins.regtel.impl.caib;
 
 import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
 import java.io.Serializable;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -13,6 +12,11 @@ import java.util.List;
 import java.util.Map;
 
 import javax.xml.ws.soap.SOAPFaultException;
+
+import net.sf.ehcache.Cache;
+import net.sf.ehcache.CacheException;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Element;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -26,18 +30,12 @@ import es.caib.redose.persistence.delegate.RdsDelegate;
 import es.caib.regweb3.ws.api.v3.AnexoWs;
 import es.caib.regweb3.ws.api.v3.AsientoRegistralWs;
 import es.caib.regweb3.ws.api.v3.DatosInteresadoWs;
-import es.caib.regweb3.ws.api.v3.IdentificadorWs;
 import es.caib.regweb3.ws.api.v3.InteresadoWs;
 import es.caib.regweb3.ws.api.v3.JustificanteReferenciaWs;
 import es.caib.regweb3.ws.api.v3.JustificanteWs;
 import es.caib.regweb3.ws.api.v3.LibroOficinaWs;
 import es.caib.regweb3.ws.api.v3.RegWebAsientoRegistralWs;
 import es.caib.regweb3.ws.api.v3.RegWebInfoWs;
-import es.caib.regweb3.ws.api.v3.RegWebRegistroEntradaWs;
-import es.caib.regweb3.ws.api.v3.RegWebRegistroSalidaWs;
-import es.caib.regweb3.ws.api.v3.RegistroEntradaWs;
-import es.caib.regweb3.ws.api.v3.RegistroSalidaWs;
-import es.caib.regweb3.ws.api.v3.RegistroWs;
 import es.caib.regweb3.ws.api.v3.TipoAsuntoWs;
 import es.caib.regweb3.ws.api.v3.WsI18NException;
 import es.caib.sistra.plugins.firma.FirmaIntf;
@@ -56,10 +54,6 @@ import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.DatosAnexoDocumentacion;
 import es.caib.xml.registro.factoria.impl.DatosInteresado;
 import es.caib.xml.registro.factoria.impl.Justificante;
-import net.sf.ehcache.Cache;
-import net.sf.ehcache.CacheException;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Element;
 
 /**
  * Implementacio del plugin de registre que empra la interfi­cie
@@ -737,7 +731,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 
 
         // Anexos
-        if ("true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs"))) {
+        if ("true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs")) && verificarFiltrosAnexadoDocumentacion(asiento)) {
 
         	boolean anexarInternoAsiento = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.asiento"));
         	boolean anexarInternoFormulario = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.formulario"));
@@ -824,6 +818,39 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 	}
 
 
+	/**
+	 * Verifica filtros anexado documentacion.
+	 * @param asiento asiento
+	 * @return si se debe anexar
+	 */
+	private boolean verificarFiltrosAnexadoDocumentacion(
+			AsientoRegistral asiento) {
+		boolean res = true;
+		String filtro = ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.filtro.tipo");
+		String listaTramites = ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.filtro.listaTramites");
+
+		Boolean incluir = null;
+		if ("INCLUIR".equals(filtro)) {
+			incluir = true;
+		}
+		if ("EXCLUIR".equals(filtro)) {
+			incluir = false;
+		}
+
+		if (incluir != null && StringUtils.isBlank(listaTramites)) {
+			boolean encontrado = false;
+			String [] listaTramitesStr = listaTramites.split(";");
+			for (int i = 0; i < listaTramites.length(); i++) {
+				if (asiento.getDatosAsunto().getIdentificadorTramite().equals(listaTramitesStr[i])) {
+					encontrado = true;
+					break;
+				}
+			}
+			res = (incluir && encontrado) || (!incluir && !encontrado);
+		}
+
+		return res;
+	}
 
 	/**
 	 * Genera AnexoWS en funcion documento REDOSE
