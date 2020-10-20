@@ -737,6 +737,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         	boolean anexarInternoFormulario = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.formulario"));
         	boolean anexarInternoPago = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.pago"));
         	boolean anexarFormateados = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.formateados"));
+        	boolean anexarAsientoFormateado = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.asiento.formateado"));
 
         	Integer origenDocumento;
 	        String tipoDocumental;
@@ -755,7 +756,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 						tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
 		        asientoWs.getAnexos().add(anexoAsientoWs);
 			}
-			if (anexarFormateados) {
+			if (anexarAsientoFormateado) {
 				AnexoWs anexoAsientoFWs = generarAnexoWs(refAsiento, true, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
 						tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
 		        asientoWs.getAnexos().add(anexoAsientoFWs);
