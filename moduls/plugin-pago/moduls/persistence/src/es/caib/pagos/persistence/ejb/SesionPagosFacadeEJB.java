@@ -50,7 +50,7 @@ import es.caib.sistra.plugins.pagos.EstadoSesionPago;
  *  name="pagos/persistence/SesionPagosFacade"
  *  jndi-name="es.caib.pagos.persistence.PagosFacade"
  *  type="Stateful"
- *  view-type="local" 
+ *  view-type="local"
  *  transaction-type="Container"
  *
  * @ejb.transaction type="Required"
@@ -59,140 +59,140 @@ import es.caib.sistra.plugins.pagos.EstadoSesionPago;
 public class SesionPagosFacadeEJB extends HibernateEJB {
 
 	private static Log log = LogFactory.getLog(PagosFacadeEJB.class);
-	
+
 	private SesionPagoCAIB sesionPago;
 
-	
-	public void ejbActivate() throws EJBException, RemoteException {					
+
+	public void ejbActivate() throws EJBException, RemoteException {
 	}
 
-	public void ejbPassivate() throws EJBException, RemoteException {	
+	public void ejbPassivate() throws EJBException, RemoteException {
 	}
-	
+
 	/**
 	 * Crea instancia de sesion de pagos
-	 * 
+	 *
      * @ejb.create-method
      * @ejb.permission role-name = "${role.todos}"
      */
 	public void ejbCreate(String token) throws CreateException {
-		
+
 		super.ejbCreate();
-		
+
 		Session session = getSession();
 		try{
-			// Buscamos sesion asociada al token 	
+			// Buscamos sesion asociada al token
 			Query query = session.createQuery("FROM ModeloPagos AS mp WHERE mp.token = '"+token+"'");
     		if (query.list().isEmpty()){
         		throw new CreateException("No existe token de acceso");
             }
     		ModeloPagos mp = (ModeloPagos) query.uniqueResult();
 	        if (mp == null) throw new CreateException("No existe token de acceso");
-        	
+
 			// Comprobamos tiempo limite de acceso
 	        TokenAccesoCAIB tokenAcceso = mp.getTokenAccesoCAIB();
 			if (tokenAcceso == null) throw new CreateException("No existe token de acceso");
-			if (tokenAcceso.getTiempoLimite().before(new Date())) {			
+			if (tokenAcceso.getTiempoLimite().before(new Date())) {
 				throw new CreateException("Se ha sobrepasado el tiempo limite para el token de acceso");
 			}
-			
+
 			// Obtenemos sesion de pago para cachearla en la instancia
 			sesionPago = mp.getSessionPagoCAIB();
 			if (sesionPago == null){
 				throw new CreateException("No se encuentra la sesion de pago asociada al token de acceso");
 			}
-			
+
 		}catch(Exception ex){
 			throw new EJBException("Excepcion creando instancia sesion pagos",ex);
 		}finally{
 			close(session);
-	    }		
+	    }
 	}
 
 
 	/**
 	 * Comprueba contra la pasarela de pagos si el pago ha sido realizado
-	 * 
+	 *
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      *
-	 * @return -1 (Estado diferente a pendiente de confirmacion) / 0 (Pago no ha sido pagado) / 1 (Pago confirmado) 
-	 * 
+	 * @return -1 (Estado diferente a pendiente de confirmacion) / 0 (Pago no ha sido pagado) / 1 (Pago confirmado)
+	 *
 	 */
 	public int confirmarPago() {
-					
+
 		log.debug("Confirmar pago");
-	
+
 		// Comprobamos si esta en estado pendiente de confirmacion
-		// en ese caso no es necesario hacer la comprobación 
+		// en ese caso no es necesario hacer la comprobación
 		if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR){
 			log.info("El pago no está pendiente de confirmar");
-			return -1;			   
+			return -1;
 		}
-	   
-		
-		// Si es telematico comprobamos contra la pasarela de pagos si esta pagado  
+
+
+		// Si es telematico comprobamos contra la pasarela de pagos si esta pagado
 		if (sesionPago.getEstadoPago().getTipo() == ConstantesPago.TIPOPAGO_TELEMATICO){
-			 
+
 			boolean simularPago = Boolean.parseBoolean(Configuracion.getInstance().getProperty("pago.simular"));
 			String justificantePagoXML =  "";
-			
-			if(simularPago){ 
+
+			if(simularPago){
 				justificantePagoXML = generarJustificanteSimulado();
 			} else {
 				// Comprobamos contra pasarela de pagos
 				try {
 					Hashtable resultado = PasarelaPagos.comprobarPago(sesionPago.getEstadoPago().getIdentificadorPago());
-					
+
 					if (resultado.containsKey(Constants.KEY_FIRMA) && ((String)resultado.get(Constants.KEY_FIRMA)).length() > 0) {
 						justificantePagoXML = generarJustificante((String)resultado.get(Constants.KEY_FIRMA));
 					} else {
-						// Si no se ha devuelto firma y no se ha generado excepcion es que no se ha pagado						
+						// Si no se ha devuelto firma y no se ha generado excepcion es que no se ha pagado
 						return 0;
 					}
 				} catch(ComprobarPagoException e){
 					log.error("Exception confirmando pago",e);
-					throw new EJBException("sesionPagos.errorGenericoComprobarPago", e);	 
-				} 
+					throw new EJBException("sesionPagos.errorGenericoComprobarPago", e);
+				}
 
 			}
-			
+
 			// Generamos justificante de pago
-			es.caib.pagos.client.JustificantePago justificantePago = new es.caib.pagos.client.JustificantePago(justificantePagoXML); 
+			es.caib.pagos.client.JustificantePago justificantePago = new es.caib.pagos.client.JustificantePago(justificantePagoXML);
 			try {
 				SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 				sesionPago.getEstadoPago().setFechaPago(formatter.parse(justificantePago.getFechaPago()));
 			} catch (ParseException e) {
 				throw new EJBException("sesionPagos.errorGenericoComprobarPago", e);
 			}
-			
+
 			// Actualizamos BBDD dando pago como realizado
 			sesionPago.getEstadoPago().setIdentificadorPago(justificantePago.getDui());
 			sesionPago.getEstadoPago().setReciboB64PagoTelematico(justificantePagoXML);
 			sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO);
 			actualizaModeloPagos();
-			
+
 			logAuditoria(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_CONFIRMADO,"S","",this.sesionPago.getEstadoPago().getIdentificadorPago());
 			return 1;
-			
+
     	} else if (sesionPago.getEstadoPago().getTipo() == ConstantesPago.TIPOPAGO_PRESENCIAL){
     		// Actualizamos BBDD dando pago como realizado
        		sesionPago.getEstadoPago().setFechaPago(new Date());
        		sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO);
 	    	actualizaModeloPagos();
     		return 1;
-    	} else{ 
+    	} else{
     		log.error("Tipo de pago no soportado");
     		throw new EJBException("sesionPagos.errorGenericoComprobarPago");
     	}
 
-        
+
 
 	}
 
 	/**
 	 * Comprueba contra la pasarela de pagos si el pago ha sido realizado, si nos devuelve que el pago no ha sido realizado se cancela.
-	 * 
+	 *
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      *
@@ -202,27 +202,27 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	public int cancelarPagoTelematico() {
 
 		log.debug("Cancelar pago telematico");
-		
+
 		// Comprobamos si esta en estado pendiente de confirmacion
 		if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR){
 			throw new EJBException("El pago no tiene estado pendiente de confirmar");
 		}
-	   
-		// Solo se puede cancelar desde aqui un pago telematico  
+
+		// Solo se puede cancelar desde aqui un pago telematico
 	   	if (sesionPago.getEstadoPago().getTipo() != ConstantesPago.TIPOPAGO_TELEMATICO){
 	   		return -2;
-	   	}	
-		   
+	   	}
+
 	   	// Intentamos confirmar para ver si esta pagado
 	   	int conf = confirmarPago();
 	   	switch (conf) {
 	   	case 1:
 	   		// Pago realizado, no se puede cancelar
 	   		log.debug("Pago realizado, no se puede cancelar");
-	   		return -1;		   	
+	   		return -1;
 	   	case 0:
 	   		// Pago no ha sido realizado, cancelamos pago
-	   		log.debug("Pago no ha sido realizado, cancelamos pago");	
+	   		log.debug("Pago no ha sido realizado, cancelamos pago");
 	   		sesionPago.getEstadoPago().setIdentificadorPago("");
     		sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_EN_CURSO);
     		actualizaModeloPagos();
@@ -230,8 +230,8 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
     		logAuditoria(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_ANULADO,"S","",sesionPago.getEstadoPago().getIdentificadorPago());
 	        return 1;
 	   	default:
-	   		return -3;	   		
-	   	}		 
+	   		return -3;
+	   	}
 	}
 
 	/**
@@ -254,70 +254,70 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 
 	/**
 	 * Cancela el pago presencial
-	 * 
+	 *
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
-     * 
-	 * 
+     *
+	 *
 	 */
 	public void cancelarPagoPresencial() {
 		//TODO eliminar este metodo ?
 		try{
-			
+
 			log.debug("Cancelar pago presencial");
-			
+
 			// Comprobamos si esta en estado pendiente de confirmacion
 			if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR){
 				throw new EJBException("El pago no tiene estado pendiente de confirmar");
 			}
-		   
+
 			// Si es telematico comprobamos contra la pasarela de pagos si esta pagado
 			if (sesionPago.getEstadoPago().getTipo() != ConstantesPago.TIPOPAGO_PRESENCIAL){
 				throw new EJBException("El pago no es presencial");
 			}
-			   
+
 			// Inicializamos la sesion de pago
      	   	sesionPago.getEstadoPago().setIdentificadorPago("");
      	   	sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_EN_CURSO);
-		    		
-     	   	actualizaModeloPagos();			        
+
+     	   	actualizaModeloPagos();
 		}catch(Exception e){
 			log.error("Exception cancelar pago presencial",e);
 			throw new EJBException(e);
-		}	       
+		}
 	}
-	
-	
+
+
 	/**
 	 * Obtiene datos del pago
-	 * 
+	 *
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      */
 	public DatosPago obtenerDatosPago() {
 		try{
 			log.debug("Obtener datos pago");
-			return sesionPago.getDatosPago();	
+			return sesionPago.getDatosPago();
 		}catch (Exception ex){
 			log.error("Exception obteniendo datos pago",ex);
 			throw new EJBException("Exception obteniendo datos pago",ex);
-		}	
+		}
 	}
-	
+
 	/**
 	 * Obtiene estado actual de la sesion de pago
-	 * 
+	 *
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      */
 	public EstadoSesionPago obtenerEstadoSesionPago() {
 		try{
-			log.debug("Obtener estado pago");			
+			log.debug("Obtener estado pago");
 			return sesionPago.getEstadoPago();
 		}catch (Exception ex){
 			log.error("Exception obteniendo estado pago",ex);
 			throw new EJBException("Exception obteniendo estado pago",ex);
-		}	
+		}
 	}
 
 	/**
@@ -334,7 +334,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			throw new EJBException("Exception obteniendo url retorno a sistra",ex);
 		}
 	}
-	
+
 	/**
 	 * Obtiene url de mantenimiento de sistra
 	 * @ejb.interface-method
@@ -349,7 +349,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			throw new EJBException("Exception obteniendo url mantenimiento sistra",ex);
 		}
 	}
-	
+
 	/**
 	 * Obtiene nivel de autenticación de sesión
 	 * @ejb.interface-method
@@ -364,7 +364,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			throw new EJBException("Exception obteniendo nivel de autenticación de sesión",ex);
 		}
 	}
-	
+
 	/**
 	 * Obtiene el nif del usuario de la sesión
 	 * @ejb.interface-method
@@ -379,7 +379,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			throw new EJBException("Exception obteniendo NIF del usuario de sesión",ex);
 		}
 	}
-	
+
 	/**
 	 * Obtiene el nombre completo del usuario de la sesión
 	 * @ejb.interface-method
@@ -394,7 +394,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			throw new EJBException("Exception obteniendo nombre completo del usuario de sesión",ex);
 		}
 	}
-	
+
 	/**
 	 * Genera un log en la auditoria
 	 * @param tipoEvento
@@ -414,15 +414,15 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 			evento.setIdioma(this.sesionPago.getDatosPago().getIdioma());
 			evento.setClave(clave);
 			evento.setIdPersistencia(this.sesionPago.getDatosPago().getIdentificadorTramite());
-			
+
 		/*	SeyconPrincipal p = (SeyconPrincipal) this.ctx.getCallerPrincipal();
 			String nivelAuth=null;
-			if (p.getCredentialType() == SeyconPrincipal.ANONYMOUS_CREDENTIAL){				
+			if (p.getCredentialType() == SeyconPrincipal.ANONYMOUS_CREDENTIAL){
 				nivelAuth= Character.toString(ConstantesLogin.LOGIN_ANONIMO);
-			}else if (p.getCredentialType() == SeyconPrincipal.PASSWORD_CREDENTIAL){					
+			}else if (p.getCredentialType() == SeyconPrincipal.PASSWORD_CREDENTIAL){
 				nivelAuth= Character.toString(ConstantesLogin.LOGIN_USUARIO);
 			}else if (p.getCredentialType() == SeyconPrincipal.SIGNATURE_CREDENTIAL){
-				nivelAuth= Character.toString(ConstantesLogin.LOGIN_CERTIFICADO);								
+				nivelAuth= Character.toString(ConstantesLogin.LOGIN_CERTIFICADO);
 			}
 			evento.setNivelAutenticacion(nivelAuth);
 			if (p.getCredentialType() != SeyconPrincipal.ANONYMOUS_CREDENTIAL){
@@ -430,10 +430,10 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				evento.setNumeroDocumentoIdentificacion(p.getNif());
 				evento.setNombre(p.getFullName());
 			}	*/
-			
-			
+
+
 			String metodoAuth = this.sesionPago.getSesionSistra().getNivelAutenticacion();
-			
+
 			evento.setNivelAutenticacion(metodoAuth);
 			if (metodoAuth.charAt(0) != ConstantesLogin.LOGIN_ANONIMO){
 				evento.setUsuarioSeycon(this.sesionPago.getSesionSistra().getCodigoUsuario());
@@ -441,44 +441,44 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				evento.setNombre(this.sesionPago.getSesionSistra().getNombreCompletoUsuario());
 			}
 
-			// Auditamos evento			
-			DelegateAUDUtil.getAuditaDelegate().logEvento(evento, false);			
-			
+			// Auditamos evento
+			DelegateAUDUtil.getAuditaDelegate().logEvento(evento, false);
+
 		}catch(Exception ex){
 			log.error("Excepción registrando evento en auditoria: " + ex.getMessage(),ex);
 		}
 	}
 
-	
+
 	/**
 	 * Inicia el pago contra la pasarela y devuelve el justificante para el pago presencial
-	 * 
+	 *
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      */
 	public byte[] realizarPagoPresencial() {
-		
+
 		log.debug("Realizar pago presencial");
-		
+
 		try{
 			// Verificamos que el pago este en un estado que permita iniciar pago con tarjeta
 			if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_EN_CURSO) {
 				throw new Exception("El pago esta confirmado o pendiente de confirmar");
 			}
-			
-			
+
+
 			// Iniciar sesion de pago con la pasarela
-			ResultadoInicioPago resPagos = PasarelaPagos.iniciarSesionPagos(sesionPago.getDatosPago(), 
+			ResultadoInicioPago resPagos = PasarelaPagos.iniciarSesionPagos(sesionPago.getDatosPago(),
 					String.valueOf(ConstantesPago.TIPOPAGO_PRESENCIAL));
 
 		    sesionPago.getEstadoPago().setIdentificadorPago(resPagos.getLocalizador());
 		    sesionPago.getEstadoPago().setTipo(ConstantesPago.TIPOPAGO_PRESENCIAL);
-		    // Obtenemos el fichero 
-		    byte[] datosFichero = PasarelaPagos.getPdf046(resPagos.getLocalizador(), sesionPago.getDatosPago().getImporte(), 
+		    // Obtenemos el fichero
+		    byte[] datosFichero = PasarelaPagos.getPdf046(resPagos.getLocalizador(), sesionPago.getDatosPago().getImporte(),
 		    		sesionPago.getDatosPago().getNifDeclarante(), new Date());
 		    sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_CONFIRMADO);
 			actualizaModeloPagos();
-	    
+
 	        return datosFichero;
 		} catch (Exception ex) {
 			log.error("Error al iniciar pago presencial", ex);
@@ -486,58 +486,63 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		}
 
 	}
-	
-	
+
+
 	/**
 	 * Inicia sesion pago contra la pasarela para pago con tarjeta bancaria.
 	 * Marca sesion como pendiente confirmar.
-	 * @return devuelve token acceso sesion. 
+	 * @return devuelve token acceso sesion.
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      */
 	public ResultadoIniciarPago realizarPagoTarjetaIniciarSesion() {
-		
+
+		// DEPRECAR PAGO WS TARJETA (SE TRATA COMO ENTIDAD)
+		if (true) {
+			throw new RuntimeException("Deprecado pago ws tarjeta");
+		}
+
 		log.debug("Realizar pago con tarjeta - iniciar sesion pago");
 
 		ResultadoIniciarPago res = null;
-		
+
 		try{
 			// Verificamos que el pago este en un estado que permita iniciar pago con tarjeta
 			if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_EN_CURSO) {
 				throw new Exception("El pago esta confirmado o pendiente de confirmar");
 			}
-			
+
 			// Verificamos si se ha excedido del tiempo maximo para pagar
 			if (sesionPago.getDatosPago().getFechaMaximaPago() != null && sesionPago.getDatosPago().getFechaMaximaPago().before(new Date())) {
 				// Si se ha sobrepasado fecha limite ponemos en estado excedido tiempo pago
 				sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_EXCEDIDO_TIEMPO_PAGO);
-				actualizaModeloPagos();	
-				
+				actualizaModeloPagos();
+
 				res = new ResultadoIniciarPago();
 				res.setTiempoExcedido(true);
 				res.setMensajeTiempoExcedido(sesionPago.getDatosPago().getMensajeTiempoMaximoPago());
-				return res;				
+				return res;
 			}
-			
+
 			// Iniciar sesion de pago con la pasarela
 			ResultadoInicioPago resPagos = PasarelaPagos.iniciarSesionPagos(sesionPago.getDatosPago(), String.valueOf(ConstantesPago.TIPOPAGO_TELEMATICO));
 			sesionPago.getEstadoPago().setIdentificadorPago(resPagos.getLocalizador());
 			sesionPago.getEstadoPago().setTipo(ConstantesPago.TIPOPAGO_TELEMATICO);
 			sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR);
-			actualizaModeloPagos();						
-			
+			actualizaModeloPagos();
+
 			logAuditoria(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_INICIADO,"S","",this.sesionPago.getEstadoPago().getIdentificadorPago());
-			
+
 			res = new ResultadoIniciarPago();
 			res.setResultado(resPagos.getToken());
 			return res;
-			
+
 		} catch (Exception ex) {
 			log.error("Error al iniciar sesion para pago con tarjeta", ex);
 			throw new EJBException("sesionPagos.errorComprobarPago", ex);
-		} 	
-		
-	}	
+		}
+
+	}
 
 
 	/**
@@ -547,7 +552,12 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
      * @ejb.permission role-name="${role.todos}"
      */
 	public int realizarPagoTarjetaPagar(String token, String numeroTarjeta, String caducidadTarjeta, String titularTarjeta, String cvvTarjeta) {
-		
+
+		// DEPRECAR PAGO WS TARJETA (SE TRATA COMO ENTIDAD)
+		if (true) {
+			throw new RuntimeException("Deprecado pago ws tarjeta");
+		}
+
 		log.debug("Realizar pago con tarjeta - pagar");
 
 		boolean resultado;
@@ -555,12 +565,12 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		String descripcionAudita =  "";
 		int ret;
 		try{
-			
+
 			// Verificamos que el pago este en estado pendiente de confirmar (puesto asi por la accion de iniciar pago con tarjeta)
 			if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR) {
 				throw new Exception("El pago no esta en un estado que permita realizar pago");
 			}
-			
+
 			boolean simularPago = Boolean.parseBoolean(Configuracion.getInstance().getProperty("pago.simular"));
 			if (simularPago) {
 				resultado = true;
@@ -568,7 +578,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				String[] refsModelos = new String[]{token};
 				resultado = PasarelaPagos.pagarConTarjeta(refsModelos, numeroTarjeta, caducidadTarjeta, titularTarjeta, cvvTarjeta);
 			}
-			
+
 			if (resultado) {
 				sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR);
 				//llamamos a confirmarPago para poder obtener el justificante de pago y guardarlo en BBDD
@@ -582,11 +592,11 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 				ret = 0; // por seguridad
 				descripcionAudita = "Pago no realizado";
 			}
-						
+
 		} catch (Exception pe) {
-			
+
 			log.error("Error al realizar pago con tarjeta", pe);
-			
+
 			//en caso que el error sea de los controlados lanzamos excepción
 			if (pe.getCause() != null && pe.getCause() instanceof ClienteException) {
 				ClienteException ce = (ClienteException)pe.getCause();
@@ -594,21 +604,21 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 					descripcionAudita = ce.getMessage();
 					throw new EJBException("sesionPagos.errorGenericoComprobarPago", pe);
 				}
-			} 
-			
+			}
+
 			//si no es un error de comunicación
 			sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR);
 			ret = -1;
-			
+
 		}finally {
 			logAuditoria(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_TARJETA, resultadoAudita, descripcionAudita,
 						this.sesionPago.getEstadoPago().getIdentificadorPago());
 		}
 
 		return ret;
-		
+
 	}
-	
+
 	/**
 	 * Inicia el pago contra la pasarela y devuelve la url para poder realizar el pago mediante banca online
 	 * @param codigoEntidad
@@ -618,95 +628,95 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 	 */
 	public ResultadoIniciarPago realizarPagoBanca(String codigoEntidad, String urlVuelta) {
 		log.debug("Realizar pago banca ");
-		
+
 		ResultadoIniciarPago res = null;
-		
+
 		try{
-			
+
 			// Verificamos que el pago este en un estado que permita iniciar pago con tarjeta
 			if (sesionPago.getEstadoPago().getEstado() != ConstantesPago.SESIONPAGO_EN_CURSO) {
 				throw new Exception("El pago esta confirmado o pendiente de confirmar");
 			}
-			
+
 			// Verificamos si se ha excedido del tiempo maximo para pagar
 			if (sesionPago.getDatosPago().getFechaMaximaPago() != null && sesionPago.getDatosPago().getFechaMaximaPago().before(new Date())) {
 				// Si se ha sobrepasado fecha limite ponemos en estado excedido tiempo pago
 				sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_EXCEDIDO_TIEMPO_PAGO);
-				actualizaModeloPagos();	
-				
+				actualizaModeloPagos();
+
 				res = new ResultadoIniciarPago();
 				res.setTiempoExcedido(true);
 				res.setMensajeTiempoExcedido(sesionPago.getDatosPago().getMensajeTiempoMaximoPago());
-				return res;				
+				return res;
 			}
-			
-			
+
+
 			// Iniciar sesion de pago con la pasarela
 			ResultadoInicioPago resPagos = PasarelaPagos.iniciarSesionPagos(sesionPago.getDatosPago(), String.valueOf(ConstantesPago.TIPOPAGO_TELEMATICO));
 			sesionPago.getEstadoPago().setIdentificadorPago(resPagos.getLocalizador());
 			sesionPago.getEstadoPago().setTipo(ConstantesPago.TIPOPAGO_TELEMATICO);
 			sesionPago.getEstadoPago().setEstado(ConstantesPago.SESIONPAGO_PAGO_PENDIENTE_CONFIRMAR);
-			actualizaModeloPagos();			
+			actualizaModeloPagos();
 
 			// Obtenemos url acceso a ATIB
 			String tokenAcceso = resPagos.getToken();
 			String[] refsModelos = new String[]{tokenAcceso};
 			String resultado = PasarelaPagos.getUrlPago(refsModelos, codigoEntidad, urlVuelta);
-			
+
 			logAuditoria(ConstantesAuditoria.EVENTO_PAGO_TELEMATICO_INICIADO,"S","",this.sesionPago.getEstadoPago().getIdentificadorPago());
-			
+
 			res = new ResultadoIniciarPago();
 			res.setResultado(resultado);
 			return res;
-			
+
 		} catch (Exception ex) {
 			log.error("Error al realizar pago por banca", ex);
 			throw new EJBException("sesionPagos.errorGenericoComprobarPago", ex);
 		}
 
 	}
-	
+
 	/**
 	 * Obtiene el justificante de un pago ya realizado
-	 * 
+	 *
      * @ejb.interface-method
      * @ejb.permission role-name="${role.todos}"
      */
 	public byte[] obtenerJustificantePago() {
-		
+
 		log.debug("Obtener justificante de pago");
 
 		try{
-			return PasarelaPagos.getPdf046(sesionPago.getEstadoPago().getIdentificadorPago(), sesionPago.getDatosPago().getImporte(), 
+			return PasarelaPagos.getPdf046(sesionPago.getEstadoPago().getIdentificadorPago(), sesionPago.getDatosPago().getImporte(),
 		    		sesionPago.getDatosPago().getNifDeclarante(), sesionPago.getEstadoPago().getFechaPago());
 		} catch (GetPdf046Exception ce) {
 			log.error("Error al obtener el justificante de pago.", ce);
 			throw new EJBException("sesionPagos.errorGenericoComprobarPago");
 		}
-    
-		
+
+
 	}
 
 	/**
 	 * Genera justificante en formato XML
 	 * @return
-	 * @throws InicializacionFactoriaException 
-	 * @throws UnsupportedEncodingException 
-	 * @throws CargaObjetoXMLException 
-	 * @throws EstablecerPropiedadException 
+	 * @throws InicializacionFactoriaException
+	 * @throws UnsupportedEncodingException
+	 * @throws CargaObjetoXMLException
+	 * @throws EstablecerPropiedadException
 	 */
-//	private JustificantePago generarJustificante(String justificante) 
+//	private JustificantePago generarJustificante(String justificante)
 //		throws InicializacionFactoriaException, CargaObjetoXMLException, UnsupportedEncodingException  {
-//		
+//
 //		FactoriaObjetosXMLJustificantePago factoriaPago = new FactoriaObjetosXMLJustificantePagoImpl();
 //		factoriaPago.setEncoding(ConstantesXML.ENCODING);
-//		
+//
 //		JustificantePago justificanteXML = factoriaPago.crearJustificantePago(new ByteArrayInputStream(justificante.getBytes(ConstantesXML.ENCODING)));
 //		return justificanteXML;
 //	}
-	
+
 	/**
-	 * Genera justificante de pago telematico simulado 
+	 * Genera justificante de pago telematico simulado
 	 * @return
 	 */
 	private String generarJustificanteSimulado( ) {
@@ -727,7 +737,7 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		str.append("</JUSTIFICANTE_PAGO>");
 		return str.toString();
 	}
-	
+
 	/**
 	 * Genera justificante de pago telemático a partir de los datos obtenidos en la respuesta del WS
 	 * @param respuesta
@@ -742,5 +752,5 @@ public class SesionPagosFacadeEJB extends HibernateEJB {
 		return sb.toString();
 	}
 
-	
+
 }

@@ -10,17 +10,17 @@ import org.apache.struts.action.ActionForward;
 import org.apache.struts.action.ActionMapping;
 
 /**
- * @struts.action 
+ * @struts.action
  * 	name="pagoTarjetaForm"
- *  path="/iniciarPagoTarjeta"        
+ *  path="/iniciarPagoTarjeta"
  *  scope="session"
  *  input=".pagoTarjeta"
  *  validate="false"
- *  
+ *
  *
  * @struts.action-forward
  * 	name="success" path=".pagoTarjeta"
- *  
+ *
  */
 public class IniciarPagoTarjetaAction extends BaseAction
 {
@@ -28,10 +28,16 @@ public class IniciarPagoTarjetaAction extends BaseAction
 	Log logger = LogFactory.getLog( IniciarPagoTarjetaAction.class );
 
 	public ActionForward executeTask(ActionMapping mapping, ActionForm form, HttpServletRequest request,
-            HttpServletResponse response) throws Exception 
+            HttpServletResponse response) throws Exception
     {
-		return mapping.findForward("success");
+
+
+		// DEPRECAR PAGO WS TARJETA (SE TRATA COMO ENTIDAD)
+		// return mapping.findForward("success");
+		response.sendRedirect("realizarPagoBanca.do?modoPago=T&banco=TJ");
+		return null;
+
     }
 
-		
+
 }

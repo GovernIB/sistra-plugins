@@ -4,9 +4,15 @@
 <%@ taglib prefix="logic" uri="http://jakarta.apache.org/struts/tags-logic"%>
 <%@ taglib prefix="tiles" uri="http://jakarta.apache.org/struts/tags-tiles"%>
 
+<script type="text/javascript">
+<!--
+	var mensajeEnviando = '<bean:message key="pago.tarjeta.mensajePagando"/>';
+//-->
+</script>
+
 <h2>	<bean:message key="pago.efectuarPago" /></h2>
 
-<!-- 
+<!--
 <p id="pagamentTitol">
 	<bean:message key="pago.titulo" />
 </p>
@@ -68,15 +74,15 @@
 		</ul>
 	</div>
 	<div style="float:left">
-	<html:form action="/iniciarPagoTarjeta">		
+	<html:form action="/iniciarPagoTarjeta">
 		<html:hidden property="modoPago" value="T"/>
-		<html:submit>
+		<html:submit onclick="accediendoEnviando(mensajeEnviando);">
 			<bean:message key="pago.tarjetaBancaria"/>
 		</html:submit>
 	</html:form>
 	</div>
 	<div style="float:right">
-	<html:form action="/iniciarPagoBanca">		
+	<html:form action="/iniciarPagoBanca">
 		<html:hidden property="modoPago" value="T"/>
 		<html:submit>
 			<bean:message key="pago.banca"/>
@@ -105,7 +111,7 @@
 	</div>
 	<div style="align:center">
 	<html:form action="/iniciarPagoPresencial">
-		<html:hidden property="modoPago" value="P"/>	
+		<html:hidden property="modoPago" value="P"/>
 		<html:submit>
 			<bean:message key="pago.presencial"/>
 		</html:submit>
@@ -117,12 +123,12 @@
 
 <!-- llançar pagament -->
 <div id="pagaments">
-	
+
 	<div>
-		
+
 	</div>
-	
-	
+
+
 </div>
 <!-- /llançar pagament -->
 
@@ -141,3 +147,7 @@
 		<bean:message key="pago.volver.asistenteTramitacion" />
 	</html:link>
 </p>
+
+<!-- capa mensaje accediendo -->
+<div id="capaInfoFondo"></div>
+<div id="capaInfoForms"></div>

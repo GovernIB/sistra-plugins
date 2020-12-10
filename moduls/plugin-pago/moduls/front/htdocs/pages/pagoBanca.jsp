@@ -18,7 +18,7 @@
 	function pagoDesactivado() {
 		alert("<bean:message key="pago.banca.pagoDesactivado"/>");
 	}
-	
+
 //-->
 </script>
 
@@ -52,15 +52,17 @@
 			</p>
 			<html:errors />
 			<html:hidden property="banco" styleId="banco"/>
-			
+
 			<a href="<bean:write name="pagoEntidades" property="BM"/>"><img src="imgs/pagos/bancamarch.png" alt="Banca March"/></a>
 			&nbsp;
 			<a href="<bean:write name="pagoEntidades" property="LC"/>"><img src="imgs/pagos/lacaixa.png" alt="La Caixa"/></a>
 			&nbsp;
-			<a href="<bean:write name="pagoEntidades" property="SN"/>"><img src="imgs/pagos/sanostra.png" alt="BMN"/></a>
+			<a href="<bean:write name="pagoEntidades" property="BK"/>"><img src="imgs/pagos/bankia.png" alt="Bankia"/></a>
 			&nbsp;
 			<a href="<bean:write name="pagoEntidades" property="BB"/>"><img src="imgs/pagos/bbva.png" alt="BBVA"/></a>
-			 
+			&nbsp;
+			<a href="<bean:write name="pagoEntidades" property="CC"/>"><img src="imgs/pagos/cc.png" alt="Colonya Caixa Pollença"/></a>
+
 		</html:form>
 	</div>
 </div>

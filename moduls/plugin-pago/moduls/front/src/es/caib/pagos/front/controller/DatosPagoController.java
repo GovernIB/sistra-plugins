@@ -23,29 +23,33 @@ public class DatosPagoController extends BaseController
 			HttpServletRequest request, HttpServletResponse response,
 			ServletContext servletContext) throws Exception
 	{
-		// Prepara los datos del pago en el formato correcto		
+		// Prepara los datos del pago en el formato correcto
 		SesionPagoDelegate dlg = getSesionPago(request);
-		
+
 		// Obtenemos datos del pago
 		DatosPago datosPago = dlg.obtenerDatosPago();
-		
+
 		es.caib.pagos.persistence.delegate.ConfiguracionDelegate delegateF = es.caib.pagos.persistence.delegate.DelegateUtil.getConfiguracionDelegate();
-		
+
 		String entidad1 = delegateF.obtenerPropiedad("pago.entidad.BM");
 		String entidad2 = delegateF.obtenerPropiedad("pago.entidad.LC");
 		String entidad3 = delegateF.obtenerPropiedad("pago.entidad.SN");
 		String entidad4 = delegateF.obtenerPropiedad("pago.entidad.BB");
+		String entidad5 = delegateF.obtenerPropiedad("pago.entidad.CC");
+		String entidad6 = delegateF.obtenerPropiedad("pago.entidad.BK");
 		Map pagoEntidades = new HashMap();
 		pagoEntidades.put("BM", (entidad1 == null || entidad1.equals("true"))?"BM":"DS");
 		pagoEntidades.put("LC", (entidad2 == null || entidad2.equals("true"))?"LC":"DS");
 		pagoEntidades.put("SN", (entidad3 == null || entidad3.equals("true"))?"SN":"DS");
 		pagoEntidades.put("BB", (entidad4 == null || entidad4.equals("true"))?"BB":"DS");
-		
+		pagoEntidades.put("CC", (entidad5 == null || entidad5.equals("true"))?"CC":"DS");
+		pagoEntidades.put("BK", (entidad6 == null || entidad6.equals("true"))?"BK":"DS");
+
 		//URL de consulta de entidades colaboradoras para pago presencial
 		String entidadesPresencial = delegateF.obtenerPropiedad("pago.urlEntidades");
-			
+
 		// Importe (convertimos de cents)
-		double impDec = Double.parseDouble(datosPago.getImporte()) / 100 ;	
+		double impDec = Double.parseDouble(datosPago.getImporte()) / 100 ;
 		DecimalFormat f = (DecimalFormat) DecimalFormat.getInstance(getLocale(request));
 		f.setDecimalSeparatorAlwaysShown(true);
 		f.setMaximumFractionDigits(2);
@@ -54,15 +58,15 @@ public class DatosPagoController extends BaseController
 		String importe = f.format(impDec);
 
 		// Fecha (convertimos desde Date)
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");               
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	    String fechaDevengo = sdf.format( datosPago.getFechaDevengo() );
-	    
+
 	    boolean presencialPermitido = false;
 	    boolean telematicoPermitido = false;
 	    if(datosPago != null && datosPago.getTipoPago() == ConstantesPago.TIPOPAGO_AMBOS){
 	    	presencialPermitido = true;
 		    telematicoPermitido = true;
-		    
+
 	    }else{
 	    	if(datosPago != null && datosPago.getTipoPago() == ConstantesPago.TIPOPAGO_PRESENCIAL){
 	    		presencialPermitido = true;
@@ -71,7 +75,7 @@ public class DatosPagoController extends BaseController
 		    	telematicoPermitido = true;
 		    }
 	    }
-	    
+
 	   	// Redirigimos a pagina de pago
 	    request.setAttribute("modelo",datosPago.getModelo());
 	    request.setAttribute("concepto",datosPago.getConcepto());
