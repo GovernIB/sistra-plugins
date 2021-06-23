@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.xml.ws.BindingProvider;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang.StringUtils;
 
 import es.caib.dir3caib.ws.api.unidad.Dir3CaibObtenerUnidadesWs;
@@ -600,6 +601,47 @@ public class UtilsRegweb3 {
 			doc = numDoc;
 		}
 		return doc;
+	}
+
+	/**
+	 * Elimina carácteres no permitidos.
+	 *
+	 * @param cadena
+	 *                   Cadena
+	 * @return Cadena normalizada
+	 */
+	public static String eliminarCaracteresNoPermitidos(final String cadena) {
+		final String[] charsNoPermitidos = { "\\+", ">", "%", "\\*", "&", ":", ";", "¿", "\\?", "/", "\\|", "!", "<",
+				"¡", "\"" , "'"};
+		String nombreFicheroNormalizado = cadena;
+		for (final String cnp : charsNoPermitidos) {
+			nombreFicheroNormalizado = nombreFicheroNormalizado.replaceAll(cnp, "_");
+		}
+		return nombreFicheroNormalizado;
+	}
+
+	/**
+	 * Trunca filename si se pasa del tamaño máximo.
+	 *
+	 * @param filename
+	 *                     filename
+	 * @param tamMax
+	 *                     Tamaño máximo
+	 * @return filename truncado
+	 */
+	public static String truncarFilename(final String filename, final int tamMax) {
+		String res = filename;
+		if (filename != null && filename.length() > tamMax) {
+			final String extension = FilenameUtils.getExtension(filename);
+			final String filenameNoExtension = FilenameUtils.removeExtension(filename);
+
+			if (StringUtils.isNotBlank(extension)) {
+				res = StringUtils.left(filenameNoExtension, tamMax - (extension.length() + 1)) + "." + extension;
+			} else {
+				res = StringUtils.left(filenameNoExtension, tamMax);
+			}
+		}
+		return res;
 	}
 
 }

@@ -78,4 +78,10 @@ public class ConstantesRegweb3 {
 
 	public static int TIEMPO_EN_CACHE = 60 * 60 * 24;
 
+	/** Tamanyo max. titulo fichero anexo. */
+	public static final int MAX_SIZE_ANEXO_TITULO = 200;
+	/** Tamanyo max. nombre fichero anexo. */
+	public static final int MAX_SIZE_ANEXO_FILENAME = 80;
+
+
 }

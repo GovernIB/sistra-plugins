@@ -874,14 +874,14 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 		}
 
 		AnexoWs anexoAsiento = new AnexoWs();
-        anexoAsiento.setTitulo(UtilsRegweb3.truncarTexto(docRDS.getTitulo(), ConstantesRegweb3.MAX_SIZE_ANEXO_TITULO));
+        anexoAsiento.setTitulo(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarTexto(docRDS.getTitulo(), ConstantesRegweb3.MAX_SIZE_ANEXO_TITULO)));
 
         if (docRDSFormateado != null) {
-	        anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.truncarFilename(docRDSFormateado.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME));
+	        anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarFilename(docRDSFormateado.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME)));
 	        anexoAsiento.setFicheroAnexado(docRDSFormateado.getDatosFichero());
 	        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDSFormateado.getNombreFichero())));
         } else {
-        	anexoAsiento.setNombreFicheroAnexado(docRDS.getNombreFichero());
+        	anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarFilename(docRDS.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME)));
 	        anexoAsiento.setFicheroAnexado(docRDS.getDatosFichero());
 	        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDS.getNombreFichero())));
         }

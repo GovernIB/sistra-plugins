@@ -674,4 +674,21 @@ public class UtilsRegweb3 {
 		return doc;
 	}
 
+
+	/**
+	 * Elimina carácteres no permitidos.
+	 *
+	 * @param cadena
+	 *                   Cadena
+	 * @return Cadena normalizada
+	 */
+	public static String eliminarCaracteresNoPermitidos(final String cadena) {
+		final String[] charsNoPermitidos = { "\\+", ">", "%", "\\*", "&", ":", ";", "¿", "\\?", "/", "\\|", "!", "<",
+				"¡", "\"" , "'"};
+		String nombreFicheroNormalizado = cadena;
+		for (final String cnp : charsNoPermitidos) {
+			nombreFicheroNormalizado = nombreFicheroNormalizado.replaceAll(cnp, "_");
+		}
+		return nombreFicheroNormalizado;
+	}
 }
