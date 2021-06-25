@@ -44,6 +44,8 @@ import es.caib.sistra.plugins.regtel.ResultadoRegistro;
 import es.caib.sistra.plugins.regtel.ServicioDestinatario;
 import es.caib.sistra.plugins.regtel.TipoAsunto;
 import es.caib.sistra.plugins.regtel.impl.caib.ConfiguracionRegweb3;
+import es.caib.sistra.plugins.regtel.impl.caib.ConstantesRegweb3;
+import es.caib.sistra.plugins.regtel.impl.caib.UtilsRegweb3;
 import es.caib.xml.registro.factoria.ConstantesAsientoXML;
 import es.caib.xml.registro.factoria.impl.AsientoRegistral;
 import es.caib.xml.registro.factoria.impl.DatosAnexoDocumentacion;
@@ -844,14 +846,14 @@ public class PluginRegweb3 implements PluginRegistroIntf {
 
 
 		AnexoWs anexoAsiento = new AnexoWs();
-        anexoAsiento.setTitulo(docRDS.getTitulo());
+        anexoAsiento.setTitulo(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarTexto(docRDS.getTitulo(), ConstantesRegweb3.MAX_SIZE_ANEXO_TITULO)));
 
         if (docRDSFormateado != null) {
-	        anexoAsiento.setNombreFicheroAnexado(docRDSFormateado.getNombreFichero());
+	        anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarFilename(docRDSFormateado.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME)));
 	        anexoAsiento.setFicheroAnexado(docRDSFormateado.getDatosFichero());
 	        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDSFormateado.getNombreFichero())));
         } else {
-        	anexoAsiento.setNombreFicheroAnexado(docRDS.getNombreFichero());
+        	anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarFilename(docRDS.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME)));
 	        anexoAsiento.setFicheroAnexado(docRDS.getDatosFichero());
 	        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDS.getNombreFichero())));
         }
