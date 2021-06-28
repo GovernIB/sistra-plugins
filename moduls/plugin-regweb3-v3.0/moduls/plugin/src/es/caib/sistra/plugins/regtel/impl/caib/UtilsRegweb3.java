@@ -644,4 +644,22 @@ public class UtilsRegweb3 {
 		return res;
 	}
 
+	/**
+	 * Trunca texto si se pasa del tamaño máximo.
+	 *
+	 * @param texto
+	 *                   Texto
+	 * @param tamMax
+	 *                   Tamaño máximo
+	 * @return texto truncado
+	 */
+	public static String truncarTexto(final String texto, final int tamMax) {
+		String res = texto;
+		if (texto != null && texto.length() > tamMax) {
+			res = StringUtils.left(texto, tamMax - 3) + "...";
+		}
+		return res;
+	}
+
+
 }
