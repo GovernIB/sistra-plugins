@@ -65,6 +65,7 @@
             optimize="${javac.optimize}"
         	source="1.5"
         	target="1.5"
+        	encoding="iso-8859-1"
             >
             <src path="${jar.src}"/>
         </javac>
