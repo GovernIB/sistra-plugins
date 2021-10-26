@@ -76,6 +76,9 @@ public class DatosPagoController extends BaseController
 		    }
 	    }
 
+	    // Pago banca electronica permitido
+	    String pagoBancaElectronica = delegateF.obtenerPropiedad("pago.bancaElectronica");
+
 	   	// Redirigimos a pagina de pago
 	    request.setAttribute("modelo",datosPago.getModelo());
 	    request.setAttribute("concepto",datosPago.getConcepto());
@@ -86,6 +89,7 @@ public class DatosPagoController extends BaseController
 	    request.setAttribute("telematicoPermitido",telematicoPermitido);
 	    request.setAttribute("pagoEntidades", pagoEntidades);
 	    request.setAttribute("urlEntidadesPresencial", entidadesPresencial);
+	    request.setAttribute("pagoBancaElectronica", pagoBancaElectronica);
 
 	}
 

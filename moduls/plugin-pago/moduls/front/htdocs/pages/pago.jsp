@@ -67,10 +67,12 @@
 	</logic:equal>
 	<h3><a class="destacat"><bean:message key="pago.instrucciones.telematicas" /></a></h3>
 	<div class="instrucciones">
-		<p><bean:message key="pago.telematico.instruccion2" /></p>
+		<!--  <p><bean:message key="pago.telematico.instruccion2" /></p>  -->
 		<ul>
 			<li><bean:message key="pago.telematico.instruccion4" /></li>
+			<logic:equal name="pagoBancaElectronica" value="true">
 			<li><bean:message key="pago.telematico.instruccion3" /></li>
+			</logic:equal>
 		</ul>
 	</div>
 	<div style="float:left">
@@ -81,6 +83,7 @@
 		</html:submit>
 	</html:form>
 	</div>
+	<logic:equal name="pagoBancaElectronica" value="true">
 	<div style="float:right">
 	<html:form action="/iniciarPagoBanca">
 		<html:hidden property="modoPago" value="T"/>
@@ -89,6 +92,7 @@
 		</html:submit>
 	</html:form>
 	</div>
+	</logic>
 </div>
 
 </logic:equal>
