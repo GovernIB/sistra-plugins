@@ -92,7 +92,7 @@
 		</html:submit>
 	</html:form>
 	</div>
-	</logic>
+	</logic:equal>
 </div>
 
 </logic:equal>

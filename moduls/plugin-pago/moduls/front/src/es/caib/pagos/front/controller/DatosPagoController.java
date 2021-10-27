@@ -77,7 +77,21 @@ public class DatosPagoController extends BaseController
 	    }
 
 	    // Pago banca electronica permitido
-	    String pagoBancaElectronica = delegateF.obtenerPropiedad("pago.bancaElectronica");
+	    String pagoBancaElectronica =  "true";
+	    boolean filtrarBancaElectronica = Boolean.parseBoolean(delegateF.obtenerPropiedad("pago.bancaElectronica.filtrar"));
+	    if (filtrarBancaElectronica) {
+	    	pagoBancaElectronica =  "false";
+	    	String listaTramites = delegateF.obtenerPropiedad("pago.bancaElectronica.tramites");
+	    	if (listaTramites != null) {
+	    		String[] lt = listaTramites.split(";");
+	    		for (int i = 0; i < lt.length; i++) {
+	    			if (datosPago.getIdentificadorTramite().equals(lt[i])) {
+	    				pagoBancaElectronica =  "true";
+	    				break;
+	    			}
+	    		}
+	    	}
+	    }
 
 	   	// Redirigimos a pagina de pago
 	    request.setAttribute("modelo",datosPago.getModelo());
