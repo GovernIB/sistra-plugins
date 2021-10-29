@@ -18,7 +18,6 @@ import es.caib.sistra.plugins.pagos.DatosPago;
 
 public class DatosPagoController extends BaseController
 {
-
 	public void execute(ComponentContext tileContext,
 			HttpServletRequest request, HttpServletResponse response,
 			ServletContext servletContext) throws Exception
@@ -85,7 +84,7 @@ public class DatosPagoController extends BaseController
 	    	if (listaTramites != null) {
 	    		String[] lt = listaTramites.split(";");
 	    		for (int i = 0; i < lt.length; i++) {
-	    			if (datosPago.getIdentificadorTramite().equals(lt[i])) {
+	    			if (datosPago.getModeloTramite().equals(lt[i])) {
 	    				pagoBancaElectronica =  "true";
 	    				break;
 	    			}
