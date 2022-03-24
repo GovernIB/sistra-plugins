@@ -62,643 +62,646 @@ import es.caib.xml.registro.factoria.impl.Justificante;
  */
 public class PluginRegweb3 implements PluginRegistroIntf {
 
-	private static final Log logger = LogFactory.getLog(PluginRegweb3.class);
-	private static final String ERROR = "javax.xml.ws.soap.SOAPFaultException: Caller unauthorized";
-	private static final String ORGANOS_DESTINO = "ORGANOS_DESTINO";
+    private static final Log logger = LogFactory.getLog(PluginRegweb3.class);
+    private static final String ERROR = "javax.xml.ws.soap.SOAPFaultException: Caller unauthorized";
+    private static final String ORGANOS_DESTINO = "ORGANOS_DESTINO";
 
-	private int getMaxReintentos() {
+    private int getMaxReintentos() {
         return new Integer(Integer.parseInt(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.reintentos"), "0")));
-	}
+    }
 
-	private String getFechaInicioJustificante() {
+    private String getFechaInicioJustificante() {
         return new String(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.justificante.fechaInicio"), ""));
-	}
-
-	/** {@inheritDoc} */
-	public ResultadoRegistro registroEntrada(
-			AsientoRegistral asiento,
-			ReferenciaRDS refAsiento,
-			Map refAnexos) throws Exception {
-
-		int maxIntentos = getMaxReintentos();
-		String id = "" + System.currentTimeMillis();
-
-		// Obtiene entidad
-		String entidad =  UtilsRegweb3.obtenerEntidadAsiento(asiento);
-
-		// Mapea parametros ws
-		 AsientoRegistralWs paramEntrada = mapearParametrosRegistro(entidad, asiento, refAsiento, refAnexos);
-
-		// Invoca a Regweb3
-		final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
-
-		AsientoRegistralWs result = null;
-		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-			try{
-
-				// TODO PENDIENTE GESTION REINTENTOS SOBRE SESION REGISTRO
-				String idSesionRegistro = generarSesionRegweb(entidad);
-
-				// Obtiene si esta configurado distribucion y generar justificante
-				boolean distribuir = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.entrada.distribuir"),"false"));
-				boolean generarJustificante = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.entrada.generarJustificante"),"false"));
-
-				// Crea asiento registral
-				result  = service.crearAsientoRegistral(Long.parseLong(idSesionRegistro),
-						entidad, paramEntrada, null, generarJustificante, distribuir);
-	            break;
-			}catch (SOAPFaultException e){
-				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-					logger.debug("Registro de entrada " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-		            continue;
-				} else{
-					logger.error("Error realizando registro de entrada: " + e.getMessage(), e);
-				}
-			}
-		}
-
-		// Devuelve resultado registro
-		ResultadoRegistro resReg = new ResultadoRegistro();
-		resReg.setFechaRegistro(result.getFechaRegistro());
-		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
-		return resReg;
-	}
-
-
-	/** {@inheritDoc} */
-	public byte[] obtenerJustificanteRegistroEntrada(String entidad, String numeroRegistro,
-			Date fechaRegistro) throws Exception {
-
-		byte[] resultado = null;
-		Date fechaInicioFormateada = null;
-
-		int maxIntentos = getMaxReintentos();
-		String fechaInicio = getFechaInicioJustificante();
-
-		DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
-
-		if (!StringUtils.isEmpty(fechaInicio)){
-			try {
-				fechaInicioFormateada = formatoFecha.parse(getFechaInicioJustificante());
-			} catch (ParseException e) {
-				logger.error("Error al formatear fecha inicio de justificante de registro: " + e.getMessage(), e);
-			}
-
-			if (!fechaRegistro.before(fechaInicioFormateada)){
-				// Invoca a Regweb3
-				final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
-
-				JustificanteWs result = new JustificanteWs();
-
-				for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-					try{
-						result = service.obtenerJustificante(entidad, numeroRegistro, ConstantesRegweb3.REGISTRO_ENTRADA);
-					    break;
-					}catch (SOAPFaultException e){
-						String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-						if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-							logger.debug("Obtención de justificante de registro de entrada " + numeroRegistro + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-					        continue;
-						} else{
-							logger.error("Error obteniendo justificante de registro de entrada: " + e.getMessage(), e);
-						}
-					}catch (WsI18NException ex){
-						logger.error("Error obteniendo justificante de registro de entrada: " + ex.getMessage(), ex);
-						throw new Exception ("S'ha produit un error al descarregar el justificant de registre. Per favor, tornau a provar-ho passats uns minuts.");
-					}
-				}
-
-				resultado = result.getJustificante();
-			}
-
-		}
-
-
-		return resultado;
-	}
-
-
-	/** {@inheritDoc} */
-	public ResultadoRegistro registroSalida(
-			AsientoRegistral asiento,
-			ReferenciaRDS refAsiento,
-			Map refAnexos) throws Exception {
+    }
+
+    /** {@inheritDoc} */
+    public ResultadoRegistro registroEntrada(
+            AsientoRegistral asiento,
+            ReferenciaRDS refAsiento,
+            Map refAnexos) throws Exception {
+
+        int maxIntentos = getMaxReintentos();
+        String id = "" + System.currentTimeMillis();
+
+        // Obtiene entidad
+        String entidad =  UtilsRegweb3.obtenerEntidadAsiento(asiento);
+
+        // Mapea parametros ws
+         AsientoRegistralWs paramEntrada = mapearParametrosRegistro(entidad, asiento, refAsiento, refAnexos);
+
+        // Invoca a Regweb3
+        final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
+
+        AsientoRegistralWs result = null;
+        for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+            try{
+
+                // TODO PENDIENTE GESTION REINTENTOS SOBRE SESION REGISTRO
+                String idSesionRegistro = generarSesionRegweb(entidad);
+
+                // Obtiene si esta configurado distribucion y generar justificante
+                boolean distribuir = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.entrada.distribuir"),"false"));
+                boolean generarJustificante = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.entrada.generarJustificante"),"false"));
+
+                // Crea asiento registral
+                result  = service.crearAsientoRegistral(Long.parseLong(idSesionRegistro),
+                        entidad, paramEntrada, null, generarJustificante, distribuir);
+                break;
+            }catch (SOAPFaultException e){
+                String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                    logger.debug("Registro de entrada " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                    continue;
+                } else{
+                    logger.error("Error realizando registro de entrada: " + e.getMessage(), e);
+                }
+            }
+        }
+
+        // Devuelve resultado registro
+        ResultadoRegistro resReg = new ResultadoRegistro();
+        resReg.setFechaRegistro(result.getFechaRegistro());
+        resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
+        return resReg;
+    }
+
+
+    /** {@inheritDoc} */
+    public byte[] obtenerJustificanteRegistroEntrada(String entidad, String numeroRegistro,
+            Date fechaRegistro) throws Exception {
+
+        byte[] resultado = null;
+        Date fechaInicioFormateada = null;
+
+        int maxIntentos = getMaxReintentos();
+        String fechaInicio = getFechaInicioJustificante();
+
+        DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+
+        if (!StringUtils.isEmpty(fechaInicio)){
+            try {
+                fechaInicioFormateada = formatoFecha.parse(getFechaInicioJustificante());
+            } catch (ParseException e) {
+                logger.error("Error al formatear fecha inicio de justificante de registro: " + e.getMessage(), e);
+            }
+
+            if (!fechaRegistro.before(fechaInicioFormateada)){
+                // Invoca a Regweb3
+                final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
+
+                JustificanteWs result = new JustificanteWs();
+
+                for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+                    try{
+                        result = service.obtenerJustificante(entidad, numeroRegistro, ConstantesRegweb3.REGISTRO_ENTRADA);
+                        break;
+                    }catch (SOAPFaultException e){
+                        String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                        if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                            logger.debug("Obtención de justificante de registro de entrada " + numeroRegistro + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                            continue;
+                        } else{
+                            logger.error("Error obteniendo justificante de registro de entrada: " + e.getMessage(), e);
+                        }
+                    }catch (WsI18NException ex){
+                        logger.error("Error obteniendo justificante de registro de entrada: " + ex.getMessage(), ex);
+                        throw new Exception ("S'ha produit un error al descarregar el justificant de registre. Per favor, tornau a provar-ho passats uns minuts.");
+                    }
+                }
+
+                resultado = result.getJustificante();
+            }
+
+        }
+
+
+        return resultado;
+    }
+
+
+    /** {@inheritDoc} */
+    public ResultadoRegistro registroSalida(
+            AsientoRegistral asiento,
+            ReferenciaRDS refAsiento,
+            Map refAnexos) throws Exception {
 
-		int maxIntentos = getMaxReintentos();
-		String id = "" + System.currentTimeMillis();
+        int maxIntentos = getMaxReintentos();
+        String id = "" + System.currentTimeMillis();
 
-		// Obtiene entidad
-		String entidad = UtilsRegweb3.obtenerEntidadAsiento(asiento);
-
-		// Mapea parametros ws
-		AsientoRegistralWs paramEntrada = mapearParametrosRegistro(entidad, asiento, refAsiento, refAnexos);
-
-
-
-		// Invoca a Regweb3
-		AsientoRegistralWs result = null;
-		final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
-
-		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-			try{
-
-				// TODO PENDIENTE GESTION REINTENTOS SOBRE SESION REGISTRO
-				String idSesionRegistro = generarSesionRegweb(entidad);
-
-				// Obtiene si esta configurado distribucion y generar justificante
-				boolean distribuir = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.salida.distribuir"),"false"));
-				boolean generarJustificante = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.salida.generarJustificante"),"false"));
-
-				result  = service.crearAsientoRegistral(Long.parseLong(idSesionRegistro),
-						entidad, paramEntrada, null, generarJustificante, distribuir);
+        // Obtiene entidad
+        String entidad = UtilsRegweb3.obtenerEntidadAsiento(asiento);
+
+        // Mapea parametros ws
+        AsientoRegistralWs paramEntrada = mapearParametrosRegistro(entidad, asiento, refAsiento, refAnexos);
+
+
+
+        // Invoca a Regweb3
+        AsientoRegistralWs result = null;
+        final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
+
+        for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+            try{
+
+                // TODO PENDIENTE GESTION REINTENTOS SOBRE SESION REGISTRO
+                String idSesionRegistro = generarSesionRegweb(entidad);
+
+                // Obtiene si esta configurado distribucion y generar justificante
+                boolean distribuir = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.salida.distribuir"),"false"));
+                boolean generarJustificante = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.salida.generarJustificante"),"false"));
+
+                result  = service.crearAsientoRegistral(Long.parseLong(idSesionRegistro),
+                        entidad, paramEntrada, null, generarJustificante, distribuir);
 
-	            break;
-			}catch (SOAPFaultException e){
-				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-					logger.debug("Registro de salida " + id + " reintento número " + reintentos + " erroneo: " + e.getMessage());
-		            continue;
-				} else{
-					logger.error("Error realizando registro de salida: " + e.getMessage(), e);
-				}
-			}
-		}
+                break;
+            }catch (SOAPFaultException e){
+                String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                    logger.debug("Registro de salida " + id + " reintento número " + reintentos + " erroneo: " + e.getMessage());
+                    continue;
+                } else{
+                    logger.error("Error realizando registro de salida: " + e.getMessage(), e);
+                }
+            }
+        }
 
-		// Devuelve resultado registro
-		ResultadoRegistro resReg = new ResultadoRegistro();
-		resReg.setFechaRegistro(result.getFechaRegistro());
-		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
-		return resReg;
-	}
+        // Devuelve resultado registro
+        ResultadoRegistro resReg = new ResultadoRegistro();
+        resReg.setFechaRegistro(result.getFechaRegistro());
+        resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
+        return resReg;
+    }
 
 
-	/** {@inheritDoc} */
-	public byte[] obtenerJustificanteRegistroSalida(String entidad, String numeroRegistro,
-			Date fechaRegistro) throws Exception {
+    /** {@inheritDoc} */
+    public byte[] obtenerJustificanteRegistroSalida(String entidad, String numeroRegistro,
+            Date fechaRegistro) throws Exception {
 
-		byte[] resultado = null;
-		Date fechaInicioFormateada = null;
-
-		int maxIntentos = getMaxReintentos();
-		String fechaInicio = getFechaInicioJustificante();
-
-		DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
-
-		if (!StringUtils.isEmpty(fechaInicio)){
-			try {
-				fechaInicioFormateada = formatoFecha.parse(getFechaInicioJustificante());
-			} catch (ParseException e) {
-				logger.error("Error al formatear fecha inicio de justificante de registro: " + e.getMessage(), e);
-			}
-
-			if (!fechaRegistro.before(fechaInicioFormateada)){
-				// Invoca a Regweb3
-				final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
-
-				JustificanteWs result = new JustificanteWs();
-
-				for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-					try{
-						result = service.obtenerJustificante(entidad, numeroRegistro, ConstantesRegweb3.REGISTRO_SALIDA);
-					    break;
-					}catch (SOAPFaultException e){
-						String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-						if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-							logger.debug("Obtención de justificante de registro de salida " + numeroRegistro + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-					        continue;
-						} else{
-							logger.error("Error obteniendo justificante de registro de salida: " + e.getMessage(), e);
-						}
-					}catch (WsI18NException ex){
-						logger.error("Error obteniendo justificante de registro de entrada: " + ex.getMessage(), ex);
-						throw new Exception ("S'ha produit un error al descarregar el justificant de registre de sortida. Per favor, tornau a provar-ho passats uns minuts.");
-					}
-				}
-
-				resultado = result.getJustificante();
-			}
-
-		}
-
-		return resultado;
-	}
-
-	/** {@inheritDoc} */
-	public ResultadoRegistro confirmarPreregistro(
-			String usuario,
-			String entidad,
-			String oficina,
-			String codigoProvincia,
-			String codigoMunicipio,
-			String descripcionMunicipio,
-			Justificante justificantePreregistro,
-			ReferenciaRDS refJustificante,
-			ReferenciaRDS refAsiento,
-			Map refAnexos) throws Exception {
-
-		int maxIntentos = getMaxReintentos();
-		String id = "" + System.currentTimeMillis();
-
-		// Verifica entidad
-		verificarEntidad(entidad);
-
-		// Obtenemos asiento
-		AsientoRegistral asientoRegistral = justificantePreregistro.getAsientoRegistral();
-
-		// Establecemos oficina origen
-		asientoRegistral.getDatosOrigen().setCodigoEntidadRegistralOrigen(oficina);
-
-		// Mapea parametros ws
-		AsientoRegistralWs paramEntrada = mapearParametrosRegistro(entidad, asientoRegistral, refAsiento, refAnexos);
-
-		// Establecemos como usuario que realiza el registro al usuario conectado
-		paramEntrada.setCodigoUsuario(usuario);
-
-		// Invoca a Regweb3
-		RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
-
-
-		AsientoRegistralWs result = null;
-		for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-			try{
-
-				// TODO PENDIENTE GESTION REINTENTOS SOBRE SESION REGISTRO
-				String idSesionRegistro = generarSesionRegweb(entidad);
-
-				// Obtiene si esta configurado distribucion y generar justificante
-				boolean distribuir = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.entrada.distribuir"),"false"));
-				boolean generarJustificante = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.entrada.generarJustificante"),"false"));
-
-	            result   = service.crearAsientoRegistral(Long.parseLong(idSesionRegistro),
-						entidad, paramEntrada, null, generarJustificante, distribuir);
-	            break;
-			}catch (SOAPFaultException e){
-				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-					logger.debug("Confirmación de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-		            continue;
-				} else{
-					logger.error("Error realizando confirmación de registro: " + e.getMessage(), e);
-				}
-			}
-		}
-
-		// Devuelve resultado registro
-		ResultadoRegistro resReg = new ResultadoRegistro();
-		resReg.setFechaRegistro(result.getFechaRegistro());
-		resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
-		return resReg;
-
-
-	}
-
-	/** {@inheritDoc} */
-	public List obtenerOficinasRegistro(String entidad, char tipoRegistro) {
-		return obtenerOficinasRegistroUsuario(entidad,tipoRegistro, null);
-	}
-
-	/** {@inheritDoc} */
-	public List obtenerOficinasRegistroUsuario(String entidad, char tipoRegistro, String usuario) {
-		List resultado = new ArrayList();
-		int maxIntentos = getMaxReintentos();
-		String id = "" + System.currentTimeMillis();
-		try {
-
-			verificarEntidad(entidad);
-
-			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
-
-			Long regType = null;
-			if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_ENTRADA) {
-				regType = ConstantesRegweb3.REGISTRO_ENTRADA;
-			} else if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_SALIDA) {
-				regType = ConstantesRegweb3.REGISTRO_SALIDA;
-			} else {
-				throw new Exception("Tipo registro no soportado: " + tipoRegistro);
-			}
-
-
-			List<LibroOficinaWs> resWs = null;
-
-			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-				try{
-					if (usuario != null) {
-						resWs = service.obtenerLibrosOficinaUsuario(entidad, usuario, regType);
-					} else {
-						resWs = service.obtenerLibrosOficina(entidad, regType);
-					}
-					break;
-				}catch (SOAPFaultException e){
-					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-						logger.debug("Consulta oficinas de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-			            continue;
-					}
-				}
-			}
-
-			for (LibroOficinaWs lo : resWs) {
-				String codigoLibro = lo.getLibroWs().getCodigoLibro();
-				String descLibro = lo.getLibroWs().getNombreCorto();
-				String codigoOficina = lo.getOficinaWs().getCodigo();
-				String descOficina = lo.getOficinaWs().getNombre();
-
-				OficinaRegistro of = new OficinaRegistro();
-				of.setCodigo(UtilsRegweb3.getOficinaAsiento(codigoLibro, codigoOficina));
-				of.setDescripcion(descLibro + " - " + descOficina);
-				resultado.add(of);
-			}
-
-		} catch (Exception ex) {
-			logger.error("Error consultando oficinas registro: " + ex.getMessage(), ex);
-			resultado = new ArrayList();
-		}
-
-		return resultado;
-	}
-
-	/** {@inheritDoc} */
-	public List obtenerTiposAsunto(String entidad) {
-		List resultado = new ArrayList();
-		int maxIntentos = getMaxReintentos();
-		String id = "" + System.currentTimeMillis();
-
-		try {
-			verificarEntidad(entidad);
-			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
-			List<TipoAsuntoWs> tiposAsunto = null;
-
-			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-				try{
-					tiposAsunto = service.listarTipoAsunto(entidad);
-					break;
-				}catch (SOAPFaultException e){
-					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-						logger.debug("Consulta tipos asunto de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-			            continue;
-					}
-				}
-			}
-
-			for (TipoAsuntoWs asuntoR : tiposAsunto) {
-				TipoAsunto asunto = new TipoAsunto();
-				asunto.setCodigo(asuntoR.getCodigo());
-				asunto.setDescripcion(asuntoR.getNombre());
-				resultado.add(asunto);
-			}
-		} catch (Exception ex) {
-			logger.error("Error consultando tipos asunto: " + ex.getMessage(), ex);
-			resultado = new ArrayList();
-		}
-		return resultado;
-	}
-
-	/** {@inheritDoc} */
-	public List obtenerServiciosDestino(String entidad) {
-		List resultado = null;
-		int maxIntentos = getMaxReintentos();
-
-		String id = "" + System.currentTimeMillis();
-
-		String cacheKey = ORGANOS_DESTINO;
+        byte[] resultado = null;
+        Date fechaInicioFormateada = null;
+
+        int maxIntentos = getMaxReintentos();
+        String fechaInicio = getFechaInicioJustificante();
+
+        DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+
+        if (!StringUtils.isEmpty(fechaInicio)){
+            try {
+                fechaInicioFormateada = formatoFecha.parse(getFechaInicioJustificante());
+            } catch (ParseException e) {
+                logger.error("Error al formatear fecha inicio de justificante de registro: " + e.getMessage(), e);
+            }
+
+            if (!fechaRegistro.before(fechaInicioFormateada)){
+                // Invoca a Regweb3
+                final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
+
+                JustificanteWs result = new JustificanteWs();
+
+                for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+                    try{
+                        result = service.obtenerJustificante(entidad, numeroRegistro, ConstantesRegweb3.REGISTRO_SALIDA);
+                        break;
+                    }catch (SOAPFaultException e){
+                        String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                        if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                            logger.debug("Obtención de justificante de registro de salida " + numeroRegistro + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                            continue;
+                        } else{
+                            logger.error("Error obteniendo justificante de registro de salida: " + e.getMessage(), e);
+                        }
+                    }catch (WsI18NException ex){
+                        logger.error("Error obteniendo justificante de registro de entrada: " + ex.getMessage(), ex);
+                        throw new Exception ("S'ha produit un error al descarregar el justificant de registre de sortida. Per favor, tornau a provar-ho passats uns minuts.");
+                    }
+                }
+
+                resultado = result.getJustificante();
+            }
+
+        }
+
+        return resultado;
+    }
+
+    /** {@inheritDoc} */
+    public ResultadoRegistro confirmarPreregistro(
+            String usuario,
+            String entidad,
+            String oficina,
+            String codigoProvincia,
+            String codigoMunicipio,
+            String descripcionMunicipio,
+            Justificante justificantePreregistro,
+            ReferenciaRDS refJustificante,
+            ReferenciaRDS refAsiento,
+            Map refAnexos) throws Exception {
+
+        int maxIntentos = getMaxReintentos();
+        String id = "" + System.currentTimeMillis();
+
+        // Verifica entidad
+        verificarEntidad(entidad);
+
+        // Obtenemos asiento
+        AsientoRegistral asientoRegistral = justificantePreregistro.getAsientoRegistral();
+
+        // Establecemos oficina origen
+        asientoRegistral.getDatosOrigen().setCodigoEntidadRegistralOrigen(oficina);
+
+        // Mapea parametros ws
+        AsientoRegistralWs paramEntrada = mapearParametrosRegistro(entidad, asientoRegistral, refAsiento, refAnexos);
+
+        // Establecemos como usuario que realiza el registro al usuario conectado
+        paramEntrada.setCodigoUsuario(usuario);
+
+        // Invoca a Regweb3
+        RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
+
+
+        AsientoRegistralWs result = null;
+        for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+            try{
+
+                // TODO PENDIENTE GESTION REINTENTOS SOBRE SESION REGISTRO
+                String idSesionRegistro = generarSesionRegweb(entidad);
+
+                // Obtiene si esta configurado distribucion y generar justificante
+                boolean distribuir = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.entrada.distribuir"),"false"));
+                boolean generarJustificante = Boolean.parseBoolean(StringUtils.defaultIfEmpty(ConfiguracionRegweb3.getInstance().getProperty("regweb3.entrada.generarJustificante"),"false"));
+
+                result   = service.crearAsientoRegistral(Long.parseLong(idSesionRegistro),
+                        entidad, paramEntrada, null, generarJustificante, distribuir);
+                break;
+            }catch (SOAPFaultException e){
+                String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                    logger.debug("Confirmación de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                    continue;
+                } else{
+                    logger.error("Error realizando confirmación de registro: " + e.getMessage(), e);
+                }
+            }
+        }
+
+        // Devuelve resultado registro
+        ResultadoRegistro resReg = new ResultadoRegistro();
+        resReg.setFechaRegistro(result.getFechaRegistro());
+        resReg.setNumeroRegistro(result.getNumeroRegistroFormateado());
+        return resReg;
+
+
+    }
+
+    /** {@inheritDoc} */
+    public List obtenerOficinasRegistro(String entidad, char tipoRegistro) {
+        return obtenerOficinasRegistroUsuario(entidad,tipoRegistro, null);
+    }
+
+    /** {@inheritDoc} */
+    public List obtenerOficinasRegistroUsuario(String entidad, char tipoRegistro, String usuario) {
+        List resultado = new ArrayList();
+        int maxIntentos = getMaxReintentos();
+        String id = "" + System.currentTimeMillis();
+        try {
+
+            verificarEntidad(entidad);
+
+            RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
+
+            Long regType = null;
+            if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_ENTRADA) {
+                regType = ConstantesRegweb3.REGISTRO_ENTRADA;
+            } else if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_SALIDA) {
+                regType = ConstantesRegweb3.REGISTRO_SALIDA;
+            } else {
+                throw new Exception("Tipo registro no soportado: " + tipoRegistro);
+            }
+
+
+            List<LibroOficinaWs> resWs = null;
+
+            for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+                try{
+                    if (usuario != null) {
+                        resWs = service.obtenerLibrosOficinaUsuario(entidad, usuario, regType);
+                    } else {
+                        resWs = service.obtenerLibrosOficina(entidad, regType);
+                    }
+                    break;
+                }catch (SOAPFaultException e){
+                    String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                    if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                        logger.debug("Consulta oficinas de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                        continue;
+                    }
+                }
+            }
+
+            for (LibroOficinaWs lo : resWs) {
+                String codigoLibro = lo.getLibroWs().getCodigoLibro();
+                String descLibro = lo.getLibroWs().getNombreCorto();
+                String codigoOficina = lo.getOficinaWs().getCodigo();
+                String descOficina = lo.getOficinaWs().getNombre();
+
+                OficinaRegistro of = new OficinaRegistro();
+                of.setCodigo(UtilsRegweb3.getOficinaAsiento(codigoLibro, codigoOficina));
+                of.setDescripcion(descLibro + " - " + descOficina);
+                resultado.add(of);
+            }
+
+        } catch (Exception ex) {
+            logger.error("Error consultando oficinas registro: " + ex.getMessage(), ex);
+            resultado = new ArrayList();
+        }
+
+        return resultado;
+    }
+
+    /** {@inheritDoc} */
+    public List obtenerTiposAsunto(String entidad) {
+        List resultado = new ArrayList();
+        int maxIntentos = getMaxReintentos();
+        String id = "" + System.currentTimeMillis();
 
         try {
-        	resultado = ( List ) getFromCache(cacheKey);
+            verificarEntidad(entidad);
+            RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
+            List<TipoAsuntoWs> tiposAsunto = null;
+
+            for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+                try{
+                    tiposAsunto = service.listarTipoAsunto(entidad);
+                    break;
+                }catch (SOAPFaultException e){
+                    String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                    if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                        logger.debug("Consulta tipos asunto de registro " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                        continue;
+                    }
+                }
+            }
+
+            for (TipoAsuntoWs asuntoR : tiposAsunto) {
+                TipoAsunto asunto = new TipoAsunto();
+                asunto.setCodigo(asuntoR.getCodigo());
+                asunto.setDescripcion(asuntoR.getNombre());
+                resultado.add(asunto);
+            }
+        } catch (Exception ex) {
+            logger.error("Error consultando tipos asunto: " + ex.getMessage(), ex);
+            resultado = new ArrayList();
+        }
+        return resultado;
+    }
+
+    /** {@inheritDoc} */
+    public List obtenerServiciosDestino(String entidad) {
+        List resultado = null;
+        int maxIntentos = getMaxReintentos();
+
+        String id = "" + System.currentTimeMillis();
+
+        String cacheKey = ORGANOS_DESTINO;
+
+        try {
+            resultado = ( List ) getFromCache(cacheKey);
         } catch (CacheException ex){
-        	logger.error("Error recuperando servicios destino de cache: " + ex.getMessage(), ex);
+            logger.error("Error recuperando servicios destino de cache: " + ex.getMessage(), ex);
         }
 
         if (resultado != null){
-        	logger.debug(cacheKey + " - obtenido de cache");
-        	return resultado;
+            logger.debug(cacheKey + " - obtenido de cache");
+            return resultado;
         }
 
-		try {
-			verificarEntidad(entidad);
-			List<UnidadTF> res = new ArrayList<UnidadTF>();
+        try {
+            verificarEntidad(entidad);
+            List<UnidadTF> res = new ArrayList<UnidadTF>();
 
-			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-				try{
-		            res = UtilsRegweb3.getDir3UnidadesService().obtenerArbolUnidadesDestinatarias(entidad);
-		            break;
-				}catch (SOAPFaultException e){
-					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-						logger.debug("Consulta servicios destino " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-			            continue;
-					}
-				}
-			}
+            for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+                try{
+                    res = UtilsRegweb3.getDir3UnidadesService().obtenerArbolUnidadesDestinatarias(entidad);
+                    break;
+                }catch (SOAPFaultException e){
+                    String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                    if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                        logger.debug("Consulta servicios destino " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                        continue;
+                    }
+                }
+            }
 
-			resultado = new ArrayList();
-			for (UnidadTF u : res) {
-				ServicioDestinatario sd = new ServicioDestinatario();
-				sd.setCodigo(u.getCodigo());
-				sd.setDescripcion(u.getDenominacion());
-				if (StringUtils.isNotBlank(u.getCodUnidadSuperior()) && !u.getCodUnidadRaiz().equals(u.getCodigo())) {
-					sd.setCodigoPadre(u.getCodUnidadSuperior());
-				}
-				resultado.add(sd);
-			}
+            resultado = new ArrayList();
+            for (UnidadTF u : res) {
+                ServicioDestinatario sd = new ServicioDestinatario();
+                sd.setCodigo(u.getCodigo());
+                sd.setDescripcion(u.getDenominacion());
+                if (StringUtils.isNotBlank(u.getCodUnidadSuperior()) && !u.getCodUnidadRaiz().equals(u.getCodigo())) {
+                    sd.setCodigoPadre(u.getCodUnidadSuperior());
+                }
+                resultado.add(sd);
+            }
 
-			this.saveToCache( cacheKey, (Serializable) resultado );
-		} catch (Exception ex) {
-			logger.error("Error consultando servicios destino: " + ex.getMessage(), ex);
-			resultado = new ArrayList();
-		}
-		return resultado;
-	}
-
-	/** {@inheritDoc} */
-	public String obtenerDescServiciosDestino(String servicioDestino) {
-		String result = null;
-		int maxIntentos = getMaxReintentos();
-
-		String id = "" + System.currentTimeMillis();
-
-		try {
-
-			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-				try{
-		            final UnidadTF res = UtilsRegweb3.getDir3UnidadesService().obtenerUnidad(servicioDestino, null, null);
-		            if (res != null) {
-		            	result = res.getDenominacion();
-		            }
-		            break;
-				}catch (SOAPFaultException e){
-					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-						logger.debug("Consulta descripcion servicio destino " + servicioDestino + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-			            continue;
-					}
-				}
-			}
-
-		} catch (Exception ex) {
-			logger.error("Error consultando descripcion del servicio destino: " + servicioDestino + " " + ex.getMessage(), ex);
-		}
-
-		return result;
-
-	}
-
-	/** {@inheritDoc} */
-    public void anularRegistroEntrada(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
-    	int maxIntentos = getMaxReintentos();
-		String id = "" + System.currentTimeMillis();
-    	verificarEntidad(entidad);
-    	String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
-    	for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-			try{
-				UtilsRegweb3.getRegistroEntradaService(entidad).anularRegistroEntrada(numeroRegistro, entidad, true);
-				break;
-			}catch (SOAPFaultException e){
-				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-					logger.debug("Anulación registro de entrada " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-		            continue;
-				}
-			}
-		}
-	}
+            this.saveToCache( cacheKey, (Serializable) resultado );
+        } catch (Exception ex) {
+            logger.error("Error consultando servicios destino: " + ex.getMessage(), ex);
+            resultado = new ArrayList();
+        }
+        return resultado;
+    }
 
     /** {@inheritDoc} */
-	public void anularRegistroSalida(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
-		int maxIntentos = getMaxReintentos();
-		String id = "" + System.currentTimeMillis();
-		verificarEntidad(entidad);
-		String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
-    	for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-			try{
-				UtilsRegweb3.getRegistroSalidaService(entidad).anularRegistroSalida(numeroRegistro, entidad, true);
-		    	break;
-			}catch (SOAPFaultException e){
-				String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-				if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-					logger.debug("Anulación registro de salida " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-		            continue;
-				}
-			}
-		}
-	}
+    public String obtenerDescServiciosDestino(String servicioDestino) {
+        String result = null;
+        int maxIntentos = getMaxReintentos();
 
-	/** {@inheritDoc} */
-	public String obtenerDescripcionSelloOficina(char tipoRegistro, String entidad, String codigoOficinaAsiento) {
-		int maxIntentos = getMaxReintentos();
-		String id = "" + System.currentTimeMillis();
-		String resultado = "";
-		try {
+        String id = "" + System.currentTimeMillis();
 
-			verificarEntidad(entidad);
+        try {
 
-			RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
+            for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+                try{
+                    final UnidadTF res = UtilsRegweb3.getDir3UnidadesService().obtenerUnidad(servicioDestino, null, null);
+                    if (res != null) {
+                        result = res.getDenominacion();
+                    }
+                    break;
+                }catch (SOAPFaultException e){
+                    String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                    if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                        logger.debug("Consulta descripcion servicio destino " + servicioDestino + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                        continue;
+                    }
+                }
+            }
 
-			Long regType = null;
-			if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_ENTRADA) {
-				regType = ConstantesRegweb3.REGISTRO_ENTRADA;
-			} else if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_SALIDA) {
-				regType = ConstantesRegweb3.REGISTRO_SALIDA;
-			} else {
-				throw new Exception("Tipo registro no soportado: " + tipoRegistro);
-			}
+        } catch (Exception ex) {
+            logger.error("Error consultando descripcion del servicio destino: " + servicioDestino + " " + ex.getMessage(), ex);
+        }
+
+        return result;
+
+    }
+
+    /** {@inheritDoc} */
+    public void anularRegistroEntrada(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
+        int maxIntentos = getMaxReintentos();
+        String id = "" + System.currentTimeMillis();
+        verificarEntidad(entidad);
+        String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
+        for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+            try{
+                UtilsRegweb3.getRegistroEntradaService(entidad).anularRegistroEntrada(numeroRegistro, entidad, true);
+                break;
+            }catch (SOAPFaultException e){
+                String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                    logger.debug("Anulación registro de entrada " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                    continue;
+                }
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    public void anularRegistroSalida(String entidad, String numeroRegistro, Date fechaRegistro) throws Exception {
+        int maxIntentos = getMaxReintentos();
+        String id = "" + System.currentTimeMillis();
+        verificarEntidad(entidad);
+        String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
+        for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+            try{
+                UtilsRegweb3.getRegistroSalidaService(entidad).anularRegistroSalida(numeroRegistro, entidad, true);
+                break;
+            }catch (SOAPFaultException e){
+                String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                    logger.debug("Anulación registro de salida " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                    continue;
+                }
+            }
+        }
+    }
+
+    /** {@inheritDoc} */
+    public String obtenerDescripcionSelloOficina(char tipoRegistro, String entidad, String codigoOficinaAsiento) {
+        int maxIntentos = getMaxReintentos();
+        String id = "" + System.currentTimeMillis();
+        String resultado = "";
+        try {
+
+            verificarEntidad(entidad);
+
+            RegWebInfoWs service = UtilsRegweb3.getRegistroInfoService(entidad);
+
+            Long regType = null;
+            if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_ENTRADA) {
+                regType = ConstantesRegweb3.REGISTRO_ENTRADA;
+            } else if (tipoRegistro == ConstantesPluginRegistro.REGISTRO_SALIDA) {
+                regType = ConstantesRegweb3.REGISTRO_SALIDA;
+            } else {
+                throw new Exception("Tipo registro no soportado: " + tipoRegistro);
+            }
 
 
-			List<LibroOficinaWs> resWs = null;
+            List<LibroOficinaWs> resWs = null;
 
-			for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-				try{
-					resWs = service.obtenerLibrosOficina(entidad, regType);
-					break;
-				}catch (SOAPFaultException e){
-					String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-					if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-						logger.debug("Obtención descripción oficina sello de registro  " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-			            continue;
-					}
-				}
-			}
+            for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+                try{
+                    resWs = service.obtenerLibrosOficina(entidad, regType);
+                    break;
+                }catch (SOAPFaultException e){
+                    String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                    if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                        logger.debug("Obtención descripción oficina sello de registro  " + id + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                        continue;
+                    }
+                }
+            }
 
-			boolean enc = false;
+            boolean enc = false;
 
-			for (LibroOficinaWs lo : resWs) {
-				String codigoLibro = lo.getLibroWs().getCodigoLibro();
-				String codigoOficina = lo.getOficinaWs().getCodigo();
+            for (LibroOficinaWs lo : resWs) {
+                String codigoLibro = lo.getLibroWs().getCodigoLibro();
+                String codigoOficina = lo.getOficinaWs().getCodigo();
 
-				if (codigoOficinaAsiento.equals(UtilsRegweb3.getOficinaAsiento(codigoLibro,codigoOficina))) {
-					enc = true;
-					resultado = lo.getLibroWs().getNombreCorto();
-					break;
-				}
-			}
+                if (codigoOficinaAsiento.equals(UtilsRegweb3.getOficinaAsiento(codigoLibro,codigoOficina))) {
+                    enc = true;
+                    resultado = lo.getLibroWs().getNombreCorto();
+                    break;
+                }
+            }
 
-			if (!enc) {
-				logger.error("Error consultando oficina registro: no se encuentra oficina " + codigoOficinaAsiento);
-			}
+            if (!enc) {
+                logger.error("Error consultando oficina registro: no se encuentra oficina " + codigoOficinaAsiento);
+            }
 
-		} catch (Exception ex) {
-			logger.error("Error consultando oficinas registro: " + ex.getMessage(), ex);
-			resultado = "";
-		}
+        } catch (Exception ex) {
+            logger.error("Error consultando oficinas registro: " + ex.getMessage(), ex);
+            resultado = "";
+        }
 
-		return resultado;
-	}
+        return resultado;
+    }
 
-	// ----------- Funciones auxiliares
+    // ----------- Funciones auxiliares
 
-	/**
-	 *  Mapea datos asiento a parametro ws.
-	 * @param asiento asiento
-	 * @param refAsiento referencia asiento
-	 * @param refAnexos referencia anexos
-	 * @return parametro ws
-	 * @throws Exception
-	 */
-	private AsientoRegistralWs mapearParametrosRegistro(String entidad,
-			AsientoRegistral asiento, ReferenciaRDS refAsiento, Map refAnexos) throws Exception {
+    /**
+     *  Mapea datos asiento a parametro ws.
+     * @param asiento asiento
+     * @param refAsiento referencia asiento
+     * @param refAnexos referencia anexos
+     * @return parametro ws
+     * @throws Exception
+     */
+    private AsientoRegistralWs mapearParametrosRegistro(String entidad,
+            AsientoRegistral asiento, ReferenciaRDS refAsiento, Map refAnexos) throws Exception {
 
-		// Obtiene datos propios
-		 DatosPropios datosPropios = obtenerDatosPropios(asiento, refAnexos);
+        // Obtiene datos propios
+         DatosPropios datosPropios = obtenerDatosPropios(asiento, refAnexos);
 
-		// Crea parametros segun sea registro entrada o salida
-		final AsientoRegistralWs asientoWs = new AsientoRegistralWs();
-		boolean esRegistroSalida = (asiento.getDatosOrigen().getTipoRegistro() == ConstantesAsientoXML.TIPO_REGISTRO_SALIDA);
-		if (esRegistroSalida) {
-			asientoWs.setTipoRegistro(ConstantesRegweb3.REGISTRO_SALIDA);
-		} else {
-			asientoWs.setTipoRegistro(ConstantesRegweb3.REGISTRO_ENTRADA);
-		}
+        // Crea parametros segun sea registro entrada o salida
+        final AsientoRegistralWs asientoWs = new AsientoRegistralWs();
+        boolean esRegistroSalida = (asiento.getDatosOrigen().getTipoRegistro() == ConstantesAsientoXML.TIPO_REGISTRO_SALIDA);
+        if (esRegistroSalida) {
+            asientoWs.setTipoRegistro(ConstantesRegweb3.REGISTRO_SALIDA);
+        } else {
+            asientoWs.setTipoRegistro(ConstantesRegweb3.REGISTRO_ENTRADA);
+        }
 
-		// Datos aplicacion
-		asientoWs.setAplicacionTelematica(UtilsRegweb3.getCodigoAplicacion());
+        // Datos aplicacion
+        asientoWs.setAplicacionTelematica(UtilsRegweb3.getCodigoAplicacion());
 
         // Usuario que registra (por defecto SISTRA, excepto para confirmacion preregistro)
         String user = UtilsRegweb3.obtenerUsuarioEntidad(entidad);
         asientoWs.setCodigoUsuario(user);
 
-		// Datos oficina registro
+        // Datos oficina registro
         String oficinaAsientoRegistral = asiento.getDatosOrigen().getCodigoEntidadRegistralOrigen();
-		asientoWs.setEntidadRegistralOrigenCodigo(UtilsRegweb3.getOficina(oficinaAsientoRegistral));
-		asientoWs.setLibroCodigo(UtilsRegweb3.getLibro(oficinaAsientoRegistral));
-		if (esRegistroSalida) {
-			asientoWs.setUnidadTramitacionOrigenCodigo(asiento.getDatosAsunto().getCodigoOrganoDestino());
-		} else {
-			asientoWs.setUnidadTramitacionDestinoCodigo(asiento.getDatosAsunto().getCodigoOrganoDestino());
-		}
+        asientoWs.setEntidadRegistralOrigenCodigo(UtilsRegweb3.getOficina(oficinaAsientoRegistral));
+        asientoWs.setLibroCodigo(UtilsRegweb3.getLibro(oficinaAsientoRegistral));
+        if (esRegistroSalida) {
+            asientoWs.setUnidadTramitacionOrigenCodigo(asiento.getDatosAsunto().getCodigoOrganoDestino());
+        } else {
+            asientoWs.setUnidadTramitacionDestinoCodigo(asiento.getDatosAsunto().getCodigoOrganoDestino());
+        }
 
-		// Datos asunto
+        // Datos asunto
         asientoWs.setResumen(UtilsRegweb3.truncarTexto(asiento.getDatosAsunto().getExtractoAsunto(),
-				ConstantesRegweb3.MAX_SIZE_ASUNTO_RESUMEN));
-        asientoWs.setTipoDocumentacionFisicaCodigo(new Long(ConstantesRegweb3.DOC_FISICA_REQUERIDA));
+                ConstantesRegweb3.MAX_SIZE_ASUNTO_RESUMEN));
+
+        String docFisicaRequeridaProp = ConfiguracionRegweb3.getInstance().getProperty("regweb3.doc.fisica.requerida");
+        String docFisicaRequerida = ( docFisicaRequeridaProp == null || docFisicaRequeridaProp.equals("") ) ? ConstantesRegweb3.DOC_FISICA_REQUERIDA: docFisicaRequeridaProp;
+        asientoWs.setTipoDocumentacionFisicaCodigo(new Long(docFisicaRequerida));
         asientoWs.setIdioma(UtilsRegweb3.obtenerIdiomaRegistro(asiento.getDatosAsunto().getIdiomaAsunto()));
 
         if (datosPropios != null && datosPropios.getInstrucciones() != null) {
-        	if (datosPropios.getInstrucciones().getTramiteSubsanacion() != null && StringUtils.isNotBlank(datosPropios.getInstrucciones().getTramiteSubsanacion().getExpedienteCodigo())) {
-            	asientoWs.setNumeroExpediente(datosPropios.getInstrucciones().getTramiteSubsanacion().getExpedienteCodigo());
+            if (datosPropios.getInstrucciones().getTramiteSubsanacion() != null && StringUtils.isNotBlank(datosPropios.getInstrucciones().getTramiteSubsanacion().getExpedienteCodigo())) {
+                asientoWs.setNumeroExpediente(datosPropios.getInstrucciones().getTramiteSubsanacion().getExpedienteCodigo());
             }
-        	if (StringUtils.isNotBlank(datosPropios.getInstrucciones().getIdentificadorSIA())) {
-            	asientoWs.setCodigoSia(Long.parseLong(datosPropios.getInstrucciones().getIdentificadorSIA()));
+            if (StringUtils.isNotBlank(datosPropios.getInstrucciones().getIdentificadorSIA())) {
+                asientoWs.setCodigoSia(Long.parseLong(datosPropios.getInstrucciones().getIdentificadorSIA()));
             }
         }
 
@@ -706,7 +709,7 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         // registroWs.setExpone(asiento.getDatosAsunto().getTextoExpone());
         // registroWs.setSolicita(asiento.getDatosAsunto().getTextoSolicita());
 
-    	// Se indica que el asiento no se hace de forma presencial
+        // Se indica que el asiento no se hace de forma presencial
         asientoWs.setPresencial(false);
 
 
@@ -718,10 +721,10 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         DatosInteresadoWs representante = null;
 
         if (representadoAsiento != null) {
-        	interesado =  UtilsRegweb3.crearInteresado(representadoAsiento);
-        	representante = UtilsRegweb3.crearInteresado(representanteAsiento);
+            interesado =  UtilsRegweb3.crearInteresado(representadoAsiento);
+            representante = UtilsRegweb3.crearInteresado(representanteAsiento);
         } else {
-        	interesado =  UtilsRegweb3.crearInteresado(representanteAsiento);
+            interesado =  UtilsRegweb3.crearInteresado(representanteAsiento);
         }
 
         InteresadoWs interesadoWs = new InteresadoWs();
@@ -733,157 +736,157 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         // Anexos
         if ("true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs")) && verificarFiltrosAnexadoDocumentacion(asiento)) {
 
-        	boolean anexarInternoAsiento = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.asiento"));
-        	boolean anexarInternoFormulario = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.formulario"));
-        	boolean anexarInternoPago = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.pago"));
-        	boolean anexarFormateados = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.formateados"));
-        	boolean anexarAsientoFormateado = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.asiento.formateado"));
+            boolean anexarInternoAsiento = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.asiento"));
+            boolean anexarInternoFormulario = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.formulario"));
+            boolean anexarInternoPago = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.internos.pago"));
+            boolean anexarFormateados = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.formateados"));
+            boolean anexarAsientoFormateado = "true".equals(ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.asiento.formateado"));
 
-        	Integer origenDocumento;
-	        String tipoDocumental;
-	        if (esRegistroSalida) {
-				origenDocumento  = ConstantesRegweb3.ORIGEN_DOCUMENTO_ADMINISTRACION;
-				tipoDocumental = ConstantesRegweb3.TIPO_DOCUMENTAL_NOTIFICACION;
-			} else {
-				origenDocumento  = ConstantesRegweb3.ORIGEN_DOCUMENTO_CIUDADANO;
-				tipoDocumental = ConstantesRegweb3.TIPO_DOCUMENTAL_SOLICITUD;
-			}
+            Integer origenDocumento;
+            String tipoDocumental;
+            if (esRegistroSalida) {
+                origenDocumento  = ConstantesRegweb3.ORIGEN_DOCUMENTO_ADMINISTRACION;
+                tipoDocumental = ConstantesRegweb3.TIPO_DOCUMENTAL_NOTIFICACION;
+            } else {
+                origenDocumento  = ConstantesRegweb3.ORIGEN_DOCUMENTO_CIUDADANO;
+                tipoDocumental = ConstantesRegweb3.TIPO_DOCUMENTAL_SOLICITUD;
+            }
 
-	        // - Asiento registral
-	        // 		- Xml de asiento
-			if (anexarInternoAsiento) {
-				AnexoWs anexoAsientoWs = generarAnexoWs(refAsiento, false, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
-						tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
-		        asientoWs.getAnexos().add(anexoAsientoWs);
-			}
-			if (anexarAsientoFormateado) {
-				AnexoWs anexoAsientoFWs = generarAnexoWs(refAsiento, true, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
-						tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
-		        asientoWs.getAnexos().add(anexoAsientoFWs);
-			}
+            // - Asiento registral
+            // 		- Xml de asiento
+            if (anexarInternoAsiento) {
+                AnexoWs anexoAsientoWs = generarAnexoWs(refAsiento, false, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
+                        tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
+                asientoWs.getAnexos().add(anexoAsientoWs);
+            }
+            if (anexarAsientoFormateado) {
+                AnexoWs anexoAsientoFWs = generarAnexoWs(refAsiento, true, ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO,
+                        tipoDocumental, origenDocumento, ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL);
+                asientoWs.getAnexos().add(anexoAsientoFWs);
+            }
 
-	        // - Ficheros asiento
-	        for (Iterator it = asiento.getDatosAnexoDocumentacion().iterator();it.hasNext();) {
+            // - Ficheros asiento
+            for (Iterator it = asiento.getDatosAnexoDocumentacion().iterator();it.hasNext();) {
 
-	        	AnexoWs anexoWs = null;
-	        	String tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO;
-	        	String validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA;
-	        	boolean anexarInterno = false;
+                AnexoWs anexoWs = null;
+                String tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO;
+                String validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA;
+                boolean anexarInterno = false;
 
-	        	DatosAnexoDocumentacion da = (DatosAnexoDocumentacion) it.next();
-	        	ReferenciaRDS refRDS = (ReferenciaRDS) refAnexos.get(da.getIdentificadorDocumento());
+                DatosAnexoDocumentacion da = (DatosAnexoDocumentacion) it.next();
+                ReferenciaRDS refRDS = (ReferenciaRDS) refAnexos.get(da.getIdentificadorDocumento());
 
-	        	// Fichero asociados asiento
-	        	if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_DATOS_PROPIOS) ||
-	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_AVISO_NOTIFICACION) ||
-	        		da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_OFICIO_REMISION)) {
-	        			tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
-	        			validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
-	        			anexarInterno = anexarInternoAsiento;
-	        	}
+                // Fichero asociados asiento
+                if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_DATOS_PROPIOS) ||
+                    da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_AVISO_NOTIFICACION) ||
+                    da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_OFICIO_REMISION)) {
+                        tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
+                        validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
+                        anexarInterno = anexarInternoAsiento;
+                }
 
-	        	// Fichero asociado a formulario
-	        	if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO)) {
-	        		tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
-	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
-	        		anexarInterno = anexarInternoFormulario;
-	        	}
+                // Fichero asociado a formulario
+                if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO)) {
+                    tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
+                    validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
+                    anexarInterno = anexarInternoFormulario;
+                }
 
-	        	// Fichero asociado a pago
-	        	if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_PAGO)) {
-	        		tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
-	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
-	        		anexarInterno = anexarInternoPago;
-	        	}
+                // Fichero asociado a pago
+                if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_PAGO)) {
+                    tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO;
+                    validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
+                    anexarInterno = anexarInternoPago;
+                }
 
-	        	// Generamos anexo ws y añadimos a lista: si tenemos que anexar fichero interno o no es un fichero interno (anexo)
-	        	if (anexarInterno || tipoDocumento != ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO) {
-	        		anexoWs = generarAnexoWs(refRDS, false, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
-	        		asientoWs.getAnexos().add(anexoWs);
-	        	}
+                // Generamos anexo ws y añadimos a lista: si tenemos que anexar fichero interno o no es un fichero interno (anexo)
+                if (anexarInterno || tipoDocumento != ConstantesRegweb3.TIPO_DOCUMENTO_FICHERO_TECNICO) {
+                    anexoWs = generarAnexoWs(refRDS, false, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
+                    asientoWs.getAnexos().add(anexoWs);
+                }
 
-	        	// Para formularios y pagos vemos si se adjunta como formateados
-	        	if (anexarFormateados &&
-	        			(da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO) || da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_PAGO) ) ) {
-	        		tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FORMULARIO;
-	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
-	        		anexoWs = generarAnexoWs(refRDS, true, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
-	        		asientoWs.getAnexos().add(anexoWs);
-	        	}
+                // Para formularios y pagos vemos si se adjunta como formateados
+                if (anexarFormateados &&
+                        (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_FORMULARIO) || da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_PAGO) ) ) {
+                    tipoDocumento = ConstantesRegweb3.TIPO_DOCUMENTO_FORMULARIO;
+                    validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_ORIGINAL;
+                    anexoWs = generarAnexoWs(refRDS, true, tipoDocumento, tipoDocumental, origenDocumento, validezDocumento);
+                    asientoWs.getAnexos().add(anexoWs);
+                }
 
-	        }
+            }
         }
 
         return asientoWs;
 
-	}
+    }
 
 
-	/**
-	 * Verifica filtros anexado documentacion.
-	 * @param asiento asiento
-	 * @return si se debe anexar
-	 */
-	private boolean verificarFiltrosAnexadoDocumentacion(
-			AsientoRegistral asiento) {
-		boolean res = true;
-		String filtro = ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.filtro.tipo");
-		String listaTramites = ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.filtro.listaTramites");
+    /**
+     * Verifica filtros anexado documentacion.
+     * @param asiento asiento
+     * @return si se debe anexar
+     */
+    private boolean verificarFiltrosAnexadoDocumentacion(
+            AsientoRegistral asiento) {
+        boolean res = true;
+        String filtro = ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.filtro.tipo");
+        String listaTramites = ConfiguracionRegweb3.getInstance().getProperty("regweb3.insertarDocs.filtro.listaTramites");
 
-		Boolean incluir = null;
-		if ("INCLUIR".equals(filtro)) {
-			incluir = true;
-		}
-		if ("EXCLUIR".equals(filtro)) {
-			incluir = false;
-		}
+        Boolean incluir = null;
+        if ("INCLUIR".equals(filtro)) {
+            incluir = true;
+        }
+        if ("EXCLUIR".equals(filtro)) {
+            incluir = false;
+        }
 
-		if (incluir != null && StringUtils.isBlank(listaTramites)) {
-			boolean encontrado = false;
-			String [] listaTramitesStr = listaTramites.split(";");
-			for (int i = 0; i < listaTramites.length(); i++) {
-				if (asiento.getDatosAsunto().getIdentificadorTramite().equals(listaTramitesStr[i])) {
-					encontrado = true;
-					break;
-				}
-			}
-			res = (incluir && encontrado) || (!incluir && !encontrado);
-		}
+        if (incluir != null && StringUtils.isBlank(listaTramites)) {
+            boolean encontrado = false;
+            String [] listaTramitesStr = listaTramites.split(";");
+            for (int i = 0; i < listaTramites.length(); i++) {
+                if (asiento.getDatosAsunto().getIdentificadorTramite().equals(listaTramitesStr[i])) {
+                    encontrado = true;
+                    break;
+                }
+            }
+            res = (incluir && encontrado) || (!incluir && !encontrado);
+        }
 
-		return res;
-	}
+        return res;
+    }
 
-	/**
-	 * Genera AnexoWS en funcion documento REDOSE
-	 * @param refRDS
-	 * @param tipoDocumento
-	 * @param tipoDocumental
-	 * @param origenDocumento
-	 * @return
-	 */
-	private AnexoWs generarAnexoWs(ReferenciaRDS refRDS, boolean formatearDocumento, String tipoDocumento, String tipoDocumental,
-			Integer origenDocumento, String validezDocumento) throws Exception {
-		RdsDelegate rdsDelegate = DelegateRDSUtil.getRdsDelegate();
-		DocumentoRDS docRDS = null;
-		DocumentoRDS docRDSFormateado = null;
+    /**
+     * Genera AnexoWS en funcion documento REDOSE
+     * @param refRDS
+     * @param tipoDocumento
+     * @param tipoDocumental
+     * @param origenDocumento
+     * @return
+     */
+    private AnexoWs generarAnexoWs(ReferenciaRDS refRDS, boolean formatearDocumento, String tipoDocumento, String tipoDocumental,
+            Integer origenDocumento, String validezDocumento) throws Exception {
+        RdsDelegate rdsDelegate = DelegateRDSUtil.getRdsDelegate();
+        DocumentoRDS docRDS = null;
+        DocumentoRDS docRDSFormateado = null;
 
-		docRDS = rdsDelegate.consultarDocumento(refRDS);
+        docRDS = rdsDelegate.consultarDocumento(refRDS);
 
-		if (docRDS.isEstructurado() && formatearDocumento) {
-			docRDSFormateado = rdsDelegate.consultarDocumentoFormateadoRegistro(refRDS);
-		}
+        if (docRDS.isEstructurado() && formatearDocumento) {
+            docRDSFormateado = rdsDelegate.consultarDocumentoFormateadoRegistro(refRDS);
+        }
 
-		AnexoWs anexoAsiento = new AnexoWs();
+        AnexoWs anexoAsiento = new AnexoWs();
         anexoAsiento.setTitulo(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarTexto(docRDS.getTitulo(), ConstantesRegweb3.MAX_SIZE_ANEXO_TITULO)));
 
         if (docRDSFormateado != null) {
-	        anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarFilename(docRDSFormateado.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME)));
-	        anexoAsiento.setFicheroAnexado(docRDSFormateado.getDatosFichero());
-	        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDSFormateado.getNombreFichero())));
+            anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarFilename(docRDSFormateado.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME)));
+            anexoAsiento.setFicheroAnexado(docRDSFormateado.getDatosFichero());
+            anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDSFormateado.getNombreFichero())));
         } else {
-        	anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarFilename(docRDS.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME)));
-	        anexoAsiento.setFicheroAnexado(docRDS.getDatosFichero());
-	        anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDS.getNombreFichero())));
+            anexoAsiento.setNombreFicheroAnexado(UtilsRegweb3.eliminarCaracteresNoPermitidos(UtilsRegweb3.truncarFilename(docRDS.getNombreFichero(), ConstantesRegweb3.MAX_SIZE_ANEXO_FILENAME)));
+            anexoAsiento.setFicheroAnexado(docRDS.getDatosFichero());
+            anexoAsiento.setTipoMIMEFicheroAnexado(MimeType.getMimeTypeForExtension(getExtension(docRDS.getNombreFichero())));
         }
         anexoAsiento.setTipoDocumental(tipoDocumental);
         anexoAsiento.setTipoDocumento(tipoDocumento);
@@ -892,87 +895,87 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         // Insertamos firma
         boolean insertarFirma = false;
         if (docRDS.getFirmas() != null && docRDS.getFirmas().length > 0) {
-        	// Si documento no es estructurado
-        	if (!docRDS.isEstructurado()) {
-        		insertarFirma = true;
-        	}
-        	// Si el documento es estructurado, no hay que formatearlo y no tiene documento formateado consolidado
-        	if (docRDS.isEstructurado() && !formatearDocumento && docRDS.getReferenciaRDSFormateado() == null) {
-        		insertarFirma = true;
-        	}
-        	// Si el documento es formateado y tiene documento formateado consolidado, la firma es referente al documento formateado
-        	if (docRDS.isEstructurado() && formatearDocumento && docRDS.getReferenciaRDSFormateado() != null) {
-        		insertarFirma = true;
-        	}
+            // Si documento no es estructurado
+            if (!docRDS.isEstructurado()) {
+                insertarFirma = true;
+            }
+            // Si el documento es estructurado, no hay que formatearlo y no tiene documento formateado consolidado
+            if (docRDS.isEstructurado() && !formatearDocumento && docRDS.getReferenciaRDSFormateado() == null) {
+                insertarFirma = true;
+            }
+            // Si el documento es formateado y tiene documento formateado consolidado, la firma es referente al documento formateado
+            if (docRDS.isEstructurado() && formatearDocumento && docRDS.getReferenciaRDSFormateado() != null) {
+                insertarFirma = true;
+            }
         }
 
 
         // Insertamos firma
         if (insertarFirma) {
 
-        		// Solo se puede anexar 1 firma
-	        	if (docRDS.getFirmas().length > 1) {
-	        		throw new Exception("El documento " + docRDS.getReferenciaRDS().getCodigo() + " tiene más de 1 firma. Solo se puede anexar 1 firma.");
-	        	}
+                // Solo se puede anexar 1 firma
+                if (docRDS.getFirmas().length > 1) {
+                    throw new Exception("El documento " + docRDS.getReferenciaRDS().getCodigo() + " tiene más de 1 firma. Solo se puede anexar 1 firma.");
+                }
 
-	        	if (tipoDocumento.equals(ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO)){
-	        		validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA;
-	        	}
+                if (tipoDocumento.equals(ConstantesRegweb3.TIPO_DOCUMENTO_ANEXO)){
+                    validezDocumento = ConstantesRegweb3.VALIDEZ_DOCUMENTO_COPIA;
+                }
 
-	        	FirmaIntf firma = docRDS.getFirmas()[0];
+                FirmaIntf firma = docRDS.getFirmas()[0];
 
-	        	// Tipo firma
-	        	Integer modoFirma = null;
-	        	if (PluginFirmaIntf.FORMATO_FIRMA_CADES_DETACHED.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_XADES_DETACHED.equals(firma.getFormatoFirma()) ) {
-	        		modoFirma = ConstantesRegweb3.MODO_FIRMA_DETACHED;
-	        	} else if (PluginFirmaIntf.FORMATO_FIRMA_PADES.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_EXTENDED.equals(firma.getFormatoFirma())) {
-	        		modoFirma = ConstantesRegweb3.MODO_FIRMA_ATTACHED;
-	        	} else {
-	        		throw new Exception("Formato firma no soportado: " + firma.getFormatoFirma());
-	        	}
+                // Tipo firma
+                Integer modoFirma = null;
+                if (PluginFirmaIntf.FORMATO_FIRMA_CADES_DETACHED.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_XADES_DETACHED.equals(firma.getFormatoFirma()) ) {
+                    modoFirma = ConstantesRegweb3.MODO_FIRMA_DETACHED;
+                } else if (PluginFirmaIntf.FORMATO_FIRMA_PADES.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_SMIME.equals(firma.getFormatoFirma()) || PluginFirmaIntf.FORMATO_FIRMA_EXTENDED.equals(firma.getFormatoFirma())) {
+                    modoFirma = ConstantesRegweb3.MODO_FIRMA_ATTACHED;
+                } else {
+                    throw new Exception("Formato firma no soportado: " + firma.getFormatoFirma());
+                }
 
-	        	anexoAsiento.setModoFirma(modoFirma);
+                anexoAsiento.setModoFirma(modoFirma);
 
-	        	if (PluginFirmaIntf.FORMATO_FIRMA_PADES.equals(firma.getFormatoFirma())) {
-	        		// Se pasa directamente la firma como datos del fichero
-	        		anexoAsiento.setFicheroAnexado(firma.getContenidoFirma());
-	        	} else {
+                if (PluginFirmaIntf.FORMATO_FIRMA_PADES.equals(firma.getFormatoFirma())) {
+                    // Se pasa directamente la firma como datos del fichero
+                    anexoAsiento.setFicheroAnexado(firma.getContenidoFirma());
+                } else {
 
-	        		anexoAsiento.setFirmaAnexada(firma.getContenidoFirma());
-	        		anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
-	        		anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));
-	        	}
+                    anexoAsiento.setFirmaAnexada(firma.getContenidoFirma());
+                    anexoAsiento.setNombreFirmaAnexada(UtilsRegweb3.obtenerNombreFirma(firma));
+                    anexoAsiento.setTipoMIMEFirmaAnexada(MimeType.getMimeTypeForExtension(UtilsRegweb3.getExtension(anexoAsiento.getNombreFirmaAnexada())));
+                }
 
         } else {
-        	anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
+            anexoAsiento.setModoFirma(ConstantesRegweb3.MODO_FIRMA_SIN_FIRMA);
         }
 
         anexoAsiento.setValidezDocumento(validezDocumento);
 
-    	return anexoAsiento;
-	}
+        return anexoAsiento;
+    }
 
-	/**
+    /**
      * Obtiene extension fichero.
      */
-	private String getExtension(String filename){
-		if(filename.lastIndexOf(".") != -1){
-			return filename.substring(filename.lastIndexOf(".") + 1);
-		}else{
-			return "";
-		}
-	}
+    private String getExtension(String filename){
+        if(filename.lastIndexOf(".") != -1){
+            return filename.substring(filename.lastIndexOf(".") + 1);
+        }else{
+            return "";
+        }
+    }
 
-	/**
-	 * Verifica entidad.
-	 */
-	private void verificarEntidad(String entidad) throws Exception{
-		if (!UtilsRegweb3.verificarEntidad(entidad)) {
-			throw new Exception("Entidad " + entidad + " no soportada");
-		}
-	}
+    /**
+     * Verifica entidad.
+     */
+    private void verificarEntidad(String entidad) throws Exception{
+        if (!UtilsRegweb3.verificarEntidad(entidad)) {
+            throw new Exception("Entidad " + entidad + " no soportada");
+        }
+    }
 
-	private static Cache getCache() throws CacheException {
+    private static Cache getCache() throws CacheException {
         String cacheName = PluginRegweb3.class.getName();
         CacheManager cacheManager = CacheManager.getInstance();
         Cache cache;
@@ -1000,93 +1003,93 @@ public class PluginRegweb3 implements PluginRegistroIntf {
         cache.put(new Element(key, value));
     }
 
-	public String obtenerReferenciaJustificanteRegistroEntrada(String entidad,
-			String numeroRegistro, Date fechaRegistro) throws Exception {
+    public String obtenerReferenciaJustificanteRegistroEntrada(String entidad,
+            String numeroRegistro, Date fechaRegistro) throws Exception {
 
-		String resultado = null;
-		Date fechaInicioFormateada = null;
+        String resultado = null;
+        Date fechaInicioFormateada = null;
 
-		int maxIntentos = getMaxReintentos();
-		String fechaInicio = getFechaInicioJustificante();
+        int maxIntentos = getMaxReintentos();
+        String fechaInicio = getFechaInicioJustificante();
 
-		DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat formatoFecha = new SimpleDateFormat("dd/MM/yyyy");
 
-		if (!StringUtils.isEmpty(fechaInicio)){
-			try {
-				fechaInicioFormateada = formatoFecha.parse(getFechaInicioJustificante());
-			} catch (ParseException e) {
-				logger.error("Error al formatear fecha inicio de justificante de registro: " + e.getMessage(), e);
-			}
+        if (!StringUtils.isEmpty(fechaInicio)){
+            try {
+                fechaInicioFormateada = formatoFecha.parse(getFechaInicioJustificante());
+            } catch (ParseException e) {
+                logger.error("Error al formatear fecha inicio de justificante de registro: " + e.getMessage(), e);
+            }
 
-			if (!fechaRegistro.before(fechaInicioFormateada)){
-				// Invoca a Regweb3
-				final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
+            if (!fechaRegistro.before(fechaInicioFormateada)){
+                // Invoca a Regweb3
+                final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(entidad);
 
-				for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
-					try{
-						JustificanteReferenciaWs referencia = service.obtenerReferenciaJustificante(entidad,
-								numeroRegistro);
-						resultado = referencia.getUrl();
-					    break;
-					}catch (SOAPFaultException e){
-						String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
-						if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
-							logger.debug("Obtención de referencia justificante de registro de entrada " + numeroRegistro + " reintento número " + reintentos + " erronéo: " + e.getMessage());
-					        continue;
-						} else{
-							logger.error("Error obteniendo referencia justificante de registro de entrada: " + e.getMessage(), e);
-						}
-					}catch (WsI18NException ex){
-						logger.error("Error obteniendo referencia justificante de registro de entrada: " + ex.getMessage(), ex);
-						throw new Exception ("S'ha produit un error al descarregar referencia justificant de registre. Per favor, tornau a provar-ho passats uns minuts.");
-					}
-				}
+                for (int reintentos = 0; reintentos <= maxIntentos; reintentos++) {
+                    try{
+                        JustificanteReferenciaWs referencia = service.obtenerReferenciaJustificante(entidad,
+                                numeroRegistro);
+                        resultado = referencia.getUrl();
+                        break;
+                    }catch (SOAPFaultException e){
+                        String stackTrace = es.caib.util.StringUtil.stackTraceToString(e);
+                        if(maxIntentos > 0 && stackTrace.indexOf(ERROR) != -1){
+                            logger.debug("Obtención de referencia justificante de registro de entrada " + numeroRegistro + " reintento número " + reintentos + " erronéo: " + e.getMessage());
+                            continue;
+                        } else{
+                            logger.error("Error obteniendo referencia justificante de registro de entrada: " + e.getMessage(), e);
+                        }
+                    }catch (WsI18NException ex){
+                        logger.error("Error obteniendo referencia justificante de registro de entrada: " + ex.getMessage(), ex);
+                        throw new Exception ("S'ha produit un error al descarregar referencia justificant de registre. Per favor, tornau a provar-ho passats uns minuts.");
+                    }
+                }
 
-			}
+            }
 
-		}
+        }
 
-		return resultado;
+        return resultado;
 
-	}
+    }
 
-	public char obtenerTipoJustificanteRegistroEntrada() {
-		String tipoJustificante = ConfiguracionRegweb3.getInstance().getProperty("regweb3.tipoJustificanteRegistroEntrada");
-		if (StringUtils.isBlank(tipoJustificante)) {
-			tipoJustificante = "" + ConstantesPluginRegistro.JUSTIFICANTE_DESCARGA;
-		}
-		return tipoJustificante.charAt(0);
-	}
+    public char obtenerTipoJustificanteRegistroEntrada() {
+        String tipoJustificante = ConfiguracionRegweb3.getInstance().getProperty("regweb3.tipoJustificanteRegistroEntrada");
+        if (StringUtils.isBlank(tipoJustificante)) {
+            tipoJustificante = "" + ConstantesPluginRegistro.JUSTIFICANTE_DESCARGA;
+        }
+        return tipoJustificante.charAt(0);
+    }
 
-	private DatosPropios obtenerDatosPropios(AsientoRegistral asiento, Map refAnexos) throws Exception {
-		DatosPropios datosPropios = null;
-		for (Iterator it = asiento.getDatosAnexoDocumentacion().iterator();it.hasNext();) {
-			DatosAnexoDocumentacion da = (DatosAnexoDocumentacion) it.next();
-			if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_DATOS_PROPIOS)) {
-				ReferenciaRDS refRDS = (ReferenciaRDS) refAnexos.get(da.getIdentificadorDocumento());
-				RdsDelegate rdsDelegate = DelegateRDSUtil.getRdsDelegate();
-				DocumentoRDS docRDS = rdsDelegate.consultarDocumento(refRDS);
-				FactoriaObjetosXMLDatosPropios factoria = ServicioDatosPropiosXML.crearFactoriaObjetosXML();
-				datosPropios = factoria.crearDatosPropios (new ByteArrayInputStream(docRDS.getDatosFichero()));
-			}
-		}
-		return datosPropios;
+    private DatosPropios obtenerDatosPropios(AsientoRegistral asiento, Map refAnexos) throws Exception {
+        DatosPropios datosPropios = null;
+        for (Iterator it = asiento.getDatosAnexoDocumentacion().iterator();it.hasNext();) {
+            DatosAnexoDocumentacion da = (DatosAnexoDocumentacion) it.next();
+            if (da.getTipoDocumento().equals(ConstantesAsientoXML.DATOSANEXO_DATOS_PROPIOS)) {
+                ReferenciaRDS refRDS = (ReferenciaRDS) refAnexos.get(da.getIdentificadorDocumento());
+                RdsDelegate rdsDelegate = DelegateRDSUtil.getRdsDelegate();
+                DocumentoRDS docRDS = rdsDelegate.consultarDocumento(refRDS);
+                FactoriaObjetosXMLDatosPropios factoria = ServicioDatosPropiosXML.crearFactoriaObjetosXML();
+                datosPropios = factoria.crearDatosPropios (new ByteArrayInputStream(docRDS.getDatosFichero()));
+            }
+        }
+        return datosPropios;
 
-	}
+    }
 
-	/**
-	 * Genera sesion de registro
-	 * @param codigoEntidad
-	 * @return sesion de registro
-	 * @throws Exception
-	 */
-	private String generarSesionRegweb(final String codigoEntidad) throws Exception {
-		try {
-			final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(codigoEntidad);
-			final Long result = service.obtenerSesionRegistro(codigoEntidad);
-			return result.toString();
-		} catch (final Exception ex) {
-			throw new Exception("Error generando sesion regweb : " + ex.getMessage(), ex);
-		}
-	}
+    /**
+     * Genera sesion de registro
+     * @param codigoEntidad
+     * @return sesion de registro
+     * @throws Exception
+     */
+    private String generarSesionRegweb(final String codigoEntidad) throws Exception {
+        try {
+            final RegWebAsientoRegistralWs service = UtilsRegweb3.getAsientoRegistralService(codigoEntidad);
+            final Long result = service.obtenerSesionRegistro(codigoEntidad);
+            return result.toString();
+        } catch (final Exception ex) {
+            throw new Exception("Error generando sesion regweb : " + ex.getMessage(), ex);
+        }
+    }
 }
