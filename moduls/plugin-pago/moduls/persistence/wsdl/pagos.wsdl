@@ -52,6 +52,9 @@
           <s:element minOccurs="0" maxOccurs="1" name="EstadoPago" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="FechaPago" type="s:string" />
           <s:element minOccurs="0" maxOccurs="1" name="Firma" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="NifSujetoPasivo" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="IdTasa" type="s:string" />
+          <s:element minOccurs="0" maxOccurs="1" name="ImportePago" type="s:string" />
         </s:sequence>
       </s:complexType>
       <s:element name="Ping046">
